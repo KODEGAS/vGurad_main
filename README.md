@@ -1,7 +1,5 @@
 # vGurad_main
 
-[![Deno CI](https://github.com/Maleesha101/vGurad_main/actions/workflows/deno.yml/badge.svg)](https://github.com/Maleesha101/vGurad_main/actions/workflows/deno.yml)
-
 A full‑stack monorepo featuring:
 - Frontend: Vite + React + TypeScript with shadcn/ui, Radix UI, TanStack Query, and Three.js (react-three/fiber).
 - Backend: Node.js + Express (v5) + TypeScript with MongoDB via Mongoose and Google Generative AI (Gemini) integration.
@@ -219,9 +217,7 @@ Please follow conventional commit messages where possible.
 ---
 
 ## License
-
-No license file detected. If you plan to use or distribute this code, please add a LICENSE file to clarify terms.
-
+-
 ---
 
 ## Acknowledgments
