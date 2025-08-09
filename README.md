@@ -1,231 +1,164 @@
-# vGurad_main
+# vGuard: AI-Powered Crop Disease Detection and Management
 
-A full‑stack monorepo featuring:
-- Frontend: Vite + React + TypeScript with shadcn/ui, Radix UI, TanStack Query, and Three.js (react-three/fiber).
-- Backend: Node.js + Express (v5) + TypeScript with MongoDB via Mongoose and Google Generative AI (Gemini) integration.
+vGuard is a full-stack application designed to help farmers and agricultural professionals identify and manage crop diseases effectively. The platform leverages AI-powered image recognition to detect diseases from crop images, provides a comprehensive database of crop diseases, and offers expert advice and agricultural tips.
 
-This README documents how to develop, run, build, and contribute to the project.
+ 
 
----
+## ✨ Features
 
-## Project Structure
+-   **AI Crop Scanner:** Upload an image of a crop to get an AI-powered analysis and disease identification.
+-   **Disease Database:** A comprehensive and searchable database of crop diseases with detailed information.
+-   **Expert Help:** Connect with agricultural experts to get personalized advice and solutions.
+-   **Farming Tips:** A collection of tips and best practices for sustainable and effective farming.
+-   **Multi-language Support:** The user interface is available in multiple languages to cater to a diverse user base.
+-   **3D Interactive Models:** Engaging 3D models to visualize and understand crop-related concepts.
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+-   **Framework:** React, Vite
+-   **UI Components:** shadcn/ui, Radix UI
+-   **State Management:** TanStack React Query
+-   **3D Rendering:** Three.js, @react-three/fiber, @react-three/drei
+-   **Routing:** React Router
+-   **Styling:** Tailwind CSS
+-   **Language:** TypeScript
+
+### Backend
+
+-   **Framework:** Node.js, Express
+-   **Database:** MongoDB, Mongoose
+-   **AI:** Google Generative AI (Gemini)
+-   **API:** RESTful API
+--   **Language:** TypeScript
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+-   Node.js (v18 or higher)
+-   npm, yarn, or pnpm
+-   MongoDB instance (local or cloud)
+-   Google Generative AI API Key (for AI features)
+
+### Installation
+
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/Maleesha101/vGurad_main.git
+    cd vGurad_main
+    ```
+
+2.  **Install backend dependencies:**
+    ```bash
+    cd backend
+    npm install
+    ```
+
+3.  **Install frontend dependencies:**
+    ```bash
+    cd ../frontend
+    npm install
+    ```
+
+### Environment Variables
+
+Create a `.env` file in the `backend` directory and add the following variables:
 
 ```
-.
-├─ frontend/              # Vite React TypeScript app (shadcn/ui, Radix, TanStack Query, Three.js)
-│  └─ package.json
-├─ backend/               # Node/Express TypeScript API server (Mongoose, Gemini API)
-│  └─ package.json
-└─ .github/
-   └─ workflows/
-      └─ deno.yml         # Deno lint/test workflow (repository CI)
-```
-
----
-
-## Tech Stack
-
-- Frontend:
-  - React 18, TypeScript, Vite
-  - shadcn/ui, Radix UI primitives
-  - TanStack React Query
-  - react-three/fiber and @react-three/drei for 3D
-  - Additional: react-hook-form, lucide-react, next-themes, axios, etc.
-
-- Backend:
-  - Node.js, Express v5, TypeScript
-  - Mongoose (MongoDB)
-  - Google Generative AI (Gemini) via @google/generative-ai
-  - axios, cors, dotenv, nodemon, ts-node, typescript
-
----
-
-## Prerequisites
-
-- Node.js 18+ (20 LTS recommended)
-- npm (or yarn/pnpm) – examples below use npm
-- A running MongoDB instance (local or hosted, e.g., MongoDB Atlas)
-- (Optional, if used) Google Generative AI API key (Gemini)
-
----
-
-## Environment Variables
-
-Create a .env file in backend/ with the following values:
-
-```
-# backend/.env
 PORT=5000
-MONGODB_URI=mongodb://localhost:27017/vgurad
-# Optional if Gemini features are used:
-GEMINI_API_KEY=your_google_generative_ai_key
+MONGODB_URI=<your_mongodb_uri>
+GEMINI_API_KEY=<your_gemini_api_key>
 ```
 
-Adjust values as needed for your environment.
+### Running the Application
 
----
+1.  **Start the backend server:**
+    ```bash
+    cd backend
+    npm run dev
+    ```
 
-## Installation
+2.  **Start the frontend development server:**
+    ```bash
+    cd ../frontend
+    npm run dev
+    ```
 
-Install dependencies for both apps:
+The application will be available at `http://localhost:5173`.
 
-```bash
-# From repository root
+## 📁 Project Structure
 
-# Backend
-cd backend
-npm install
-
-# Frontend
-cd ../frontend
-npm install
+```
+vGurad_main/
+├── backend/
+│   ├── src/
+│   │   ├── controllers/  # Request handlers
+│   │   ├── models/       # Mongoose schemas
+│   │   ├── routes/       # API routes
+│   │   ├── app.ts        # Express app setup
+│   │   └── database.ts   # MongoDB connection
+│   └── package.json
+├── frontend/
+│   ├── src/
+│   │   ├── assets/       # Static assets
+│   │   ├── components/   # Reusable React components
+│   │   ├── contexts/     # React contexts
+│   │   ├── hooks/        # Custom React hooks
+│   │   ├── lib/          # Utility functions
+│   │   ├── pages/        # Page components
+│   │   ├── translations/ # Language files
+│   │   ├── App.tsx       # Main App component
+│   │   └── main.tsx      # React entry point
+│   └── package.json
+└── README.md
 ```
 
----
+## 📜 API Endpoints
 
-## Development
+The backend provides a RESTful API with the following endpoints:
 
-Run frontend and backend in separate terminals:
+-   `GET /api/diseases`: Get a list of all crop diseases.
+-   `GET /api/diseases/:id`: Get details of a specific disease.
+-   `POST /api/questions`: Submit a question to an expert.
+-   `GET /api/tips`: Get a list of all farming tips.
+-   `POST /api/gemini/generate`: Get AI-powered analysis of a crop image.
 
-```bash
-# Terminal 1: Backend (TypeScript via ts-node)
-cd backend
-npm run dev
-# Starts Express server (reads backend/.env)
+## 📦 Deployment
 
-# Terminal 2: Frontend (Vite dev server)
-cd frontend
-npm run dev
-# Opens Vite dev server with React app
-```
+### Backend
 
-- Backend key scripts:
-  - npm run dev – nodemon + ts-node on src/app.ts
-  - npm run build – compile TypeScript to dist/
-  - npm run start – run compiled app via node dist/app.js
-  - npm run seed – run src/seeder.ts to seed initial data (ensure DB connection)
+1.  Build the backend:
+    ```bash
+    cd backend
+    npm run build
+    ```
+2.  Start the production server:
+    ```bash
+    npm start
+    ```
 
-- Frontend key scripts:
-  - npm run dev – Vite dev server
-  - npm run build – production build
-  - npm run preview – preview production build
-  - npm run lint – lint frontend codebase
+### Frontend
 
----
+1.  Build the frontend:
+    ```bash
+    cd frontend
+    npm run build
+    ```
+2.  Serve the `dist` directory using a static file server.
 
-## Building for Production
+## 🤝 Contributing
 
-```bash
-# Backend
-cd backend
-npm run build
-npm run start   # serves compiled dist/app.js
+Contributions are welcome! Please follow these steps:
 
-# Frontend
-cd ../frontend
-npm run build
-npm run preview # optional local preview of production build
-```
+1.  Fork the repository.
+2.  Create a new branch (`git checkout -b feature/your-feature`).
+3.  Make your changes.
+4.  Commit your changes (`git commit -m 'Add some feature'`).
+5.  Push to the branch (`git push origin feature/your-feature`).
+6.  Open a pull request.
 
-Deploy the compiled backend (backend/dist) to your server environment and serve the frontend build (frontend/dist) via your preferred static host (or reverse proxy both behind a single domain).
+## 📄 License
 
----
-
-## API
-
-The backend is an Express v5 TypeScript server using Mongoose. Typical patterns include:
-
-- Configuration via backend/.env
-- CORS enabled for the frontend
-- Axios for upstream calls
-- Optional Google Generative AI usage via @google/generative-ai
-
-Base URL (local example): http://localhost:5000 (or the PORT you set)
-
-Note: Endpoints and request/response schemas depend on the implementation in src/. Check backend/src for routes and controllers. A common pattern is to include a health endpoint such as /health or /api/health.
-
----
-
-## Database Seeding
-
-A seeding script is available:
-
-```bash
-cd backend
-npm run seed
-```
-
-Ensure MONGODB_URI is set and reachable before running.
-
----
-
-## UI and Components
-
-- shadcn/ui with Radix primitives for accessible and composable UI
-- Three.js via react-three/fiber and @react-three/drei for 3D scenes and helpers
-- Theming via next-themes
-- Forms via react-hook-form and @hookform/resolvers
-- Data fetching/caching via @tanstack/react-query
-
-Refer to frontend/src for components, pages, and styles.
-
----
-
-## Continuous Integration
-
-This repository includes a workflow at .github/workflows/deno.yml which runs Deno lint and tests. While primarily a Node/React repo, the workflow can be used for Deno scripts or kept as a lint/test gate if applicable.
-
-Badge: See the top of this README.
-
----
-
-## Scripts Reference
-
-- Backend:
-  - dev: nodemon --exec ts-node src/app.ts
-  - build: tsc
-  - start: node dist/app.js
-  - seed: ts-node src/seeder.ts
-
-- Frontend:
-  - dev: vite
-  - build: vite build
-  - build:dev: vite build --mode development
-  - preview: vite preview
-  - lint: eslint .
-
----
-
-## Troubleshooting
-
-- Ensure Node 18+ and a working MongoDB connection (MONGODB_URI).
-- If Gemini features are used, set GEMINI_API_KEY and verify quota and access.
-- For CORS issues in local development, verify backend CORS configuration and frontend dev server origin.
-
----
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch: git checkout -b feat/your-feature
-3. Commit changes: git commit -m "feat: add your feature"
-4. Push branch: git push origin feat/your-feature
-5. Open a Pull Request
-
-Please follow conventional commit messages where possible.
-
----
-
-## License
--
----
-
-## Acknowledgments
-
-- React, Vite, TypeScript
-- shadcn/ui, Radix UI
-- TanStack React Query
-- Three.js ecosystem: react-three/fiber, @react-three/drei
-- Express, Mongoose
-- Google Generative AI (Gemini)
-- axios, dotenv, nodemon, ts-node, typescript
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

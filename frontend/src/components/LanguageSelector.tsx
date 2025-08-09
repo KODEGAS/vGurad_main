@@ -1,6 +1,5 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -8,36 +7,35 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Languages } from 'lucide-react';
+import { useTranslation } from '@/contexts/TranslationContext';
+import { languages } from '@/translations';
 
-interface LanguageSelectorProps {
-  selectedLanguage: string;
-  onLanguageChange: (language: string) => void;
-}
+export const LanguageSelector: React.FC = () => {
+  const { language, setLanguage } = useTranslation();
 
-const languages = [
-  { code: 'en', name: 'English', flag: '🇬🇧' },
-  { code: 'si', name: 'සිංහල', flag: '🇱🇰' },
-  { code: 'ta', name: 'தமிழ்', flag: '🇱🇰' },
-];
+  const selectedLang = languages.find(lang => lang.code === language);
 
-export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
-  selectedLanguage,
-  onLanguageChange,
-}) => {
   return (
-    <Select value={selectedLanguage} onValueChange={onLanguageChange}>
-      <SelectTrigger className="w-40 bg-background border-border">
-        <div className="flex items-center gap-2">
-          <Languages className="h-4 w-4" />
-          <SelectValue />
+    <Select value={language} onValueChange={setLanguage}>
+      <SelectTrigger className="w-44 h-11 bg-white border-2 border-primary/20 hover:border-primary/40 shadow-md hover:shadow-lg transition-all duration-200 rounded-lg">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 text-primary">
+            <Languages className="h-5 w-5" />
+            <span className="text-lg">{selectedLang?.flag}</span>
+          </div>
+          <span className="font-medium text-gray-700">{selectedLang?.name}</span>
         </div>
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="bg-white border-2 border-primary/20 shadow-xl rounded-lg">
         {languages.map((lang) => (
-          <SelectItem key={lang.code} value={lang.code}>
-            <div className="flex items-center gap-2">
-              <span>{lang.flag}</span>
-              <span>{lang.name}</span>
+          <SelectItem
+            key={lang.code}
+            value={lang.code}
+            className="hover:bg-primary/10 focus:bg-primary/10 cursor-pointer py-3"
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-lg">{lang.flag}</span>
+              <span className="font-medium">{lang.name}</span>
             </div>
           </SelectItem>
         ))}

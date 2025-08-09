@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Camera, Upload, Scan, ArrowLeft, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 const DEMO_IMAGE_URL = 'https://placehold.co/600x400/8B4513/FFFFFF?text=Infected+Crop';
 
@@ -14,7 +15,7 @@ interface CropScannerProps {
 interface Medicine {
   name: string;
   application_rate
-: string;
+  : string;
   frequency: string;
 }
 
@@ -33,6 +34,7 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
+  const { t } = useTranslation();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -42,7 +44,7 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setSelectedFile(file); 
+      setSelectedFile(file);
       const reader = new FileReader();
       reader.onload = (e) => {
         setSelectedImage(e.target?.result as string);
@@ -80,7 +82,7 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
       }
 
       const predictionResult = await predictionResponse.json();
-      const diseaseName = predictionResult.predicted_class; 
+      const diseaseName = predictionResult.predicted_class;
 
       if (!diseaseName) {
         throw new Error('Could not get a disease name from the prediction.');
@@ -105,14 +107,14 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
       // Step 3: Consolidate all the data with the correct key mapping
       const combinedResult: AnalysisResult = {
         disease: diseaseName.toUpperCase(),
-        confidence: Number((predictionResult.confidence * 100).toFixed(2)), 
+        confidence: Number((predictionResult.confidence * 100).toFixed(2)),
         description: diseaseInfoResult?.info?.description || '',
         symptoms: diseaseInfoResult?.info?.symptoms || [],
         causes: (diseaseInfoResult?.info?.caused_by) ? [diseaseInfoResult.info.caused_by] : [],
         prevention: diseaseInfoResult?.info?.prevention || [],
         medicines: medicinesResult?.recommended_medicines || [],
       };
-      
+
       setAnalysisResult(combinedResult);
       toast.success('Crop analysis completed!');
 
@@ -153,9 +155,9 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
       <div className="flex items-center gap-4 mb-6">
         <Button onClick={onBack} variant="outline" size="sm">
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
+          {t('back')}
         </Button>
-        <h2 className="text-2xl font-bold text-foreground">Crop Disease Scanner</h2>
+        <h2 className="text-2xl font-bold text-foreground">{t('cropScanner')}</h2>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -164,7 +166,7 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Camera className="h-5 w-5" />
-              Capture or Upload Image
+              {t('uploadImage')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -178,10 +180,10 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
                 <div className="flex gap-2">
                   <Button onClick={analyzeCrop} variant="scan" disabled={isAnalyzing} className="flex-1">
                     {isAnalyzing ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Scan className="h-4 w-4 mr-2" />}
-                    {isAnalyzing ? 'Analyzing...' : 'Analyze Crop'}
+                    {isAnalyzing ? t('analyzing') : t('analyzeCrop')}
                   </Button>
                   <Button onClick={() => { setSelectedImage(null); setSelectedFile(null); }} variant="outline">
-                    Clear
+                    {t('clear')}
                   </Button>
                 </div>
               </div>
@@ -189,15 +191,15 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
               <div className="space-y-4">
                 <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
                   <Camera className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground mb-4">Take a photo or upload an image of your crop</p>
+                  <p className="text-muted-foreground mb-4">{t('dragDrop')}</p>
                   <div className="flex flex-col gap-2">
                     <Button onClick={takeDemoPhoto} variant="farmer">
                       <Camera className="h-4 w-4 mr-2" />
-                      Use Demo Photo
+                      {t('useDemoPhoto')}
                     </Button>
                     <Button onClick={handleUploadButtonClick} variant="outline" className="w-full">
                       <Upload className="h-4 w-4 mr-2" />
-                      Upload Image
+                      {t('uploadImage')}
                     </Button>
                     <input
                       type="file"
@@ -216,39 +218,39 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
         {/* Analysis Results Section */}
         <Card>
           <CardHeader>
-            <CardTitle>Analysis Results</CardTitle>
+            <CardTitle>{t('analysisResults')}</CardTitle>
           </CardHeader>
           <CardContent>
             {isAnalyzing ? (
               <div className="flex items-center justify-center h-64">
                 <div className="text-center">
                   <Loader2 className="h-12 w-12 border-b-2 border-primary mx-auto mb-4 animate-spin" />
-                  <p className="text-muted-foreground">Analyzing your crop image...</p>
+                  <p className="text-muted-foreground">{t('analyzing')}</p>
                 </div>
               </div>
             ) : analysisResult ? (
               analysisResult.disease.toLowerCase() === 'normal' ? (
                 <div className="flex flex-col items-center justify-center h-64">
-                  <h3 className="text-2xl font-bold text-green-600 mb-2">Crop is Healthy</h3>
-                  <p className="text-muted-foreground">No disease detected. Your crop looks good!</p>
+                  <h3 className="text-2xl font-bold text-green-600 mb-2">{t('cropIsHealthy')}</h3>
+                  <p className="text-muted-foreground">{t('noDisease')}</p>
                 </div>
               ) : (
                 <div className="space-y-6">
                   <div className="bg-gradient-earth p-4 rounded-lg">
                     <h3 className="text-xl font-bold text-foreground mb-2">{analysisResult.disease}</h3>
-                    <p className="text-sm text-muted-foreground">Confidence: {analysisResult.confidence}%</p>
+                    <p className="text-sm text-muted-foreground">{t('confidence')}: {analysisResult.confidence}%</p>
                   </div>
 
                   {analysisResult.description && (
                     <div>
-                      <h4 className="font-semibold mb-2">Description:</h4>
+                      <h4 className="font-semibold mb-2">{t('description')}:</h4>
                       <p className="text-sm text-muted-foreground">{analysisResult.description}</p>
                     </div>
                   )}
-                  
+
                   {analysisResult.symptoms && analysisResult.symptoms.length > 0 && (
                     <div>
-                      <h4 className="font-semibold mb-2">Symptoms Detected:</h4>
+                      <h4 className="font-semibold mb-2">{t('symptomsDetected')}:</h4>
                       <ul className="list-disc list-inside space-y-1">
                         {analysisResult.symptoms.map((symptom: string, index: number) => (
                           <li key={index} className="text-sm text-muted-foreground">{symptom}</li>
@@ -256,10 +258,10 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
                       </ul>
                     </div>
                   )}
-                  
+
                   {analysisResult.causes && analysisResult.causes.length > 0 && (
                     <div>
-                      <h4 className="font-semibold mb-2">Causes:</h4>
+                      <h4 className="font-semibold mb-2">{t('causes')}:</h4>
                       <ul className="list-disc list-inside space-y-1">
                         {analysisResult.causes.map((cause: string, index: number) => (
                           <li key={index} className="text-sm text-muted-foreground">{cause}</li>
@@ -270,7 +272,7 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
 
                   {analysisResult.prevention && analysisResult.prevention.length > 0 && (
                     <div>
-                      <h4 className="font-semibold mb-2">Prevention Tips:</h4>
+                      <h4 className="font-semibold mb-2">{t('preventionTips')}:</h4>
                       <ul className="list-disc list-inside space-y-1">
                         {analysisResult.prevention.map((tip: string, index: number) => (
                           <li key={index} className="text-sm text-muted-foreground">{tip}</li>
@@ -281,13 +283,13 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
 
                   {analysisResult.medicines && analysisResult.medicines.length > 0 && (
                     <div>
-                      <h4 className="font-semibold mb-2">Recommended Medicines:</h4>
+                      <h4 className="font-semibold mb-2">{t('recommendedMedicines')}:</h4>
                       <div className="space-y-3">
                         {analysisResult.medicines.map((medicine: Medicine, index: number) => (
                           <div key={index} className="bg-success/10 p-3 rounded-lg border border-success/20">
                             <h5 className="font-medium text-success">{medicine.name}</h5>
-                            <p className="text-sm text-muted-foreground">Dosage: {medicine.application_rate}</p>
-                            <p className="text-sm text-muted-foreground">Application: {medicine.frequency}</p>
+                            <p className="text-sm text-muted-foreground">{t('dosage')}: {medicine.application_rate}</p>
+                            <p className="text-sm text-muted-foreground">{t('application')}: {medicine.frequency}</p>
                           </div>
                         ))}
                       </div>
@@ -295,7 +297,7 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
                   )}
 
                   <Button variant="farmer" className="w-full">
-                    Save Results
+                    {t('saveResults')}
                   </Button>
                 </div>
               )

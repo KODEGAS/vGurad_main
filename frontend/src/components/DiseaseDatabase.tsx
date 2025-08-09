@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; 
+import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, Search, Leaf, Bug, Shield } from 'lucide-react';
 import { ScrollAnimatedSection } from '@/components/ScrollAnimatedSection';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface Disease {
-  _id: string; 
+  _id: string;
   name: string;
   crop: string;
   symptoms: string[];
@@ -24,7 +25,8 @@ interface DiseaseDatabaseProps {
 export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDisease, setSelectedDisease] = useState<Disease | null>(null);
-  
+  const { t } = useTranslation();
+
   // State for fetching data from the backend
   const [diseases, setDiseases] = useState<Disease[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -44,7 +46,7 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
     };
 
     fetchDiseases();
-  }, []); 
+  }, []);
 
   const filteredDiseases = diseases.filter(disease =>
     disease.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -61,7 +63,7 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
   };
 
   if (loading) {
-    return <div className="max-w-4xl mx-auto p-8 text-center text-gray-500">Loading disease database...</div>;
+    return <div className="max-w-4xl mx-auto p-8 text-center text-gray-500">{t('loadingDatabase')}</div>;
   }
 
   if (error) {
@@ -71,74 +73,74 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
   if (selectedDisease) {
     return (
       <div className="max-w-4xl mx-auto p-4 space-y-6">
-          <div className="flex items-center gap-4 mb-6">
-            <Button onClick={() => setSelectedDisease(null)} variant="outline" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to List
-            </Button>
-            <h2 className="text-2xl font-bold text-foreground">{selectedDisease.name}</h2>
-          </div>
+        <div className="flex items-center gap-4 mb-6">
+          <Button onClick={() => setSelectedDisease(null)} variant="outline" size="sm">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            {t('backToList')}
+          </Button>
+          <h2 className="text-2xl font-bold text-foreground">{selectedDisease.name}</h2>
+        </div>
         {/* The rest of the detailed view UI remains the same */}
         <div className="grid md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Bug className="h-5 w-5" />
-                  Disease Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <h4 className="font-semibold mb-2">Affected Crop:</h4>
-                  <p className="text-crop-primary font-medium">{selectedDisease.crop}</p>
-                </div>
-                
-                <div>
-                  <h4 className="font-semibold mb-2">Severity:</h4>
-                  <span className={`font-medium ${getSeverityColor(selectedDisease.severity)}`}>
-                    {selectedDisease.severity}
-                  </span>
-                </div>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Bug className="h-5 w-5" />
+                {t('diseaseInformation')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <h4 className="font-semibold mb-2">{t('affectedCrop')}:</h4>
+                <p className="text-crop-primary font-medium">{selectedDisease.crop}</p>
+              </div>
 
-                <div>
-                  <h4 className="font-semibold mb-2">Cause:</h4>
-                  <p className="text-muted-foreground">{selectedDisease.cause}</p>
-                </div>
+              <div>
+                <h4 className="font-semibold mb-2">{t('severity')}:</h4>
+                <span className={`font-medium ${getSeverityColor(selectedDisease.severity)}`}>
+                  {selectedDisease.severity}
+                </span>
+              </div>
 
-                <div>
-                  <h4 className="font-semibold mb-2">Symptoms:</h4>
-                  <ul className="list-disc list-inside space-y-1">
-                    {selectedDisease.symptoms.map((symptom: string, index: number) => (
-                      <li key={index} className="text-muted-foreground">{symptom}</li>
-                    ))}
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
+              <div>
+                <h4 className="font-semibold mb-2">{t('cause')}:</h4>
+                <p className="text-muted-foreground">{selectedDisease.cause}</p>
+              </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-5 w-5" />
-                  Treatment & Prevention
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="bg-success/10 p-4 rounded-lg border border-success/20">
-                  <h4 className="font-semibold mb-2 text-success">Treatment:</h4>
-                  <p className="text-muted-foreground">{selectedDisease.treatment}</p>
-                </div>
+              <div>
+                <h4 className="font-semibold mb-2">{t('symptoms')}:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  {selectedDisease.symptoms.map((symptom: string, index: number) => (
+                    <li key={index} className="text-muted-foreground">{symptom}</li>
+                  ))}
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
 
-                <div className="bg-warning/10 p-4 rounded-lg border border-warning/20">
-                  <h4 className="font-semibold mb-2 text-warning-foreground">Prevention:</h4>
-                  <p className="text-muted-foreground">{selectedDisease.prevention}</p>
-                </div>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5" />
+                {t('treatmentPrevention')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="bg-success/10 p-4 rounded-lg border border-success/20">
+                <h4 className="font-semibold mb-2 text-success">{t('treatment')}:</h4>
+                <p className="text-muted-foreground">{selectedDisease.treatment}</p>
+              </div>
 
-                <Button variant="farmer" className="w-full">
-                  Save to My Notes
-                </Button>
-              </CardContent>
-            </Card>
+              <div className="bg-warning/10 p-4 rounded-lg border border-warning/20">
+                <h4 className="font-semibold mb-2 text-warning-foreground">{t('prevention')}:</h4>
+                <p className="text-muted-foreground">{selectedDisease.prevention}</p>
+              </div>
+
+              <Button variant="farmer" className="w-full">
+                {t('saveToNotes')}
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
@@ -146,36 +148,36 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
 
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6">
-        <div className="flex items-center gap-4 mb-6">
-          <Button onClick={onBack} variant="outline" size="sm">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
-          </Button>
-          <h2 className="text-2xl font-bold text-foreground">Disease Database</h2>
-        </div>
+      <div className="flex items-center gap-4 mb-6">
+        <Button onClick={onBack} variant="outline" size="sm">
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          {t('back')}
+        </Button>
+        <h2 className="text-2xl font-bold text-foreground">{t('diseaseDatabase')}</h2>
+      </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Search className="h-5 w-5" />
-              Search Diseases
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Input
-              placeholder="Search by disease name or crop type..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="mb-4"
-            />
-          </CardContent>
-        </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Search className="h-5 w-5" />
+            {t('searchDiseases')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Input
+            placeholder={t('searchByCrop')}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="mb-4"
+          />
+        </CardContent>
+      </Card>
 
       <ScrollAnimatedSection animationType="fade-up" delay={400}>
         <div className="grid md:grid-cols-2 gap-4">
           {filteredDiseases.map((disease, index) => (
             <ScrollAnimatedSection
-              key={disease._id} 
+              key={disease._id}
               animationType="scale-in"
               delay={600 + (index * 100)}
             >
@@ -187,19 +189,19 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
                       {disease.severity}
                     </span>
                   </div>
-                  
+
                   <div className="flex items-center gap-2 mb-2">
                     <Leaf className="h-4 w-4 text-crop-primary" />
                     <span className="text-sm text-crop-primary font-medium">{disease.crop}</span>
                   </div>
-                  
+
                   <p className="text-sm text-muted-foreground mb-3">
                     {disease.symptoms.slice(0, 2).join(', ')}
                     {disease.symptoms.length > 2 && '...'}
                   </p>
-                  
+
                   <Button variant="outline" size="sm" className="w-full">
-                    View Details
+                    {t('viewDetails')}
                   </Button>
                 </CardContent>
               </Card>
@@ -212,7 +214,7 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
         <ScrollAnimatedSection animationType="fade-up" delay={300}>
           <Card>
             <CardContent className="p-8 text-center">
-              <p className="text-muted-foreground">No diseases found matching your search.</p>
+              <p className="text-muted-foreground">{t('noDiseasesFound')}</p>
             </CardContent>
           </Card>
         </ScrollAnimatedSection>
