@@ -17,7 +17,10 @@ export const LanguageSelector: React.FC = () => {
 
   return (
     <Select value={language} onValueChange={setLanguage}>
-      <SelectTrigger className="w-44 h-11 bg-white border-2 border-primary/20 hover:border-primary/40 shadow-md hover:shadow-lg transition-all duration-200 rounded-lg">
+      <SelectTrigger
+        className="w-44 h-11 bg-white border-2 border-primary/20 hover:border-primary/40 shadow-md hover:shadow-lg transition-all duration-200 rounded-lg"
+        aria-label="Language selector"
+      >
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 text-primary">
             <Languages className="h-5 w-5" />

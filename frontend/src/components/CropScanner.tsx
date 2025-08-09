@@ -14,8 +14,7 @@ interface CropScannerProps {
 
 interface Medicine {
   name: string;
-  application_rate
-  : string;
+  application_rate: string;
   frequency: string;
 }
 
@@ -207,6 +206,7 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
                       onChange={handleImageUpload}
                       className="hidden"
                       ref={fileInputRef}
+                      data-testid="file-input"
                     />
                   </div>
                 </div>
