@@ -10,6 +10,7 @@ vGuard is a full-stack application designed to help farmers and agricultural pro
 -   **Disease Database:** A comprehensive and searchable database of crop diseases with detailed information.
 -   **Expert Help:** Connect with agricultural experts to get personalized advice and solutions.
 -   **Farming Tips:** A collection of tips and best practices for sustainable and effective farming.
+-   **Chat Bot:** AI power chat bot for get instance answers.
 -   **Multi-language Support:** The user interface is available in multiple languages to cater to a diverse user base.
 -   **3D Interactive Models:** Engaging 3D models to visualize and understand crop-related concepts.
 
@@ -29,6 +30,7 @@ vGuard is a full-stack application designed to help farmers and agricultural pro
 
 -   **Framework:** Node.js, Express
 -   **Database:** MongoDB, Mongoose
+-   **Auth:** Firebase auth
 -   **AI:** Google Generative AI (Gemini)
 -   **API:** RESTful API
 --   **Language:** TypeScript
