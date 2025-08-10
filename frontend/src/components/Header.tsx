@@ -7,17 +7,49 @@ import { LogIn, UserPlus, LogOut } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from './ui/dropdown-menu';
 import { auth } from '../firebase';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '@/contexts/TranslationContext';
+
+interface UserProfile {
+  email: string;
+  role: 'admin' | 'proUser' | 'user';
+}
 
 export const Header: React.FC = () => {
   const { t } = useTranslation();
   const [loginOpen, setLoginOpen] = useState(false);
   const [signupOpen, setSignupOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
+    const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
       setUser(firebaseUser);
+      if (firebaseUser) {
+        setProfileLoading(true);
+        try {
+          const idToken = await firebaseUser.getIdToken();
+          const response = await fetch('http://localhost:5001/api/user-profile', {
+            headers: {
+              'Authorization': `Bearer ${idToken}`,
+            },
+          });
+          if (response.ok) {
+            const profile = await response.json();
+            setUserProfile(profile);
+          } else {
+            setUserProfile(null);
+          }
+        } catch (e) {
+          setUserProfile(null);
+        } finally {
+          setProfileLoading(false);
+        }
+      } else {
+        setUserProfile(null);
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -29,13 +61,23 @@ export const Header: React.FC = () => {
   return (
     <header className="bg-gradient-to-r from-primary to-crop-primary text-white p-4 shadow-card">
       <div className="container mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col items-center gap-3">
           <img src="/uploads/logo.png" alt="Vguard Logo" className="h-10 w-auto" />
         </div>
 
         <div className="flex items-center gap-3">
           <LanguageSelector />
-
+          {/* Show Admin button only if userProfile.role === 'admin' */}
+          {userProfile && userProfile.role === 'admin' && !profileLoading && (
+            <Button
+              variant="ghost"
+              size="lg"
+              className="h-11 bg-white/30 text-white border border-white/20 hover:bg-white/70 transition-all duration-200"
+              onClick={() => navigate('/admin')}
+            >
+              Admin Panel
+            </Button>
+          )}
           <div className="flex gap-2">
             {user ? (
               <DropdownMenu>

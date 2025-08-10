@@ -7,6 +7,7 @@ import { TranslationProvider } from "@/contexts/TranslationContext";
 import Index from "./pages/Index";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute"; 
 
 const queryClient = new QueryClient();
 
@@ -18,8 +19,22 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* Public route for the main page */}
             <Route path="/" element={<Index />} />
-            <Route path="/admin" element={<Admin />} />
+            
+            {/* Protected route for the admin page */}
+            <Route
+              path="/admin"
+              element={
+                // Wrap the Admin component with the ProtectedRoute
+                // We specify that only the 'admin' role is allowed
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <Admin />
+                </ProtectedRoute>
+              }
+            />
+            
+            {/* Catch-all route for 404 pages */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

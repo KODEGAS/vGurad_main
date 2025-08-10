@@ -8,13 +8,13 @@ import expertRoutes from './routes/expert.routes';
 import questionRoutes from './routes/question.routes';
 import { admin, auth } from './firebase-admin';
 import { userModel } from './models/User';
+import path from 'path';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5001;
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+//const __dirname = path.resolve();
 
 
 const firebaseAdmin = admin;
@@ -22,7 +22,10 @@ const firebaseAdmin = admin;
 connectDB();
 
 // Middleware
-app.use(cors());
+if (process.env.NODE_ENV === 'dev') {
+  app.use(cors());
+}
+
 app.use(express.json());
 // Middleware to verify Firebase ID token and fetch user profile
 const verifyAndFetchUser = async (req: any, res: any, next: any) => {
@@ -93,6 +96,12 @@ app.use('/api/tips', tipRoutes);
 app.use('/api/experts', expertRoutes);
 app.use('/api/questions', questionRoutes);
 
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'frontend/dist')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend', 'dist', 'index.html'));
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
