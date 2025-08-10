@@ -1,28 +1,96 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { MessageCircle, Send, X, Bot, User } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { MessageCircle, Send, X, Bot, User, Loader2 } from 'lucide-react';
+
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  className?: string;
+  variant?: 'default' | 'farmer' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  size?: 'default' | 'sm' | 'lg' | 'icon';
+};
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, ...props }, ref) => {
+    const baseClasses = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
+    const variants = {
+      default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+      farmer: "bg-[#0A7B31] text-white shadow hover:bg-[#0A7B31]/90",
+      destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+      outline: "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+      secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
+      ghost: "hover:bg-accent hover:text-accent-foreground",
+      link: "text-primary underline-offset-4 hover:underline",
+    };
+    const sizes = {
+      default: "h-9 px-4 py-2",
+      sm: "h-8 rounded-md px-3 text-xs",
+      lg: "h-10 rounded-md px-8",
+      icon: "h-9 w-9",
+    };
+    const combinedClasses = `${baseClasses} ${variants[variant!] || variants.default} ${sizes[size!] || sizes.default} ${className || ''}`;
+    return <button className={combinedClasses} ref={ref} {...props} />;
+  }
+);
+
+const Card = ({ className, ...props }) => {
+  const combinedClasses = `rounded-xl border bg-card text-card-foreground shadow ${className || ''}`;
+  return <div className={combinedClasses} {...props} />;
+};
+
+const CardHeader = ({ className, ...props }) => {
+  const combinedClasses = `flex flex-col space-y-1.5 p-6 ${className || ''}`;
+  return <div className={combinedClasses} {...props} />;
+};
+
+const CardTitle = ({ className, ...props }) => {
+  const combinedClasses = `text-2xl font-semibold leading-none tracking-tight ${className || ''}`;
+  return <h3 className={combinedClasses} {...props} />;
+};
+
+const CardContent = ({ className, ...props }) => {
+  const combinedClasses = `p-6 pt-0 ${className || ''}`;
+  return <div className={combinedClasses} {...props} />;
+};
+
+const Input = React.forwardRef<
+  HTMLInputElement,
+  React.InputHTMLAttributes<HTMLInputElement>
+>(({ className, type, ...props }, ref) => {
+  const combinedClasses = `flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${className || ''}`;
+  return <input type={type} className={combinedClasses} ref={ref} {...props} />;
+});
+
+const Badge = ({ className, variant, ...props }) => {
+  const variants = {
+    default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
+    secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+    destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
+    outline: "text-foreground",
+  };
+  const combinedClasses = `inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${variants[variant] || variants.default} ${className || ''}`;
+  return <div className={combinedClasses} {...props} />;
+};
 
 interface Message {
-  id: string;
+  id: number;
   text: string;
-  sender: 'user' | 'bot';
-  timestamp: Date;
+  sender: 'user' | 'expert';
+  timestamp: string;
 }
 
-export const ChatBot: React.FC = () => {
+export const ChatBot = ({ onStartChat }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: '1',
+      id: 1,
       text: 'Hello! I\'m your agricultural assistant. I can help you with crop diseases, farming tips, and expert advice. How can I assist you today?',
-      sender: 'bot',
-      timestamp: new Date(),
+      sender: 'expert',
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
   const [inputValue, setInputValue] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef(null);
 
   const quickQuestions = [
     'How to identify crop diseases?',
@@ -31,40 +99,81 @@ export const ChatBot: React.FC = () => {
     'Pest control methods',
   ];
 
-  const handleSendMessage = () => {
-    if (!inputValue.trim()) return;
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: inputValue,
-      sender: 'user',
-      timestamp: new Date(),
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    setInputValue('');
-
-    // Simulate bot response
-    setTimeout(() => {
+  const callGeminiAPI = async (userPrompt) => {
+    setIsLoading(true);
+    let chatHistory = [];
+    chatHistory.push({ role: "user", parts: [{ text: `Act as a friendly, concise, and helpful agricultural assistant. Respond to this question: ${userPrompt}` }] });
+    const payload = { contents: chatHistory };
+    const apiKey = "" 
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+    
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json();
+      if (result.candidates && result.candidates.length > 0 &&
+          result.candidates[0].content && result.candidates[0].content.parts &&
+          result.candidates[0].content.parts.length > 0) {
+        const botResponseText = result.candidates[0].content.parts[0].text;
+        const botResponse: Message = {
+          id: messages.length + 2,
+          text: botResponseText,
+          sender: 'expert',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        };
+        setMessages(prev => [...prev, botResponse]);
+      } else {
+        const botResponse: Message = {
+          id: messages.length + 2,
+          text: "Sorry, I couldn't generate a response. Please try again.",
+          sender: 'expert',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        };
+        setMessages(prev => [...prev, botResponse]);
+      }
+    } catch (error) {
+      console.error('Error calling Gemini API:', error);
       const botResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        text: `Thank you for your question about "${inputValue}". I'm processing your request and will provide detailed agricultural guidance. For immediate assistance, you can also scan your crops or browse our disease database.`,
-        sender: 'bot',
-        timestamp: new Date(),
+        id: messages.length + 2,
+        text: "I'm having trouble connecting right now. Please check your network connection.",
+        sender: 'expert',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
       setMessages(prev => [...prev, botResponse]);
-    }, 1000);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleQuickQuestion = (question: string) => {
-    setInputValue(question);
+  const handleSendMessage = () => {
+    if (!inputValue.trim() || isLoading) return;
+    const userMessage: Message = {
+      id: messages.length + 1,
+      text: inputValue,
+      sender: 'user',
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+    setMessages(prev => [...prev, userMessage]);
+    callGeminiAPI(inputValue);
+    setInputValue('');
+  };
+
+  const handleQuickQuestion = (question) => {
+    onStartChat(question);
   };
 
   if (!isOpen) {
     return (
       <Button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-success hover:bg-success/90 shadow-lg animate-pulse-glow z-50"
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-[#0A7B31] text-white hover:bg-[#0A7B31]/90 shadow-lg animate-pulse-glow z-50"
         size="icon"
       >
         <MessageCircle className="h-6 w-6" />
@@ -76,8 +185,8 @@ export const ChatBot: React.FC = () => {
     <Card className="fixed bottom-6 right-6 w-80 h-96 bg-card shadow-xl z-50 animate-scale-in">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div className="flex items-center gap-2">
-          <div className="bg-success p-2 rounded-full">
-            <Bot className="h-4 w-4 text-success-foreground" />
+          <div className="bg-[#0A7B31] p-2 rounded-full">
+            <Bot className="h-4 w-4 text-white" />
           </div>
           <CardTitle className="text-lg">Farm Assistant</CardTitle>
         </div>
@@ -99,9 +208,9 @@ export const ChatBot: React.FC = () => {
               key={message.id}
               className={`flex gap-2 ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              {message.sender === 'bot' && (
-                <div className="bg-success p-1 rounded-full h-6 w-6 flex items-center justify-center">
-                  <Bot className="h-3 w-3 text-success-foreground" />
+              {message.sender === 'expert' && (
+                <div className="bg-[#0A7B31] p-1 rounded-full h-6 w-6 flex items-center justify-center">
+                  <Bot className="h-3 w-3 text-white" />
                 </div>
               )}
               <div
@@ -111,7 +220,10 @@ export const ChatBot: React.FC = () => {
                     : 'bg-muted text-muted-foreground'
                 }`}
               >
-                {message.text}
+                {/* Using ReactMarkdown to render the message text */}
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {message.text}
+                </ReactMarkdown>
               </div>
               {message.sender === 'user' && (
                 <div className="bg-primary p-1 rounded-full h-6 w-6 flex items-center justify-center">
@@ -120,6 +232,14 @@ export const ChatBot: React.FC = () => {
               )}
             </div>
           ))}
+          {isLoading && (
+            <div className="flex justify-start">
+              <div className="bg-muted text-muted-foreground max-w-[200px] p-2 rounded-lg text-sm">
+                <Loader2 className="h-4 w-4 animate-spin" />
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
         </div>
 
         {/* Quick Questions */}
@@ -129,7 +249,7 @@ export const ChatBot: React.FC = () => {
               <Badge
                 key={question}
                 variant="secondary"
-                className="text-xs cursor-pointer hover:bg-crop-primary hover:text-white transition-colors"
+                className="text-xs cursor-pointer hover:bg-[#0A7B31] hover:text-white transition-colors"
                 onClick={() => handleQuickQuestion(question)}
               >
                 {question}
@@ -145,13 +265,15 @@ export const ChatBot: React.FC = () => {
               placeholder="Ask about farming..."
               className="text-sm"
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              disabled={isLoading}
             />
             <Button
               onClick={handleSendMessage}
               size="icon"
-              className="h-9 w-9 bg-success hover:bg-success/90"
+              className="h-9 w-9 bg-[#0A7B31] hover:bg-[#0A7B31]/90"
+              disabled={isLoading}
             >
-              <Send className="h-4 w-4" />
+              {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             </Button>
           </div>
         </div>

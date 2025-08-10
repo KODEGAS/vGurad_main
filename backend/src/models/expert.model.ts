@@ -1,6 +1,5 @@
 import { Schema, model } from 'mongoose';
 
-// Define the TypeScript interface for an Expert document
 export interface IExpert {
   name: string;
   specialty: string;
@@ -11,7 +10,6 @@ export interface IExpert {
   available: boolean;
 }
 
-// Define the Mongoose schema
 const expertSchema = new Schema<IExpert>({
   name: { type: String, required: true },
   specialty: { type: String, required: true },
