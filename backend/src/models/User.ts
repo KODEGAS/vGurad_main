@@ -1,0 +1,36 @@
+import mongoose, { Document, Schema } from 'mongoose';
+
+// 1. Create an interface to represent the document in MongoDB.
+export interface IUser extends Document {
+  firebaseUid: string;
+  email: string;
+  role: 'admin' | 'proUser' | 'user';
+  createdAt: Date;
+}
+
+// 2. Define the schema
+const userSchema: Schema = new Schema({
+  firebaseUid: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  role: {
+    type: String,
+    enum: ['admin', 'proUser', 'user'],
+    default: 'user',
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+// 3. Export the model, using the IUser interface
+const userModel = mongoose.model<IUser>('User', userSchema);
+export { userModel };

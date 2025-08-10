@@ -1,4 +1,3 @@
-// src/controllers/disease.controller.ts
 import { Request, Response } from 'express';
 import { Disease } from '../models/disease.model';
 

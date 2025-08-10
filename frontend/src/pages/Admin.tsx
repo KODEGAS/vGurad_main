@@ -77,10 +77,7 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header 
-        selectedLanguage={selectedLanguage}
-        onLanguageChange={setSelectedLanguage}
-      />
+  <Header />
       
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">

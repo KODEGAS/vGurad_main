@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { ArrowLeft, Search, Leaf, Bug, Shield } from 'lucide-react';
 import { ScrollAnimatedSection } from '@/components/ScrollAnimatedSection';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { LoadingDots } from './LoadingDots';
 
 interface Disease {
   _id: string;
@@ -27,7 +28,6 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
   const [selectedDisease, setSelectedDisease] = useState<Disease | null>(null);
   const { t } = useTranslation();
 
-  // State for fetching data from the backend
   const [diseases, setDiseases] = useState<Disease[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +35,7 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
   useEffect(() => {
     const fetchDiseases = async () => {
       try {
-        const response = await axios.get<Disease[]>('http://localhost:5000/api/diseases');
+        const response = await axios.get<Disease[]>('http://localhost:5001/api/diseases');
         setDiseases(response.data);
       } catch (err) {
         setError('Failed to fetch disease data. Please check the backend server.');
@@ -63,7 +63,7 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
   };
 
   if (loading) {
-    return <div className="max-w-4xl mx-auto p-8 text-center text-gray-500">{t('loadingDatabase')}</div>;
+    return <LoadingDots />;
   }
 
   if (error) {
@@ -80,7 +80,6 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
           </Button>
           <h2 className="text-2xl font-bold text-foreground">{selectedDisease.name}</h2>
         </div>
-        {/* The rest of the detailed view UI remains the same */}
         <div className="grid md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>

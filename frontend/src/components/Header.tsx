@@ -1,12 +1,30 @@
 import React from 'react';
+import { useEffect, useState } from 'react';
 import { LanguageSelector } from './LanguageSelector';
 import { Button } from './ui/button';
 import { AuthDialog } from './AuthDialog';
-import { LogIn, UserPlus } from 'lucide-react';
+import { LogIn, UserPlus, LogOut } from 'lucide-react';
+import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from './ui/dropdown-menu';
+import { auth } from '../firebase';
 import { useTranslation } from '@/contexts/TranslationContext';
 
 export const Header: React.FC = () => {
   const { t } = useTranslation();
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [signupOpen, setSignupOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
+      setUser(firebaseUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    await auth.signOut();
+  };
 
   return (
     <header className="bg-gradient-to-r from-primary to-crop-primary text-white p-4 shadow-card">
@@ -19,19 +37,42 @@ export const Header: React.FC = () => {
           <LanguageSelector />
 
           <div className="flex gap-2">
-            <AuthDialog>
-              <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
-                <LogIn className="w-4 h-4 mr-2" />
-                {t('login')}
-              </Button>
-            </AuthDialog>
-
-            <AuthDialog>
-              <Button variant="secondary" size="sm">
-                <UserPlus className="w-4 h-4 mr-2" />
-                {t('signUp')}
-              </Button>
-            </AuthDialog>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="flex items-center gap-2 cursor-pointer">
+                    <Avatar>
+                      <AvatarImage src={user.photoURL || undefined} alt={user.displayName || user.email || 'User'} />
+                      <AvatarFallback className="bg-green-100 text-green-800">
+                        {user.displayName ? user.displayName[0].toUpperCase() : (user.email ? user.email[0].toUpperCase() : 'U')}
+                      </AvatarFallback>
+                    </Avatar>
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem disabled>
+                    {user.email}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSignOut} className="text-red-600 cursor-pointer">
+                    <LogOut className="w-4 h-4 mr-2" />
+                    {t('signOut') || 'Sign Out'}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={() => setLoginOpen(true)}>
+                  <LogIn className="w-4 h-4 mr-2" />
+                  {t('login')}
+                </Button>
+                <Button variant="secondary" size="sm" onClick={() => setSignupOpen(true)}>
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  {t('signUp')}
+                </Button>
+                {loginOpen && <AuthDialog open={loginOpen} onOpenChange={setLoginOpen} />}
+                {signupOpen && <AuthDialog open={signupOpen} onOpenChange={setSignupOpen} />}
+              </>
+            )}
           </div>
         </div>
       </div>

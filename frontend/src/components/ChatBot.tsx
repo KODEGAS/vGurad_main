@@ -108,7 +108,7 @@ export const ChatBot = ({ onStartChat }) => {
     let chatHistory = [];
     chatHistory.push({ role: "user", parts: [{ text: `Act as a friendly, concise, and helpful agricultural assistant. Respond to this question: ${userPrompt}` }] });
     const payload = { contents: chatHistory };
-    const apiKey = "" 
+    const apiKey =  'AIzaSyBItHMcDz_NkJ4iWl3SmgFPM7QlMCo83ZQ';
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
     
     try {
@@ -182,7 +182,7 @@ export const ChatBot = ({ onStartChat }) => {
   }
 
   return (
-    <Card className="fixed bottom-6 right-6 w-80 h-96 bg-card shadow-xl z-50 animate-scale-in">
+    <Card className="fixed bottom-6 right-6 w-80 h-100 bg-card shadow-xl z-50 animate-scale-in">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div className="flex items-center gap-2">
           <div className="bg-[#0A7B31] p-2 rounded-full">

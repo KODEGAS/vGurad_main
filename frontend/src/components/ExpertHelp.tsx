@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Phone, MessageCircle, Camera, Send, User, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { ScrollAnimatedSection } from '@/components/ScrollAnimatedSection';
+import { LoadingDots } from './LoadingDots';
 
 interface ExpertHelpProps {
   onBack: () => void;
@@ -46,8 +47,8 @@ export const ExpertHelp: React.FC<ExpertHelpProps> = ({ onBack, onNavigateToChat
     const fetchData = async () => {
       try {
         const [expertsRes, questionsRes] = await Promise.all([
-          axios.get<Expert[]>('http://localhost:5000/api/experts'),
-          axios.get<Question[]>('http://localhost:5000/api/questions'),
+          axios.get<Expert[]>('http://localhost:5001/api/experts'),
+          axios.get<Question[]>('http://localhost:5001/api/questions'),
         ]);
         setExperts(expertsRes.data);
         setRecentQuestions(questionsRes.data);
@@ -79,7 +80,7 @@ export const ExpertHelp: React.FC<ExpertHelpProps> = ({ onBack, onNavigateToChat
     }
     
     try {
-      await axios.post('http://localhost:5000/api/questions', {
+      await axios.post('http://localhost:5001/api/questions', {
         question,
         expert: 'Not yet assigned', 
       });
@@ -87,7 +88,7 @@ export const ExpertHelp: React.FC<ExpertHelpProps> = ({ onBack, onNavigateToChat
       setQuestion('');
       setSelectedImage(null);
 
-      const questionsRes = await axios.get<Question[]>('http://localhost:5000/api/questions');
+      const questionsRes = await axios.get<Question[]>('http://localhost:5001/api/questions');
       setRecentQuestions(questionsRes.data);
     } catch (error) {
       console.error('Error submitting question:', error);
@@ -114,7 +115,7 @@ export const ExpertHelp: React.FC<ExpertHelpProps> = ({ onBack, onNavigateToChat
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
-          <h2 className="text-2xl font-bold text-foreground">Expert Help</h2>
+        <LoadingDots />
         </div>
 
       {/* Tab Navigation */}

@@ -1,4 +1,5 @@
 import React, { useState, Suspense } from 'react';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { Header } from '@/components/Header';
 import { QuickActionCard } from '@/components/QuickActionCard';
 import { CropScanner } from '@/components/CropScanner';
@@ -25,6 +26,7 @@ import {
 } from 'lucide-react';
 import heroImage from '@/assets/hero-image.jpg';
 import { ChatBot } from '@/components/ChatBot';
+import WeatherCard from '@/components/WeatherCard';
 
 type Page = 'home' | 'scanner' | 'database' | 'tips' | 'help' | 'chat';
 
@@ -201,39 +203,7 @@ const Index = () => {
 
             {/* Today's Weather & Alerts */}
             <ScrollAnimatedSection animationType="fade-up" delay={800}>
-              <Card className="bg-gradient-to-r from-crop-secondary to-accent/50 hover-glow">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-foreground animate-slide-in-left">Today's Farming Conditions</h3>
-                  <Badge className="bg-success/20 text-success border-success/30 animate-pulse-glow">
-                    Optimal
-                  </Badge>
-                </div>
-                
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                  <div className="flex flex-col items-center animate-stagger-1 hover-scale">
-                    <Sun className="h-8 w-8 text-warning mb-2 animate-float" />
-                    <div className="text-sm font-medium">28°C</div>
-                    <div className="text-xs text-muted-foreground">Temperature</div>
-                  </div>
-                  <div className="flex flex-col items-center animate-stagger-2 hover-scale">
-                    <Cloud className="h-8 w-8 text-primary mb-2 animate-float" style={{animationDelay: '0.5s'}} />
-                    <div className="text-sm font-medium">65%</div>
-                    <div className="text-xs text-muted-foreground">Humidity</div>
-                  </div>
-                  <div className="flex flex-col items-center animate-stagger-3 hover-scale">
-                    <TrendingUp className="h-8 w-8 text-success mb-2 animate-float" style={{animationDelay: '1s'}} />
-                    <div className="text-sm font-medium">Good</div>
-                    <div className="text-xs text-muted-foreground">Growth</div>
-                  </div>
-                  <div className="flex flex-col items-center animate-stagger-4 hover-scale">
-                    <Shield className="h-8 w-8 text-crop-primary mb-2 animate-float" style={{animationDelay: '1.5s'}} />
-                    <div className="text-sm font-medium">Low</div>
-                    <div className="text-xs text-muted-foreground">Disease Risk</div>
-                  </div>
-                </div>
-              </CardContent>
-              </Card>
+              <WeatherCard />
             </ScrollAnimatedSection>
           </div>
         );
@@ -248,7 +218,10 @@ const Index = () => {
         {renderCurrentPage()}
       </main>
       
-      {currentPage === 'home' && <ChatBot />}
+      {currentPage === 'home' && <ChatBot onStartChat={(question) => {
+        setChatQuestion(question);
+        handlePageChange('chat');
+      }} />}
     </div>
   );
 };
