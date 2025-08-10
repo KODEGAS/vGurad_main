@@ -29,6 +29,7 @@ vGuard is a full-stack application designed to help farmers and agricultural pro
 
 -   **Framework:** Node.js, Express
 -   **Database:** MongoDB, Mongoose
+-   **Auth:** Firebase auth
 -   **AI:** Google Generative AI (Gemini)
 -   **API:** RESTful API
 --   **Language:** TypeScript
