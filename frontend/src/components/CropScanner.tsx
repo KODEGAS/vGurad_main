@@ -134,18 +134,28 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
     }
   };
 
-  const takeDemoPhoto = async () => {
+  // Capture photo from device camera
+  const captureFromCamera = async () => {
     try {
-      const response = await fetch(DEMO_IMAGE_URL);
-      const blob = await response.blob();
-      const file = new File([blob], 'demo-image.png', { type: blob.type });
-      setSelectedFile(file);
-      setSelectedImage(DEMO_IMAGE_URL);
-      setAnalysisResult(null);
-      toast.success('Demo photo captured!');
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.capture = 'environment';
+      input.onchange = (event: any) => {
+        const file = event.target.files?.[0];
+        if (file) {
+          setSelectedFile(file);
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            setSelectedImage(e.target?.result as string);
+            setAnalysisResult(null);
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+      input.click();
     } catch (error) {
-      console.error('Error fetching demo image:', error);
-      toast.error('Failed to load demo image.');
+      toast.error('Failed to capture photo from camera.');
     }
   };
 
@@ -192,9 +202,9 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
                   <Camera className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                   <p className="text-muted-foreground mb-4">{t('dragDrop')}</p>
                   <div className="flex flex-col gap-2">
-                    <Button onClick={takeDemoPhoto} variant="farmer">
+                    <Button onClick={captureFromCamera} variant="farmer">
                       <Camera className="h-4 w-4 mr-2" />
-                      {t('useDemoPhoto')}
+                      Capture from Camera
                     </Button>
                     <Button onClick={handleUploadButtonClick} variant="outline" className="w-full">
                       <Upload className="h-4 w-4 mr-2" />

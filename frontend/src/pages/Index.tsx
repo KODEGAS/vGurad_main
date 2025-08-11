@@ -50,7 +50,11 @@ const Index = () => {
 
   const renderCurrentPage = () => {
     if (isPageLoading) {
-      return <SectionLoadingSpinner text={t('loadingPage')} />;
+       return (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
     }
 
     switch (currentPage) {
@@ -109,7 +113,7 @@ const Index = () => {
         return (
           <div className="space-y-8 page-transition">
             {/* Hero Section */}
-            <div className="relative rounded-3xl overflow-hidden shadow-card animate-fade-in-up hover-glow h-64 md:h-80">
+            <div className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-card animate-fade-in-up hover-glow h-56 sm:h-64 md:h-80">
               {/* 3D Background */}
               <Suspense fallback={
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-crop-primary/80 flex items-center justify-center">
@@ -124,28 +128,29 @@ const Index = () => {
                 src={heroImage}
                 alt="Healthy crops in agricultural field"
                 className="w-full h-full object-cover opacity-60"
+                draggable="false"
               />
 
               {/* Content Overlay */}
               <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-crop-primary/80 flex items-center z-10">
-                <div className="container mx-auto px-6 text-white">
-                  <h1 className="text-3xl md:text-5xl font-bold mb-4 animate-slide-in-left">
+                <div className="w-full px-3 sm:px-6 text-white flex flex-col justify-center">
+                  <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-2 sm:mb-4 animate-slide-in-left leading-tight">
                     {t('heroTitle')}
                   </h1>
-                  <p className="text-lg md:text-xl mb-6 text-white/90 max-w-2xl animate-slide-in-right">
+                  <p className="text-base sm:text-lg md:text-xl mb-3 sm:mb-6 text-white/90 max-w-full sm:max-w-2xl animate-slide-in-right">
                     {t('heroDescription')}
                   </p>
-                  <div className="flex flex-wrap gap-3 animate-fade-in">
-                    <Badge className="bg-white/20 text-white border-white/30 text-sm px-3 py-1 animate-stagger-1">
-                      <Camera className="h-4 w-4 mr-2" />
+                  <div className="flex flex-wrap gap-2 sm:gap-3 animate-fade-in">
+                    <Badge className="bg-white/20 text-white border-white/30 text-xs sm:text-sm px-2 sm:px-3 py-1 animate-stagger-1">
+                      <Camera className="h-4 w-4 mr-1 sm:mr-2" />
                       {t('aiDetection')}
                     </Badge>
-                    <Badge className="bg-white/20 text-white border-white/30 text-sm px-3 py-1 animate-stagger-2">
-                      <Shield className="h-4 w-4 mr-2" />
+                    <Badge className="bg-white/20 text-white border-white/30 text-xs sm:text-sm px-2 sm:px-3 py-1 animate-stagger-2">
+                      <Shield className="h-4 w-4 mr-1 sm:mr-2" />
                       {t('expertAdvice')}
                     </Badge>
-                    <Badge className="bg-white/20 text-white border-white/30 text-sm px-3 py-1 animate-stagger-3">
-                      <Leaf className="h-4 w-4 mr-2" />
+                    <Badge className="bg-white/20 text-white border-white/30 text-xs sm:text-sm px-2 sm:px-3 py-1 animate-stagger-3">
+                      <Leaf className="h-4 w-4 mr-1 sm:mr-2" />
                       {t('organicSolutions')}
                     </Badge>
                   </div>

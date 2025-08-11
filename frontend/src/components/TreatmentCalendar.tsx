@@ -93,7 +93,7 @@ export const TreatmentCalendar = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-950 dark:to-emerald-900 p-4">
-      <ScrollAnimatedSection animationType="fade-up">{/* ... keep existing code */}
+      <ScrollAnimatedSection animationType="fade-up">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <Calendar className="w-16 h-16 mx-auto mb-4 text-primary" />

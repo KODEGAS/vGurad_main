@@ -173,7 +173,7 @@ export const ChatBot = ({ onStartChat }) => {
     return (
       <Button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-[#0A7B31] text-white hover:bg-[#0A7B31]/90 shadow-lg animate-pulse-glow z-50"
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-[#0A7B31] text-white hover:bg-[#0A7B31]/90 shadow-lg animate-pulse-glow z-[110]"
         size="icon"
       >
         <MessageCircle className="h-6 w-6" />
@@ -182,7 +182,7 @@ export const ChatBot = ({ onStartChat }) => {
   }
 
   return (
-    <Card className="fixed bottom-6 right-6 w-80 h-100 bg-card shadow-xl z-50 animate-scale-in">
+  <Card className="fixed bottom-6 right-6 w-80 h-100 bg-card shadow-xl z-[110] animate-scale-in">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div className="flex items-center gap-2">
           <div className="bg-[#0A7B31] p-2 rounded-full">
