@@ -10,6 +10,10 @@ import { ChatScreen } from '@/components/ChatScreen';
 import { Hero3D } from '@/components/Hero3D';
 import { SectionLoadingSpinner } from '@/components/LoadingSpinner';
 import { LoadingDots } from '@/components/LoadingDots';
+import { TreatmentCalendar } from '@/components/TreatmentCalendar';
+import { Marketplace } from '@/components/Marketplace';
+import { ProfilePage } from '@/components/ProfilePage';
+import { BottomNavigation } from '@/components/BottomNavigation';
 import { ScrollAnimatedSection } from '@/components/ScrollAnimatedSection';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -28,7 +32,7 @@ import heroImage from '@/assets/hero-image.jpg';
 import { ChatBot } from '@/components/ChatBot';
 import WeatherCard from '@/components/WeatherCard';
 
-type Page = 'home' | 'scanner' | 'database' | 'tips' | 'help' | 'chat';
+type Page = 'home' | 'scanner' | 'database' | 'tips' | 'help' | 'chat' | 'calendar' | 'marketplace' | 'profile';
 
 const Index = () => {
   const [currentPage, setCurrentPage] = useState<Page>('home');
@@ -81,6 +85,24 @@ const Index = () => {
         return (
           <Suspense fallback={<SectionLoadingSpinner text={t('loadingChat')} />}>
             <ChatScreen onBack={() => handlePageChange('help')} question={chatQuestion} />
+          </Suspense>
+        );
+        case 'calendar':
+        return (
+          <Suspense fallback={<SectionLoadingSpinner text="Loading treatment calendar..." />}>
+            <TreatmentCalendar />
+          </Suspense>
+        );
+      case 'marketplace':
+        return (
+          <Suspense fallback={<SectionLoadingSpinner text="Loading marketplace..." />}>
+            <Marketplace />
+          </Suspense>
+        );
+      case 'profile':
+        return (
+          <Suspense fallback={<SectionLoadingSpinner text="Loading profile..." />}>
+            <ProfilePage />
           </Suspense>
         );
       default:
@@ -222,6 +244,17 @@ const Index = () => {
         setChatQuestion(question);
         handlePageChange('chat');
       }} />}
+
+          <BottomNavigation 
+        activeTab={ currentPage === 'home' ? 'home' :currentPage === 'scanner' ? 'scan' : currentPage === 'calendar' ? 'calendar' : currentPage === 'marketplace' ? 'marketplace' : 'profile'}
+        onTabChange={(tab) => {
+          if (tab === 'home') handlePageChange('home');
+          else if (tab === 'scan') handlePageChange('scanner');
+          else if (tab === 'calendar') handlePageChange('calendar');
+          else if (tab === 'marketplace') handlePageChange('marketplace');
+          else if (tab === 'profile') handlePageChange('profile');
+        }}
+      />
     </div>
   );
 };

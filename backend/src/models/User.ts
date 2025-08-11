@@ -6,6 +6,10 @@ export interface IUser extends Document {
   email: string;
   role: 'admin' | 'proUser' | 'user';
   createdAt: Date;
+  displayName?: string;
+  phone?: string;
+  location?: string;
+  language_preference?: 'en' | 'si' | 'ta';
 }
 
 // 2. Define the schema
@@ -28,6 +32,23 @@ const userSchema: Schema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now,
+  },
+  displayName: {
+    type: String,
+    default: '',
+  },
+  phone: {
+    type: String,
+    default: '',
+  },
+  location: {
+    type: String,
+    default: '',
+  },
+  language_preference: {
+    type: String,
+    enum: ['en', 'si', 'ta'],
+    default: 'en',
   },
 });
 

@@ -6,6 +6,8 @@ import diseaseRoutes from './routes/disease.routes';
 import tipRoutes from './routes/tip.routes';
 import expertRoutes from './routes/expert.routes';
 import questionRoutes from './routes/question.routes';
+import treatmentRoutes from './routes/treatment.routes';
+import productRoutes from './routes/product.routes';
 import { admin, auth } from './firebase-admin';
 import { userModel } from './models/User';
 import path from 'path';
@@ -74,7 +76,7 @@ app.post('/api/auth/create-user-profile', verifyAndFetchUser, async (req: any, r
 });
 
 
-// Protected route to get user profile by ID token
+// GET user profile
 app.get('/api/user-profile', verifyAndFetchUser, async (req: any, res) => {
   try {
     const userProfile = await userModel.findOne({ firebaseUid: req.user.uid });
@@ -88,13 +90,35 @@ app.get('/api/user-profile', verifyAndFetchUser, async (req: any, res) => {
   }
 });
 
+// PUT user profile (update)
+app.put('/api/user-profile', verifyAndFetchUser, async (req: any, res) => {
+  try {
+    const { full_name, phone, location, language_preference } = req.body;
+    const userProfile = await userModel.findOne({ firebaseUid: req.user.uid });
+    if (!userProfile) {
+      return res.status(404).json({ message: 'User profile not found.' });
+    }
+  if (full_name !== undefined) userProfile.displayName = full_name;
+  if (phone !== undefined) userProfile.phone = phone;
+  if (location !== undefined) userProfile.location = location;
+  if (language_preference !== undefined) userProfile.language_preference = language_preference;
+    await userProfile.save();
+    res.json(userProfile);
+  } catch (error) {
+    console.error('Error updating user profile:', error);
+    res.status(500).json({ message: 'Internal server error.' });
+  }
+});
+
 
 // API Routes
 app.get('/test', (req, res) => res.send('API is working'));
 app.use('/api/diseases', diseaseRoutes);
+app.use('/api/products', productRoutes);
 app.use('/api/tips', tipRoutes);
 app.use('/api/experts', expertRoutes);
 app.use('/api/questions', questionRoutes);
+app.use('/api/treatments', treatmentRoutes);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'frontend/dist')));

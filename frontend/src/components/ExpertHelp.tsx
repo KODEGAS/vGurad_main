@@ -97,8 +97,12 @@ export const ExpertHelp: React.FC<ExpertHelpProps> = ({ onBack, onNavigateToChat
   };
 
   const handleCallExpert = (phone: string) => {
-    toast.success(`Calling ${phone}...`);
-  };
+    toast.info('This is a Pro feature. Upgrade to Pro to call experts.');
+  }
+
+  const handleChatExpert = () => {
+    toast.info('This is a Pro feature. Upgrade to Pro to chat with experts.');
+  }
 
   if (loading) {
     return <div className="max-w-4xl mx-auto p-8 text-center text-gray-500">Loading expert data...</div>;
@@ -115,7 +119,7 @@ export const ExpertHelp: React.FC<ExpertHelpProps> = ({ onBack, onNavigateToChat
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
-        <LoadingDots />
+     
         </div>
 
       {/* Tab Navigation */}
@@ -198,7 +202,7 @@ export const ExpertHelp: React.FC<ExpertHelpProps> = ({ onBack, onNavigateToChat
                           <Phone className="h-4 w-4 mr-2" />
                           {expert.available ? 'Call Now' : 'Unavailable'}
                         </Button>
-                        <Button variant="outline" size="sm" className="flex-1">
+                        <Button variant="outline" size="sm" className="flex-1" onClick={handleChatExpert}>
                           <MessageCircle className="h-4 w-4 mr-2" />
                           Chat
                         </Button>
