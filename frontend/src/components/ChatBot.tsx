@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { MessageCircle, Send, X, Bot, User, Loader2 } from 'lucide-react';
+import axios from 'axios';
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   className?: string;
@@ -105,39 +106,18 @@ export const ChatBot = ({ onStartChat }) => {
 
   const callGeminiAPI = async (userPrompt) => {
     setIsLoading(true);
-    let chatHistory = [];
-    chatHistory.push({ role: "user", parts: [{ text: `Act as a friendly, concise, and helpful agricultural assistant. Respond to this question: ${userPrompt}` }] });
-    const payload = { contents: chatHistory };
-    const apiKey =  'AIzaSyBItHMcDz_NkJ4iWl3SmgFPM7QlMCo83ZQ';
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-    
     try {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+      const response = await axios.post('http://localhost:5001/api/gemini-proxy', {
+        prompt: `Act as a friendly, concise, and helpful agricultural assistant. Respond to this question: ${userPrompt}`
       });
-      const result = await response.json();
-      if (result.candidates && result.candidates.length > 0 &&
-          result.candidates[0].content && result.candidates[0].content.parts &&
-          result.candidates[0].content.parts.length > 0) {
-        const botResponseText = result.candidates[0].content.parts[0].text;
-        const botResponse: Message = {
-          id: messages.length + 2,
-          text: botResponseText,
-          sender: 'expert',
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        };
-        setMessages(prev => [...prev, botResponse]);
-      } else {
-        const botResponse: Message = {
-          id: messages.length + 2,
-          text: "Sorry, I couldn't generate a response. Please try again.",
-          sender: 'expert',
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        };
-        setMessages(prev => [...prev, botResponse]);
-      }
+      const botResponseText = response.data.text;
+      const botResponse: Message = {
+        id: messages.length + 2,
+        text: botResponseText,
+        sender: 'expert',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+      setMessages(prev => [...prev, botResponse]);
     } catch (error) {
       console.error('Error calling Gemini API:', error);
       const botResponse: Message = {

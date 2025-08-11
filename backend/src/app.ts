@@ -8,6 +8,7 @@ import expertRoutes from './routes/expert.routes';
 import questionRoutes from './routes/question.routes';
 import treatmentRoutes from './routes/treatment.routes';
 import productRoutes from './routes/product.routes';
+import geminiProxyRoute from './routes/gemini-proxy.route';
 import { admin, auth } from './firebase-admin';
 import { userModel } from './models/User';
 import path from 'path';
@@ -110,15 +111,18 @@ app.put('/api/user-profile', verifyAndFetchUser, async (req: any, res) => {
   }
 });
 
+app.get('/test', (req, res) => res.send('API is working'));
+app.get('/gemini', (req, res) => res.send(process.env.GEMINI_API_KEY || 'No API Key Found'));
 
 // API Routes
-app.get('/test', (req, res) => res.send('API is working'));
+
 app.use('/api/diseases', diseaseRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/tips', tipRoutes);
 app.use('/api/experts', expertRoutes);
 app.use('/api/questions', questionRoutes);
 app.use('/api/treatments', treatmentRoutes);
+app.use('/api/gemini-proxy', geminiProxyRoute);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'frontend/dist')));
