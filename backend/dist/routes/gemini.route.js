@@ -16,7 +16,7 @@ if (!API_KEY) {
     throw new Error("GEMINI_API_KEY environment variable is not set");
 }
 const genAI = new generative_ai_1.GoogleGenerativeAI(API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 function handler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.method !== 'POST') {
