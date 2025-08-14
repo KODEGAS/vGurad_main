@@ -35,8 +35,16 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [savingResult, setSavingResult] = useState(false);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [cameraError, setCameraError] = useState<string | null>(null);
   const { t } = useTranslation();
   const { toast: customToast } = useToast();
+
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   // Save analysis result to backend
   const handleSaveResults = async () => {
     if (!analysisResult) return;
@@ -71,7 +79,102 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
     }
   };
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  // Camera access functions
+  const startCamera = useCallback(async () => {
+    try {
+      setCameraError(null);
+      setIsCameraOpen(true);
+
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: 'environment', // Use back camera if available
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        }
+      });
+
+      setStream(mediaStream);
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStream;
+        await videoRef.current.play();
+      }
+
+      toast.success('Camera access granted!');
+    } catch (error) {
+      console.error('Error accessing camera:', error);
+      let errorMessage = 'Failed to access camera. ';
+
+      if (error instanceof Error) {
+        if (error.name === 'NotAllowedError') {
+          errorMessage += 'Please allow camera access and try again.';
+        } else if (error.name === 'NotFoundError') {
+          errorMessage += 'No camera found on this device.';
+        } else if (error.name === 'NotSupportedError') {
+          errorMessage += 'Camera access is not supported in this browser.';
+        } else {
+          errorMessage += 'Please check your camera permissions.';
+        }
+      }
+
+      setCameraError(errorMessage);
+      setIsCameraOpen(false);
+      toast.error(errorMessage);
+    }
+  }, []);
+
+  const stopCamera = useCallback(() => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      setStream(null);
+    }
+    setIsCameraOpen(false);
+    setCameraError(null);
+  }, [stream]);
+
+  const capturePhoto = useCallback(() => {
+    if (!videoRef.current || !canvasRef.current) return;
+
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+
+    if (!context) return;
+
+    // Set canvas dimensions to video dimensions
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // Draw the video frame to canvas
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Convert canvas to blob
+    canvas.toBlob((blob) => {
+      if (blob) {
+        const file = new File([blob], 'camera-capture.jpg', { type: 'image/jpeg' });
+        setSelectedFile(file);
+
+        // Create image URL for preview
+        const imageUrl = URL.createObjectURL(blob);
+        setSelectedImage(imageUrl);
+        setAnalysisResult(null);
+
+        // Stop camera after capture
+        stopCamera();
+
+        toast.success('Photo captured successfully!');
+      }
+    }, 'image/jpeg', 0.8);
+  }, [stopCamera]);
+
+  // Clean up camera stream on component unmount
+  React.useEffect(() => {
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [stream]);
 
 
   const API_BASE_URL = 'http://kodegas-paddy-api.centralindia.cloudapp.azure.com:8000';
@@ -170,7 +273,7 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
     }
   };
 
-  // Capture photo from device camera
+  // Capture photo from device camera (fallback method)
   const captureFromCamera = async () => {
     try {
       const input = document.createElement('input');
@@ -215,7 +318,35 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {selectedImage ? (
+            {isCameraOpen ? (
+              <div className="space-y-4">
+                <div className="relative">
+                  <video
+                    ref={videoRef}
+                    className="w-full h-64 object-cover rounded-lg border bg-black"
+                    autoPlay
+                    playsInline
+                    muted
+                  />
+                  {cameraError && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-lg">
+                      <p className="text-white text-center p-4">{cameraError}</p>
+                    </div>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <Button onClick={capturePhoto} variant="farmer" className="flex-1">
+                    <Camera className="h-4 w-4 mr-2" />
+                    Capture Photo
+                  </Button>
+                  <Button onClick={stopCamera} variant="outline">
+                    <X className="h-4 w-4 mr-2" />
+                    Close Camera
+                  </Button>
+                </div>
+                <canvas ref={canvasRef} className="hidden" />
+              </div>
+            ) : selectedImage ? (
               <div className="space-y-4">
                 <img
                   src={selectedImage}
@@ -238,9 +369,9 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
                   <Camera className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                   <p className="text-muted-foreground mb-4">{t('dragDrop')}</p>
                   <div className="flex flex-col gap-2">
-                    <Button onClick={captureFromCamera} variant="farmer">
+                    <Button onClick={startCamera} variant="farmer">
                       <Camera className="h-4 w-4 mr-2" />
-                      Capture from Camera
+                      Open Camera
                     </Button>
                     <Button onClick={handleUploadButtonClick} variant="outline" className="w-full">
                       <Upload className="h-4 w-4 mr-2" />
@@ -342,8 +473,8 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
                     </div>
                   )}
 
-                  <Button 
-                    variant="farmer" 
+                  <Button
+                    variant="farmer"
                     className="w-full"
                     onClick={handleSaveResults}
                     disabled={savingResult}
