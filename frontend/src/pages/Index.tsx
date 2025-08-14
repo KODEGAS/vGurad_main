@@ -25,8 +25,6 @@ import {
 } from 'lucide-react';
 import heroImage from '@/assets/hero-image.jpg';
 import { ChatBot } from '@/components/ChatBot';
-import { FirebaseTest } from '@/components/FirebaseTest';
-import { AuthTest } from '@/components/AuthTest';
 import { useTranslation } from '@/contexts/TranslationContext';
 
 type Page = 'home' | 'scanner' | 'database' | 'tips' | 'help' | 'chat';
@@ -87,8 +85,6 @@ const Index = () => {
       default:
         return (
           <div className="space-y-6 md:space-y-12 page-transition">
-            <FirebaseTest />
-            <AuthTest />
             {/* Hero Section - Enhanced */}
             <div className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl animate-fade-in-up hover-glow h-72 md:h-96 lg:h-[32rem]">
               {/* 3D Background */}
@@ -287,7 +283,10 @@ const Index = () => {
         {renderCurrentPage()}
       </main>
 
-      {currentPage === 'home' && <ChatBot />}
+      {currentPage === 'home' && <ChatBot onStartChat={(question) => {
+        setChatQuestion(question);
+        handlePageChange('chat');
+      }} />}
 
       {/* Footer - Only show on home page */}
       {currentPage === 'home' && (
