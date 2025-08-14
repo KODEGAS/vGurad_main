@@ -7,7 +7,6 @@ export interface IUser extends Document {
   role: 'admin' | 'proUser' | 'user';
   createdAt: Date;
   displayName?: string;
-  photoURL?: string;
   phone?: string;
   location?: string;
   language_preference?: 'en' | 'si' | 'ta';
@@ -38,10 +37,6 @@ const userSchema: Schema = new Schema({
     type: String,
     default: '',
   },
-  photoURL: {
-    type: String,
-    default: '',
-  },
   phone: {
     type: String,
     default: '',
@@ -55,7 +50,6 @@ const userSchema: Schema = new Schema({
     enum: ['en', 'si', 'ta'],
     default: 'en',
   },
-  savedNotes: [{ type: Schema.Types.ObjectId, ref: 'Note' }], // Array of saved note ObjectIds
 });
 
 // 3. Export the model, using the IUser interface

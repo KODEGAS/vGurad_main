@@ -85,8 +85,7 @@ const mockDiseases = [
         cause: 'Fungal infection due to high humidity',
         treatment: 'Copper fungicide spray',
         prevention: 'Proper drainage, avoid overhead watering',
-        severity: 'High',
-        image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Rice_blight.jpg'
+        severity: 'High'
     },
     {
         name: 'Powdery Mildew',
@@ -95,8 +94,7 @@ const mockDiseases = [
         cause: 'Fungal spores in warm, dry conditions',
         treatment: 'Sulfur-based fungicide',
         prevention: 'Good air circulation, avoid crowding',
-        severity: 'Medium',
-        image_url: 'https://upload.wikimedia.org/wikipedia/commons/2/2b/Powdery_mildew_on_tomato.jpg'
+        severity: 'Medium'
     },
     {
         name: 'Bacterial Wilt',
@@ -105,8 +103,7 @@ const mockDiseases = [
         cause: 'Bacterial infection through wounds',
         treatment: 'Remove infected plants, copper spray',
         prevention: 'Use disease-free seeds, crop rotation',
-        severity: 'High',
-        image_url: 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Bacterial_wilt_eggplant.jpg'
+        severity: 'High'
     },
     {
         name: 'Aphid Infestation',
@@ -115,8 +112,7 @@ const mockDiseases = [
         cause: 'Insect pest',
         treatment: 'Neem oil, insecticidal soap',
         prevention: 'Companion planting, beneficial insects',
-        severity: 'Low',
-        image_url: 'https://upload.wikimedia.org/wikipedia/commons/8/8b/Aphid_infestation.jpg'
+        severity: 'Low'
     },
     {
         name: 'Root Rot',
@@ -125,8 +121,7 @@ const mockDiseases = [
         cause: 'Overwatering, poor drainage',
         treatment: 'Improve drainage, fungicide',
         prevention: 'Proper watering, well-draining soil',
-        severity: 'High',
-        image_url: 'https://upload.wikimedia.org/wikipedia/commons/4/4e/Root_rot_beans.jpg'
+        severity: 'High'
     }
 ];
 const mockTips = [

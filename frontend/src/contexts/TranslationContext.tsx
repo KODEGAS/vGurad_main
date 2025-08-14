@@ -31,26 +31,6 @@ export const TranslationProvider: React.FC<TranslationProviderProps> = ({ childr
 
     useEffect(() => {
         localStorage.setItem('vguard-language', language);
-
-        // Apply language-specific font to document body
-        const body = document.body;
-
-        // Remove existing language classes
-        body.classList.remove('font-tamil', 'font-sinhala', 'font-english');
-
-        // Add appropriate font class based on language
-        switch (language) {
-            case 'ta':
-                body.classList.add('font-tamil');
-                break;
-            case 'si':
-                body.classList.add('font-sinhala');
-                break;
-            case 'en':
-            default:
-                body.classList.add('font-english');
-                break;
-        }
     }, [language]);
 
     const t = (key: TranslationKey): string => {

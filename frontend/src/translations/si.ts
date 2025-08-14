@@ -2,23 +2,6 @@ export const translations = {
   // Header
   login: "ප්‍රවේශ වන්න",
   signUp: "ලියාපදිංචි වන්න",
-  signOut: "ප්‍රවේශයෙන් ඉවත් වන්න",
-  logout: "ප්‍රවේශයෙන් ඉවත් වන්න",
-  loggingOut: "ප්‍රවේශයෙන් ඉවත් වෙමින්...",
-  welcome: "ආයුබෝවන්",
-  profile: "පැතිකඩ",
-  settings: "සැකසුම්",
-  theme: "තේමාව",
-  lightMode: "ආලෝක මාදිලිය",
-  darkMode: "අඳුරු මාදිලිය",
-  
-  // Settings
-  general: "සාමාන්‍ය",
-  account: "ගිණුම",
-  notifications: "දැනුම්දීම්",
-  privacy: "පෞද්ගලිකත්වය සහ ආරක්ෂාව",
-  appearance: "පෙනුම",
-  dataStorage: "දත්ත සහ ගබඩා කිරීම",
 
   // Hero Section
   heroTitle: "AI සමඟ ඔබේ බෝග ආරක්ෂා කරන්න",
@@ -143,14 +126,6 @@ export const translations = {
   error: "දෝෂය",
   success: "සාර්ථකත්වය",
   warning: "අනතුරු ඇඟවීම",
-  home: "මුල් පිටුව",
-  seedPricing: "බීජ මිල ගණන්",
-  
-  // Call to Action
-  readyToProtect: "ඔබේ භෝග ආරක්ෂා කිරීමට සූදානම්ද?",
-  joinThousands: "කෘත්‍රිම බුද්ධිමත් භෝග ආරක්ෂණ භාවිතා කරන හාවුරක් ගොවීන් හා එක්වන්න.",
-  startScanning: "ස්කෑන් කිරීම ආරම්භ කරන්න",
-  getExpertHelp: "විශේෂඥ උපකාර ලබා ගන්න",
 };
 
 export type TranslationKey = keyof typeof translations;

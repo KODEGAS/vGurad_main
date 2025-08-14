@@ -9,8 +9,6 @@ import questionRoutes from './routes/question.routes';
 import treatmentRoutes from './routes/treatment.routes';
 import productRoutes from './routes/product.routes';
 import geminiProxyRoute from './routes/gemini-proxy.route';
-import detectionResultRoutes from './routes/detectionResult.routes';
-import noteRoutes from './routes/note.routes';
 import { admin, auth } from './firebase-admin';
 import { userModel } from './models/User';
 import path from 'path';
@@ -27,11 +25,9 @@ const firebaseAdmin = admin;
 connectDB();
 
 // Middleware
-// Enable CORS for development
-app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:8080', 'http://localhost:8081', 'http://localhost:8082'],
-  credentials: true
-}));
+if (process.env.NODE_ENV === 'dev') {
+  app.use(cors());
+}
 
 app.use(express.json());
 // Middleware to verify Firebase ID token and fetch user profile
@@ -56,7 +52,7 @@ const verifyAndFetchUser = async (req: any, res: any, next: any) => {
 // Route to create user profile after Firebase sign-up
 app.post('/api/auth/create-user-profile', verifyAndFetchUser, async (req: any, res) => {
   try {
-    const { email, displayName, photoURL } = req.body;
+    const { email } = req.body;
     const firebaseUid = req.user.uid;
 
     const existingUser = await userModel.findOne({ firebaseUid });
@@ -68,8 +64,6 @@ app.post('/api/auth/create-user-profile', verifyAndFetchUser, async (req: any, r
     const newUser = new userModel({
       firebaseUid,
       email,
-      displayName: displayName || '',
-      photoURL: photoURL || '',
       role: 'user', // Assign a default role
       createdAt: new Date(),
     });
@@ -122,7 +116,6 @@ app.get('/gemini', (req, res) => res.send(process.env.GEMINI_API_KEY || 'No API 
 
 // API Routes
 
-
 app.use('/api/diseases', diseaseRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/tips', tipRoutes);
@@ -130,9 +123,6 @@ app.use('/api/experts', expertRoutes);
 app.use('/api/questions', questionRoutes);
 app.use('/api/treatments', treatmentRoutes);
 app.use('/api/gemini-proxy', geminiProxyRoute);
-app.use('/api/detection-results', detectionResultRoutes);
-app.use('/api/notes', noteRoutes);
-
 
 
 app.listen(PORT, () => {
