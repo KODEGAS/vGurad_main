@@ -34,9 +34,11 @@ const firebaseAdmin = firebase_admin_1.admin;
 // Connect to the database
 (0, database_1.default)();
 // Middleware
-if (process.env.NODE_ENV === 'dev') {
-    app.use((0, cors_1.default)());
-}
+// Enable CORS for development
+app.use((0, cors_1.default)({
+    origin: ['http://localhost:3000', 'http://localhost:8080', 'http://localhost:8081', 'http://localhost:8082'],
+    credentials: true
+}));
 app.use(express_1.default.json());
 // Middleware to verify Firebase ID token and fetch user profile
 const verifyAndFetchUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
