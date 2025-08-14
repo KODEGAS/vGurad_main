@@ -7,6 +7,7 @@ interface UserProfile {
     displayName?: string;
     firstName?: string;
     full_name?: string;
+    photoURL?: string;
     email?: string;
     phone?: string;
     location?: string;
