@@ -26,12 +26,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
             if (storedTheme) {
                 return storedTheme;
             }
-
-            // Check system preference
-            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                return 'dark';
-            }
         }
+        // Always default to light theme if no stored preference
         return defaultTheme;
     });
 
