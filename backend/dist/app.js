@@ -25,7 +25,6 @@ const product_routes_1 = __importDefault(require("./routes/product.routes"));
 const gemini_proxy_route_1 = __importDefault(require("./routes/gemini-proxy.route"));
 const firebase_admin_1 = require("./firebase-admin");
 const User_1 = require("./models/User");
-const path_1 = __importDefault(require("path"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 5001;
@@ -126,13 +125,6 @@ app.use('/api/experts', expert_routes_1.default);
 app.use('/api/questions', question_routes_1.default);
 app.use('/api/treatments', treatment_routes_1.default);
 app.use('/api/gemini-proxy', gemini_proxy_route_1.default);
-if (process.env.NODE_ENV === 'production') {
-    const frontendDist = path_1.default.resolve(process.cwd(), 'frontend/dist');
-    app.use(express_1.default.static(frontendDist));
-    app.get('*', (req, res) => {
-        res.sendFile(path_1.default.join(frontendDist, 'index.html'));
-    });
-}
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

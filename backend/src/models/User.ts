@@ -50,6 +50,7 @@ const userSchema: Schema = new Schema({
     enum: ['en', 'si', 'ta'],
     default: 'en',
   },
+  savedNotes: [{ type: Schema.Types.ObjectId, ref: 'Note' }], // Array of saved note ObjectIds
 });
 
 // 3. Export the model, using the IUser interface

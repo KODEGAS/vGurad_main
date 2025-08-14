@@ -9,6 +9,8 @@ import questionRoutes from './routes/question.routes';
 import treatmentRoutes from './routes/treatment.routes';
 import productRoutes from './routes/product.routes';
 import geminiProxyRoute from './routes/gemini-proxy.route';
+import detectionResultRoutes from './routes/detectionResult.routes';
+import noteRoutes from './routes/note.routes';
 import { admin, auth } from './firebase-admin';
 import { userModel } from './models/User';
 import path from 'path';
@@ -116,6 +118,7 @@ app.get('/gemini', (req, res) => res.send(process.env.GEMINI_API_KEY || 'No API 
 
 // API Routes
 
+
 app.use('/api/diseases', diseaseRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/tips', tipRoutes);
@@ -123,6 +126,9 @@ app.use('/api/experts', expertRoutes);
 app.use('/api/questions', questionRoutes);
 app.use('/api/treatments', treatmentRoutes);
 app.use('/api/gemini-proxy', geminiProxyRoute);
+app.use('/api/detection-results', detectionResultRoutes);
+app.use('/api/notes', noteRoutes);
+
 
 
 app.listen(PORT, () => {

@@ -7,6 +7,10 @@ import { ArrowLeft, Search, Leaf, Bug, Shield } from 'lucide-react';
 import { ScrollAnimatedSection } from '@/components/ScrollAnimatedSection';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { LoadingDots } from './LoadingDots';
+import { useToast } from '@/hooks/use-toast';
+import { getCurrentUserId } from '@/lib/getCurrentUserId';
+import { fetchMongoUserProfile } from '@/lib/fetchMongoUserProfile';
+import { LoadingSpinner } from './LoadingSpinner';
 
 interface Disease {
   _id: string;
@@ -17,20 +21,24 @@ interface Disease {
   treatment: string;
   prevention: string;
   severity: 'High' | 'Medium' | 'Low';
+  image_url?: string;
 }
 
 interface DiseaseDatabaseProps {
   onBack: () => void;
 }
 
+
 export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDisease, setSelectedDisease] = useState<Disease | null>(null);
   const { t } = useTranslation();
+  const { toast } = useToast();
 
   const [diseases, setDiseases] = useState<Disease[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [savingNote, setSavingNote] = useState(false);
 
   useEffect(() => {
     const fetchDiseases = async () => {
@@ -62,8 +70,41 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
     }
   };
 
+  // Save disease as note
+  const handleSaveToNotes = async () => {
+    if (!selectedDisease) return;
+    const userId = getCurrentUserId();
+    if (!userId) {
+      toast({ title: 'Error', description: 'User not logged in', variant: 'destructive' });
+      return;
+    }
+    setSavingNote(true);
+    try {
+      const profile = await fetchMongoUserProfile();
+      if (!profile || !profile._id) throw new Error('User profile not found');
+      const noteContent = `Crop: ${selectedDisease.crop}\n\nSeverity: ${selectedDisease.severity}\n\nCause: ${selectedDisease.cause}\n\nSymptoms: ${selectedDisease.symptoms.join(', ')}\n\nTreatment: ${selectedDisease.treatment}\n\nPrevention: ${selectedDisease.prevention}`;
+      const res = await fetch('http://localhost:5001/api/notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: profile._id,
+          title: selectedDisease.name,
+          content: noteContent,
+          category: 'Disease',
+        }),
+      });
+      if (!res.ok) throw new Error('Failed to save note');
+      toast({ title: 'Success', description: 'Disease saved to your notes!' });
+    } catch (error) {
+      console.error('Error saving note:', error);
+      toast({ title: 'Error', description: 'Failed to save note', variant: 'destructive' });
+    } finally {
+      setSavingNote(false);
+    }
+  };
+
   if (loading) {
-    return <LoadingDots />;
+    return <LoadingSpinner></LoadingSpinner>;
   }
 
   if (error) {
@@ -80,6 +121,7 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
           </Button>
           <h2 className="text-2xl font-bold text-foreground">{selectedDisease.name}</h2>
         </div>
+
         <div className="grid md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
@@ -89,6 +131,13 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {selectedDisease.image_url && (
+                <img
+                  src={selectedDisease.image_url}
+                  alt={selectedDisease.name}
+                  className="w-full max-h-40 object-cover rounded mb-5"
+                />
+              )}
               <div>
                 <h4 className="font-semibold mb-2">{t('affectedCrop')}:</h4>
                 <p className="text-crop-primary font-medium">{selectedDisease.crop}</p>
@@ -135,8 +184,13 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
                 <p className="text-muted-foreground">{selectedDisease.prevention}</p>
               </div>
 
-              <Button variant="farmer" className="w-full">
-                {t('saveToNotes')}
+              <Button 
+                variant="farmer" 
+                className="w-full"
+                onClick={handleSaveToNotes}
+                disabled={savingNote}
+              >
+                {savingNote ? 'Saving...' : t('saveToNotes')}
               </Button>
             </CardContent>
           </Card>
@@ -182,6 +236,7 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
             >
               <Card className="hover:shadow-card transition-all duration-300 cursor-pointer" onClick={() => setSelectedDisease(disease)}>
                 <CardContent className="p-4">
+                  {/* Show image only in details view, not in list */}
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="font-semibold text-foreground">{disease.name}</h3>
                     <span className={`text-xs px-2 py-1 rounded-full ${getSeverityColor(disease.severity)} bg-opacity-10`}>
