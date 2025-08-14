@@ -27,9 +27,11 @@ const firebaseAdmin = admin;
 connectDB();
 
 // Middleware
-if (process.env.NODE_ENV === 'dev') {
-  app.use(cors());
-}
+// Enable CORS for development
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://localhost:8080', 'http://localhost:8081', 'http://localhost:8082'],
+  credentials: true
+}));
 
 app.use(express.json());
 // Middleware to verify Firebase ID token and fetch user profile
