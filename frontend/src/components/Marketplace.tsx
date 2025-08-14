@@ -156,19 +156,28 @@ export const Marketplace = () => {
               >
                 <Card className="hover:shadow-lg transition-all duration-300 group">
                   <CardHeader className="pb-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <Badge className={`mb-2 ${getCategoryColor(product.category)}`}>
-                          {categories.find(c => c.value === product.category)?.label}
-                        </Badge>
-                        <CardTitle className="text-lg group-hover:text-primary transition-colors">
-                          {product.name}
-                        </CardTitle>
-                        <CardDescription className="line-clamp-2">
-                          {product.description}
-                        </CardDescription>
+                    <div className="flex flex-col gap-2">
+                      {product.image_url && (
+                        <img
+                          src={product.image_url}
+                          alt={product.name}
+                          className="w-full h-40 object-cover rounded mb-2"
+                        />
+                      )}
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <Badge className={`mb-2 ${getCategoryColor(product.category)}`}>
+                            {categories.find(c => c.value === product.category)?.label}
+                          </Badge>
+                          <CardTitle className="text-lg group-hover:text-primary transition-colors">
+                            {product.name}
+                          </CardTitle>
+                          <CardDescription className="line-clamp-2">
+                            {product.description}
+                          </CardDescription>
+                        </div>
+                        <Package className="w-8 h-8 text-muted-foreground ml-4" />
                       </div>
-                      <Package className="w-8 h-8 text-muted-foreground ml-4" />
                     </div>
                   </CardHeader>
                   

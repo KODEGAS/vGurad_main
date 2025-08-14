@@ -26,7 +26,12 @@ export const LanguageSelector: React.FC = () => {
             <Languages className="h-5 w-5" />
             <span className="text-lg">{selectedLang?.flag}</span>
           </div>
-          <span className="font-medium text-gray-700">{selectedLang?.name}</span>
+          <span className={`font-medium text-gray-700 ${language === 'ta' ? 'font-tamil' :
+              language === 'si' ? 'font-sinhala' :
+                'font-english'
+            }`}>
+            {selectedLang?.name}
+          </span>
         </div>
       </SelectTrigger>
       <SelectContent className="bg-white border-2 border-primary/20 shadow-xl rounded-lg">
@@ -34,11 +39,19 @@ export const LanguageSelector: React.FC = () => {
           <SelectItem
             key={lang.code}
             value={lang.code}
-            className="hover:bg-primary/10 focus:bg-primary/10 cursor-pointer py-3"
+            className={`hover:bg-primary/10 focus:bg-primary/10 cursor-pointer py-3 ${lang.code === 'ta' ? 'font-tamil' :
+                lang.code === 'si' ? 'font-sinhala' :
+                  'font-english'
+              }`}
           >
             <div className="flex items-center gap-3">
               <span className="text-lg">{lang.flag}</span>
-              <span className="font-medium">{lang.name}</span>
+              <span className={`font-medium ${lang.code === 'ta' ? 'font-tamil' :
+                  lang.code === 'si' ? 'font-sinhala' :
+                    'font-english'
+                }`}>
+                {lang.name}
+              </span>
             </div>
           </SelectItem>
         ))}

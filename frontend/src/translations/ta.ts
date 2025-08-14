@@ -2,6 +2,23 @@ export const translations = {
   // Header
   login: "உள்நுழைய",
   signUp: "பதிவு செய்யுங்கள்",
+  signOut: "வெளியேறு",
+  logout: "வெளியேறு",
+  loggingOut: "வெளியேறுகிறது...",
+  welcome: "வரவேற்கிறோம்",
+  profile: "சுயவிவரம்",
+  settings: "அமைப்புகள்",
+  theme: "தீம்",
+  lightMode: "ஒளி முறை",
+  darkMode: "இருண்ட முறை",
+  
+  // Settings
+  general: "பொது",
+  account: "கணக்கு",
+  notifications: "அறிவிப்புகள்",
+  privacy: "தனியுரிமை மற்றும் பாதுகாப்பு",
+  appearance: "தோற்றம்",
+  dataStorage: "தரவு மற்றும் சேமிப்பு",
 
   // Hero Section
   heroTitle: "AI உடன் உங்கள் பயிர்களைப் பாதுகாக்கவும்",
@@ -126,6 +143,14 @@ export const translations = {
   error: "பிழை",
   success: "வெற்றி",
   warning: "எச்சரிக்கை",
+  home: "முகப்பு",
+  seedPricing: "விதை விலை",
+  
+  // Call to Action
+  readyToProtect: "உங்கள் பயிர்களைப் பாதுகாக்க தயாரா?",
+  joinThousands: "AI இயங்கும் பயிர் பாதுகாப்பைப் பயன்படுத்தும் ஆயிரக்கணக்கான விவசாயிகளுடன் இணையுங்கள்.",
+  startScanning: "ஸ்கேனிங் தொடங்கவும்",
+  getExpertHelp: "நிபுணர் உதவி பெறவும்",
 };
 
 export type TranslationKey = keyof typeof translations;

@@ -3,6 +3,22 @@ export const translations = {
   login: "Login",
   signUp: "Sign Up",
   signOut: "Sign Out",
+  logout: "Logout",
+  loggingOut: "Logging out...",
+  welcome: "Welcome",
+  profile: "Profile",
+  settings: "Settings",
+  theme: "Theme",
+  lightMode: "Light Mode",
+  darkMode: "Dark Mode",
+  
+  // Settings
+  general: "General",
+  account: "Account",
+  notifications: "Notifications",
+  privacy: "Privacy & Security",
+  appearance: "Appearance",
+  dataStorage: "Data & Storage",
 
   // Hero Section
   heroTitle: "Protect Your Crops with AI",
@@ -127,6 +143,14 @@ export const translations = {
   error: "Error",
   success: "Success",
   warning: "Warning",
+  home: "Home",
+  seedPricing: "Seed Pricing",
+  
+  // Call to Action
+  readyToProtect: "Ready to Protect Your Crops?",
+  joinThousands: "Join thousands of farmers using AI-powered crop protection.",
+  startScanning: "Start Scanning",
+  getExpertHelp: "Get Expert Help",
 };
 
 export type TranslationKey = keyof typeof translations;

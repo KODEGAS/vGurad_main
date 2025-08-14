@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollAnimatedSection } from './ScrollAnimatedSection';
+import { SavedNotes } from './profile/SavedNotes';
+import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { AuthDialog } from './AuthDialog';
 
@@ -32,7 +34,9 @@ export const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const [activeSection, setActiveSection] = useState<'results' | 'notes' | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -147,7 +151,7 @@ export const ProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-950 dark:to-emerald-900 p-4">
-      <ScrollAnimatedSection animationType="fade-up">{/* ... keep existing code */}
+      <ScrollAnimatedSection animationType="fade-up">
         <div className="max-w-4xl mx-auto space-y-6">
           <div className="text-center mb-8">
             <User className="w-16 h-16 mx-auto mb-4 text-primary" />
@@ -156,7 +160,7 @@ export const ProfilePage = () => {
           </div>
 
           {/* Profile Information */}
-          <ScrollAnimatedSection animationType="fade-up">{/* ... keep existing code */}
+          <ScrollAnimatedSection animationType="fade-up">
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -242,12 +246,35 @@ export const ProfilePage = () => {
                     <Button onClick={() => setEditing(true)}>Edit Profile</Button>
                   )}
                 </div>
+
+                {/* Toggle Buttons for Saved Results and Notes */}
+                <div className="flex gap-4 pt-4 justify-center">
+                  <Button
+                    variant={activeSection === 'results' ? 'default' : 'outline'}
+                    onClick={() => setActiveSection(activeSection === 'results' ? null : 'results')}
+                  >
+                    My Saved Results
+                  </Button>
+                  <Button
+                    variant={activeSection === 'notes' ? 'default' : 'outline'}
+                    onClick={() => setActiveSection(activeSection === 'notes' ? null : 'notes')}
+                  >
+                    My Saved Notes
+                  </Button>
+                </div>
+
+                {/* Inline display of Saved Notes */}
+                {activeSection === 'notes' && (
+                  <div className="pt-6">
+                    <SavedNotes />
+                  </div>
+                )}
               </CardContent>
             </Card>
           </ScrollAnimatedSection>
 
           {/* Subscription Status */}
-          <ScrollAnimatedSection animationType="fade-up">{/* ... keep existing code */}
+          <ScrollAnimatedSection animationType="fade-up">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -294,7 +321,7 @@ export const ProfilePage = () => {
           </ScrollAnimatedSection>
 
           {/* Feature Access */}
-          <ScrollAnimatedSection animationType="fade-up">{/* ... keep existing code */}
+          <ScrollAnimatedSection animationType="fade-up">
             <Card>
               <CardHeader>
                 <CardTitle>Feature Access</CardTitle>

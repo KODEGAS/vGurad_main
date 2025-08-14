@@ -1,6 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@300;400;500;600;700&display=swap');
+
+/* Tamil Font - Kalam Regular */
+@font-face {
+  font-family: 'Kalam-Regular';
+  src: url('https://fonts.gstatic.com/s/kalam/v16/YA9dr0Wd4kDdMuhWMibDszkB.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0B80-0BFF, U+200C-200D, U+25CC;
+  /* Tamil Unicode range */
+}
+
+/* Sinhala Font - Abhaya with fallback */
+@font-face {
+  font-family: 'Abhaya';
+  src: local('Abhaya Libre'), local('Noto Sans Sinhala');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0D80-0DFF, U+200C-200D, U+25CC;
+  /* Sinhala Unicode range */
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Smooth theme transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
@@ -127,20 +161,39 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', 'Abhaya Libre', 'Kalam', 'Noto Sans Sinhala', system-ui, -apple-system, sans-serif;
   }
 
   html {
     scroll-behavior: smooth;
   }
+
+  /* Language-specific font assignments with Inter as primary for mixed content */
+  [lang="ta"],
+  .tamil-text {
+    font-family: 'Inter', 'Kalam-Regular', 'Kalam', system-ui, sans-serif;
+  }
+
+  [lang="si"],
+  .sinhala-text {
+    font-family: 'Inter', 'Abhaya', 'Abhaya Libre', 'Noto Sans Sinhala', system-ui, sans-serif;
+  }
+
+  [lang="en"],
+  .english-text {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
 }
 
 @layer utilities {
+
   /* Fade animations */
   @keyframes fade-in {
     0% {
       opacity: 0;
       transform: translateY(20px);
     }
+
     100% {
       opacity: 1;
       transform: translateY(0);
@@ -152,6 +205,7 @@ All colors MUST be HSL.
       opacity: 0;
       transform: translateY(40px);
     }
+
     100% {
       opacity: 1;
       transform: translateY(0);
@@ -163,6 +217,7 @@ All colors MUST be HSL.
       opacity: 0;
       transform: translateX(-40px);
     }
+
     100% {
       opacity: 1;
       transform: translateX(0);
@@ -174,6 +229,7 @@ All colors MUST be HSL.
       opacity: 0;
       transform: translateX(40px);
     }
+
     100% {
       opacity: 1;
       transform: translateX(0);
@@ -185,6 +241,7 @@ All colors MUST be HSL.
       opacity: 0;
       transform: scale(0.95);
     }
+
     100% {
       opacity: 1;
       transform: scale(1);
@@ -192,20 +249,58 @@ All colors MUST be HSL.
   }
 
   @keyframes float {
-    0%, 100% {
+
+    0%,
+    100% {
       transform: translateY(0);
     }
+
     50% {
       transform: translateY(-10px);
     }
   }
 
   @keyframes pulse-glow {
-    0%, 100% {
+
+    0%,
+    100% {
       box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
     }
+
     50% {
       box-shadow: 0 0 40px hsl(var(--primary) / 0.6);
+    }
+  }
+
+  @keyframes slide-up {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes bounce-in {
+    0% {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+
+    50% {
+      transform: scale(1.05);
+    }
+
+    70% {
+      transform: scale(0.9);
+    }
+
+    100% {
+      opacity: 1;
+      transform: scale(1);
     }
   }
 
@@ -226,6 +321,10 @@ All colors MUST be HSL.
     animation: slide-in-right 0.6s ease-out;
   }
 
+  .animate-slide-in-up {
+    animation: slide-up 0.6s ease-out;
+  }
+
   .animate-scale-in {
     animation: scale-in 0.4s ease-out;
   }
@@ -236,6 +335,10 @@ All colors MUST be HSL.
 
   .animate-pulse-glow {
     animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .animate-bounce-in {
+    animation: bounce-in 0.6s ease-out;
   }
 
   .animate-bounce {
@@ -293,8 +396,79 @@ All colors MUST be HSL.
     box-shadow: 0 0 30px hsl(var(--success) / 0.6);
   }
 
+  /* Mobile-specific enhancements */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  .tap-highlight-none {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Mobile button active states */
+  .mobile-button-active:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease-out;
+  }
+
+  /* Mobile card hover/touch effects */
+  .mobile-card-interaction {
+    transition: all 0.2s ease-out;
+  }
+
+  .mobile-card-interaction:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
+
+  /* Improved touch targets */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
   /* Page transition */
   .page-transition {
     animation: fade-in 0.5s ease-out;
+  }
+
+  /* Enhanced mobile scroll */
+  .smooth-scroll {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Mobile-optimized shadows */
+  @media (max-width: 768px) {
+    .hover-lift:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 20px hsl(var(--primary) / 0.15);
+    }
+
+    .hover-glow:hover {
+      box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+    }
+
+    .hover-glow-green:hover {
+      box-shadow: 0 0 20px hsl(var(--success) / 0.4);
+    }
+  }
+
+  /* Font utilities - Inter first for consistency in mixed content */
+  .font-tamil {
+    font-family: 'Inter', 'Kalam-Regular', 'Kalam', system-ui, sans-serif;
+  }
+
+  .font-sinhala {
+    font-family: 'Inter', 'Abhaya', 'Abhaya Libre', 'Noto Sans Sinhala', system-ui, sans-serif;
+  }
+
+  .font-english {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  /* Auto font detection based on content - Inter prioritized for mixed content */
+  .font-auto {
+    font-family: 'Inter', 'Abhaya Libre', 'Kalam', 'Noto Sans Sinhala', system-ui, sans-serif;
   }
 }
