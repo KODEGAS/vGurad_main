@@ -27,9 +27,11 @@ const firebaseAdmin = admin;
 connectDB();
 
 // Middleware
-if (process.env.NODE_ENV === 'dev') {
-  app.use(cors());
-}
+// Enable CORS for development
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://localhost:8080', 'http://localhost:8081', 'http://localhost:8082'],
+  credentials: true
+}));
 
 app.use(express.json());
 // Middleware to verify Firebase ID token and fetch user profile
@@ -54,7 +56,7 @@ const verifyAndFetchUser = async (req: any, res: any, next: any) => {
 // Route to create user profile after Firebase sign-up
 app.post('/api/auth/create-user-profile', verifyAndFetchUser, async (req: any, res) => {
   try {
-    const { email } = req.body;
+    const { email, displayName, photoURL } = req.body;
     const firebaseUid = req.user.uid;
 
     const existingUser = await userModel.findOne({ firebaseUid });
@@ -66,6 +68,8 @@ app.post('/api/auth/create-user-profile', verifyAndFetchUser, async (req: any, r
     const newUser = new userModel({
       firebaseUid,
       email,
+      displayName: displayName || '',
+      photoURL: photoURL || '',
       role: 'user', // Assign a default role
       createdAt: new Date(),
     });

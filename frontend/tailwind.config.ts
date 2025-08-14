@@ -18,6 +18,12 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['Inter', 'Abhaya Libre', 'Kalam', 'system-ui', 'sans-serif'],
+				tamil: ['Inter', 'Kalam-Regular', 'Kalam', 'system-ui', 'sans-serif'],
+				sinhala: ['Inter', 'Abhaya', 'Abhaya Libre', 'Noto Sans Sinhala', 'system-ui', 'sans-serif'],
+				english: ['Inter', 'system-ui', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

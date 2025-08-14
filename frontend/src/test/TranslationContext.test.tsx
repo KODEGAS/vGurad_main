@@ -141,7 +141,7 @@ describe('Translation Files', () => {
 
     it('should have specific required keys', () => {
         const requiredKeys = [
-            'welcome', 'language', 'cropScanner', 'diseaseDatabase', 
+            'welcome', 'language', 'cropScanner', 'diseaseDatabase',
             'expertHelp', 'farmerTips', 'login', 'register'
         ]
 
