@@ -7,6 +7,7 @@ export interface IUser extends Document {
   role: 'admin' | 'proUser' | 'user';
   createdAt: Date;
   displayName?: string;
+  photoURL?: string;
   phone?: string;
   location?: string;
   language_preference?: 'en' | 'si' | 'ta';
@@ -34,6 +35,10 @@ const userSchema: Schema = new Schema({
     default: Date.now,
   },
   displayName: {
+    type: String,
+    default: '',
+  },
+  photoURL: {
     type: String,
     default: '',
   },
