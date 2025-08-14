@@ -126,6 +126,14 @@ export const translations = {
   error: "දෝෂය",
   success: "සාර්ථකත්වය",
   warning: "අනතුරු ඇඟවීම",
+  home: "මුල් පිටුව",
+  seedPricing: "බීජ මිල ගණන්",
+  
+  // Call to Action
+  readyToProtect: "ඔබේ භෝග ආරක්ෂා කිරීමට සූදානම්ද?",
+  joinThousands: "කෘත්‍රිම බුද්ධිමත් භෝග ආරක්ෂණ භාවිතා කරන හාවුරක් ගොවීන් හා එක්වන්න.",
+  startScanning: "ස්කෑන් කිරීම ආරම්භ කරන්න",
+  getExpertHelp: "විශේෂඥ උපකාර ලබා ගන්න",
 };
 
 export type TranslationKey = keyof typeof translations;

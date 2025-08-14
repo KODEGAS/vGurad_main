@@ -126,6 +126,14 @@ export const translations = {
   error: "பிழை",
   success: "வெற்றி",
   warning: "எச்சரிக்கை",
+  home: "முகப்பு",
+  seedPricing: "விதை விலை",
+  
+  // Call to Action
+  readyToProtect: "உங்கள் பயிர்களைப் பாதுகாக்க தயாரா?",
+  joinThousands: "AI இயங்கும் பயிர் பாதுகாப்பைப் பயன்படுத்தும் ஆயிரக்கணக்கான விவசாயிகளுடன் இணையுங்கள்.",
+  startScanning: "ஸ்கேனிங் தொடங்கவும்",
+  getExpertHelp: "நிபுணர் உதவி பெறவும்",
 };
 
 export type TranslationKey = keyof typeof translations;

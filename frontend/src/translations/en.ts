@@ -126,6 +126,14 @@ export const translations = {
   error: "Error",
   success: "Success",
   warning: "Warning",
+  home: "Home",
+  seedPricing: "Seed Pricing",
+  
+  // Call to Action
+  readyToProtect: "Ready to Protect Your Crops?",
+  joinThousands: "Join thousands of farmers using AI-powered crop protection.",
+  startScanning: "Start Scanning",
+  getExpertHelp: "Get Expert Help",
 };
 
 export type TranslationKey = keyof typeof translations;
