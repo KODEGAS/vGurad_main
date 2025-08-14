@@ -25,7 +25,7 @@ exports.getQuestions = getQuestions;
 // Submit a new question
 const createQuestion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Note: In a real app, you'd associate this with a user ID
+        // TODO:
         const newQuestion = new question_model_1.Question(Object.assign(Object.assign({}, req.body), { status: 'pending', date: new Date().toLocaleDateString('en-US', {
                 month: 'short',
                 day: 'numeric',

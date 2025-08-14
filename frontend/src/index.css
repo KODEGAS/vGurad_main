@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@300;400;500;600;700&display=swap');
 
 /* Tamil Font - Kalam Regular */
 @font-face {
@@ -11,10 +13,6 @@
   unicode-range: U+0B80-0BFF, U+200C-200D, U+25CC;
   /* Tamil Unicode range */
 }
-
-/* Sinhala Font - Use Abhaya Libre as primary Sinhala font */
-@import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;500;600;700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@300;400;500;600;700&display=swap');
 
 /* Sinhala Font - Abhaya with fallback */
 @font-face {
