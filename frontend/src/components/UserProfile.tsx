@@ -92,7 +92,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ user, userProfile, isM
                 <div className="flex items-center gap-3 px-3 py-2 text-white">
                     <Avatar className="h-10 w-10">
                         <AvatarImage
-                            src={user?.photoURL || undefined}
+                            src={displayInfo.photoURL}
                             alt={displayInfo.fullName}
                         />
                         <AvatarFallback className="bg-white/20 text-white">
@@ -149,7 +149,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ user, userProfile, isM
                 >
                     <Avatar className="h-8 w-8">
                         <AvatarImage
-                            src={user?.photoURL || undefined}
+                            src={displayInfo.photoURL}
                             alt={displayInfo.fullName}
                         />
                         <AvatarFallback className="bg-white/20 text-white text-sm">
