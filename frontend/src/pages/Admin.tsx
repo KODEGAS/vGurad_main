@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,82 +10,335 @@ import { Badge } from '@/components/ui/badge';
 import { Trash2, Plus, Edit, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+// Declare global variables provided by the runtime environment
+declare const __app_id: string;
+declare const __firebase_config: string;
+declare const __initial_auth_token: string | undefined;
+
+// Firebase imports
+import { initializeApp, getApps } from 'firebase/app';
+import {
+  getFirestore,
+  collection,
+  onSnapshot,
+  addDoc,
+  deleteDoc,
+  doc,
+  updateDoc,
+} from 'firebase/firestore';
+import {
+  getAuth,
+  signInWithCustomToken,
+  onAuthStateChanged,
+  signInAnonymously
+} from 'firebase/auth';
+
+// Define the data types for better type safety
+interface Disease {
+  id: string;
+  name: string;
+  description: string;
+  treatment: string;
+  severity: 'Low' | 'Medium' | 'High';
+}
+
+interface NewDisease {
+  name: string;
+  description: string;
+  treatment: string;
+  severity: 'Low' | 'Medium' | 'High';
+}
+
+interface Tip {
+  id: string;
+  title: string;
+  content: string;
+  category: string;
+}
+
+interface NewTip {
+  title: string;
+  content: string;
+  category: string;
+}
+
+interface Expert {
+  id: string;
+  name: string;
+  specialization: string;
+  contact: string;
+  availability: string;
+}
+
+interface NewExpert {
+  name: string;
+  specialization: string;
+  contact: string;
+  availability: string;
+}
+
 const Admin = () => {
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
   const { toast } = useToast();
 
-  // Disease Database State
-  const [diseases, setDiseases] = useState([
-    { id: 1, name: 'Tomato Blight', description: 'A fungal disease affecting tomato plants', treatment: 'Apply copper fungicide', severity: 'High' },
-    { id: 2, name: 'Wheat Rust', description: 'A rust disease affecting wheat crops', treatment: 'Use resistant varieties', severity: 'Medium' },
-  ]);
+  const [diseases, setDiseases] = useState<Disease[]>([]);
+  const [tips, setTips] = useState<Tip[]>([]);
+  const [experts, setExperts] = useState<Expert[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
 
-  // Farmer Tips State
-  const [tips, setTips] = useState([
-    { id: 1, title: 'Seasonal Planting Guide', content: 'Best practices for seasonal crop rotation', category: 'Planting' },
-    { id: 2, title: 'Water Management', content: 'Efficient irrigation techniques', category: 'Irrigation' },
-  ]);
+  const [newDisease, setNewDisease] = useState<NewDisease>({ name: '', description: '', treatment: '', severity: 'Low' });
+  const [newTip, setNewTip] = useState<NewTip>({ title: '', content: '', category: '' });
+  const [newExpert, setNewExpert] = useState<NewExpert>({ name: '', specialization: '', contact: '', availability: '' });
 
-  // Expert Help State
-  const [experts, setExperts] = useState([
-    { id: 1, name: 'Dr. John Smith', specialization: 'Plant Pathology', contact: 'john@example.com', availability: 'Mon-Fri 9AM-5PM' },
-    { id: 2, name: 'Dr. Sarah Wilson', specialization: 'Crop Management', contact: 'sarah@example.com', availability: '24/7' },
-  ]);
+  const [editingDiseaseId, setEditingDiseaseId] = useState<string | null>(null);
+  const [editingTipId, setEditingTipId] = useState<string | null>(null);
+  const [editingExpertId, setEditingExpertId] = useState<string | null>(null);
+  const [editedDisease, setEditedDisease] = useState<Disease | null>(null);
+  const [editedTip, setEditedTip] = useState<Tip | null>(null);
+  const [editedExpert, setEditedExpert] = useState<Expert | null>(null);
+  
+  // Firebase configuration and initialization
+  const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+  const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+  const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-  const [newDisease, setNewDisease] = useState({ name: '', description: '', treatment: '', severity: 'Low' });
-  const [newTip, setNewTip] = useState({ title: '', content: '', category: '' });
-  const [newExpert, setNewExpert] = useState({ name: '', specialization: '', contact: '', availability: '' });
+  const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+  const db = getFirestore(app);
+  const auth = getAuth(app);
 
-  const addDisease = () => {
-    if (newDisease.name && newDisease.description) {
-      setDiseases([...diseases, { ...newDisease, id: Date.now() }]);
+  useEffect(() => {
+    const setupAuthAndFirestore = async () => {
+      try {
+        if (initialAuthToken) {
+          await signInWithCustomToken(auth, initialAuthToken);
+        } else {
+          await signInAnonymously(auth);
+        }
+        
+        const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+          if (user) {
+            setUserId(user.uid);
+            setIsLoading(false);
+          } else {
+            console.error("User not authenticated.");
+            setIsLoading(false);
+          }
+        });
+
+        return () => unsubscribeAuth();
+      } catch (error) {
+        console.error("Error during authentication:", error);
+        setIsLoading(false);
+      }
+    };
+    setupAuthAndFirestore();
+  }, [auth, initialAuthToken]);
+  
+  useEffect(() => {
+    if (!userId) return;
+
+    const diseasesCollection = collection(db, `artifacts/${appId}/public/data/diseases`);
+    const tipsCollection = collection(db, `artifacts/${appId}/public/data/tips`);
+    const expertsCollection = collection(db, `artifacts/${appId}/public/data/experts`);
+
+    const unsubscribeDiseases = onSnapshot(diseasesCollection, (snapshot) => {
+      const diseasesData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Disease[];
+      setDiseases(diseasesData);
+    }, (error) => {
+      console.error("Error fetching diseases:", error);
+      toast({ title: "Error fetching diseases", variant: "destructive" });
+    });
+
+    const unsubscribeTips = onSnapshot(tipsCollection, (snapshot) => {
+      const tipsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Tip[];
+      setTips(tipsData);
+    }, (error) => {
+      console.error("Error fetching tips:", error);
+      toast({ title: "Error fetching tips", variant: "destructive" });
+    });
+
+    const unsubscribeExperts = onSnapshot(expertsCollection, (snapshot) => {
+      const expertsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Expert[];
+      setExperts(expertsData);
+    }, (error) => {
+      console.error("Error fetching experts:", error);
+      toast({ title: "Error fetching experts", variant: "destructive" });
+    });
+
+    return () => {
+      unsubscribeDiseases();
+      unsubscribeTips();
+      unsubscribeExperts();
+    };
+  }, [db, appId, userId]);
+
+
+  const addDisease = async () => {
+    if (!newDisease.name || !newDisease.description) {
+      toast({ title: "Please fill out all required fields", variant: "destructive" });
+      return;
+    }
+    try {
+      await addDoc(collection(db, `artifacts/${appId}/public/data/diseases`), newDisease);
       setNewDisease({ name: '', description: '', treatment: '', severity: 'Low' });
       toast({ title: "Disease added successfully" });
+    } catch (error) {
+      console.error("Error adding disease: ", error);
+      toast({ title: "Error adding disease", description: "Please try again.", variant: "destructive" });
     }
   };
 
-  const addTip = () => {
-    if (newTip.title && newTip.content) {
-      setTips([...tips, { ...newTip, id: Date.now() }]);
+  const deleteDisease = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, `artifacts/${appId}/public/data/diseases`, id));
+      toast({ title: "Disease deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting disease: ", error);
+      toast({ title: "Error deleting disease", description: "Please try again.", variant: "destructive" });
+    }
+  };
+
+  const startEditDisease = (disease: Disease) => {
+    setEditingDiseaseId(disease.id);
+    setEditedDisease(disease);
+  };
+  
+  const updateDisease = async () => {
+    if (!editedDisease || !editedDisease.name || !editedDisease.description) {
+      toast({ title: "Please fill out all required fields", variant: "destructive" });
+      return;
+    }
+    try {
+  await updateDoc(doc(db, `artifacts/${appId}/public/data/diseases`, editedDisease.id), { ...editedDisease });
+      setEditingDiseaseId(null);
+      setEditedDisease(null);
+      toast({ title: "Disease updated successfully" });
+    } catch (error) {
+      console.error("Error updating disease: ", error);
+      toast({ title: "Error updating disease", description: "Please try again.", variant: "destructive" });
+    }
+  };
+
+  const addTip = async () => {
+    if (!newTip.title || !newTip.content) {
+      toast({ title: "Please fill out all required fields", variant: "destructive" });
+      return;
+    }
+    try {
+      await addDoc(collection(db, `artifacts/${appId}/public/data/tips`), newTip);
       setNewTip({ title: '', content: '', category: '' });
       toast({ title: "Tip added successfully" });
+    } catch (error) {
+      console.error("Error adding tip: ", error);
+      toast({ title: "Error adding tip", description: "Please try again.", variant: "destructive" });
     }
   };
 
-  const addExpert = () => {
-    if (newExpert.name && newExpert.specialization) {
-      setExperts([...experts, { ...newExpert, id: Date.now() }]);
+  const deleteTip = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, `artifacts/${appId}/public/data/tips`, id));
+      toast({ title: "Tip deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting tip: ", error);
+      toast({ title: "Error deleting tip", description: "Please try again.", variant: "destructive" });
+    }
+  };
+
+  const startEditTip = (tip: Tip) => {
+    setEditingTipId(tip.id);
+    setEditedTip(tip);
+  };
+
+  const updateTip = async () => {
+    if (!editedTip || !editedTip.title || !editedTip.content) {
+      toast({ title: "Please fill out all required fields", variant: "destructive" });
+      return;
+    }
+    try {
+  await updateDoc(doc(db, `artifacts/${appId}/public/data/tips`, editedTip.id), { ...editedTip });
+      setEditingTipId(null);
+      setEditedTip(null);
+      toast({ title: "Tip updated successfully" });
+    } catch (error) {
+      console.error("Error updating tip: ", error);
+      toast({ title: "Error updating tip", description: "Please try again.", variant: "destructive" });
+    }
+  };
+
+  const addExpert = async () => {
+    if (!newExpert.name || !newExpert.specialization) {
+      toast({ title: "Please fill out all required fields", variant: "destructive" });
+      return;
+    }
+    try {
+      await addDoc(collection(db, `artifacts/${appId}/public/data/experts`), newExpert);
       setNewExpert({ name: '', specialization: '', contact: '', availability: '' });
       toast({ title: "Expert added successfully" });
+    } catch (error) {
+      console.error("Error adding expert: ", error);
+      toast({ title: "Error adding expert", description: "Please try again.", variant: "destructive" });
     }
   };
 
-  const deleteDisease = (id: number) => {
-    setDiseases(diseases.filter(d => d.id !== id));
-    toast({ title: "Disease deleted successfully" });
+  const deleteExpert = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, `artifacts/${appId}/public/data/experts`, id));
+      toast({ title: "Expert deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting expert: ", error);
+      toast({ title: "Error deleting expert", description: "Please try again.", variant: "destructive" });
+    }
   };
 
-  const deleteTip = (id: number) => {
-    setTips(tips.filter(t => t.id !== id));
-    toast({ title: "Tip deleted successfully" });
+  const startEditExpert = (expert: Expert) => {
+    setEditingExpertId(expert.id);
+    setEditedExpert(expert);
+  };
+  
+  const updateExpert = async () => {
+    if (!editedExpert || !editedExpert.name || !editedExpert.specialization) {
+      toast({ title: "Please fill out all required fields", variant: "destructive" });
+      return;
+    }
+    try {
+  await updateDoc(doc(db, `artifacts/${appId}/public/data/experts`, editedExpert.id), { ...editedExpert });
+      setEditingExpertId(null);
+      setEditedExpert(null);
+      toast({ title: "Expert updated successfully" });
+    } catch (error) {
+      console.error("Error updating expert: ", error);
+      toast({ title: "Error updating expert", description: "Please try again.", variant: "destructive" });
+    }
   };
 
-  const deleteExpert = (id: number) => {
-    setExperts(experts.filter(e => e.id !== id));
-    toast({ title: "Expert deleted successfully" });
-  };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
-      <Header 
-        selectedLanguage={selectedLanguage}
-        onLanguageChange={setSelectedLanguage}
-      />
-      
+      <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Admin Dashboard</h1>
           <p className="text-muted-foreground">Manage disease database, farmer tips, and expert help content</p>
+          <div className="mt-4 p-3 bg-secondary text-secondary-foreground rounded-md">
+            <span className="font-semibold">Current User ID:</span> {userId}
+          </div>
         </div>
 
         <Tabs defaultValue="diseases" className="space-y-6">
@@ -120,7 +373,7 @@ const Admin = () => {
                     <select
                       id="disease-severity"
                       value={newDisease.severity}
-                      onChange={(e) => setNewDisease({...newDisease, severity: e.target.value})}
+                      onChange={(e) => setNewDisease({...newDisease, severity: e.target.value as 'Low' | 'Medium' | 'High'})}
                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                     >
                       <option value="Low">Low</option>
@@ -160,17 +413,65 @@ const Admin = () => {
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <h3 className="text-lg font-semibold">{disease.name}</h3>
+                        {editingDiseaseId === disease.id ? (
+                          <Input 
+                            value={editedDisease?.name || ''}
+                            onChange={(e) => setEditedDisease({...editedDisease!, name: e.target.value})}
+                            className="text-lg font-semibold"
+                          />
+                        ) : (
+                          <h3 className="text-lg font-semibold">{disease.name}</h3>
+                        )}
                         <Badge variant={disease.severity === 'High' ? 'destructive' : disease.severity === 'Medium' ? 'default' : 'secondary'}>
-                          {disease.severity}
+                          {editingDiseaseId === disease.id ? (
+                            <select
+                              value={editedDisease?.severity}
+                              onChange={(e) => setEditedDisease({...editedDisease!, severity: e.target.value as 'Low' | 'Medium' | 'High'})}
+                              className="bg-transparent text-sm border-none focus:outline-none"
+                            >
+                              <option value="Low">Low</option>
+                              <option value="Medium">Medium</option>
+                              <option value="High">High</option>
+                            </select>
+                          ) : (
+                            disease.severity
+                          )}
                         </Badge>
                       </div>
-                      <Button variant="destructive" size="sm" onClick={() => deleteDisease(disease.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <div className="flex gap-2">
+                        {editingDiseaseId === disease.id ? (
+                          <Button variant="outline" size="sm" onClick={updateDisease}>
+                            <Save className="h-4 w-4" />
+                          </Button>
+                        ) : (
+                          <Button variant="ghost" size="sm" onClick={() => startEditDisease(disease)}>
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        )}
+                        <Button variant="destructive" size="sm" onClick={() => deleteDisease(disease.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
-                    <p className="text-sm text-muted-foreground mb-2">{disease.description}</p>
-                    <p className="text-sm"><strong>Treatment:</strong> {disease.treatment}</p>
+                    {editingDiseaseId === disease.id ? (
+                      <div className="space-y-2">
+                        <Textarea
+                          value={editedDisease?.description || ''}
+                          onChange={(e) => setEditedDisease({...editedDisease!, description: e.target.value})}
+                          className="text-sm text-muted-foreground"
+                        />
+                        <Textarea
+                          value={editedDisease?.treatment || ''}
+                          onChange={(e) => setEditedDisease({...editedDisease!, treatment: e.target.value})}
+                          className="text-sm"
+                        />
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-sm text-muted-foreground mb-2">{disease.description}</p>
+                        <p className="text-sm"><strong>Treatment:</strong> {disease.treatment}</p>
+                      </>
+                    )}
                   </CardContent>
                 </Card>
               ))}
@@ -230,14 +531,51 @@ const Admin = () => {
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <h3 className="text-lg font-semibold">{tip.title}</h3>
-                        <Badge variant="outline">{tip.category}</Badge>
+                        {editingTipId === tip.id ? (
+                          <Input 
+                            value={editedTip?.title || ''}
+                            onChange={(e) => setEditedTip({...editedTip!, title: e.target.value})}
+                            className="text-lg font-semibold"
+                          />
+                        ) : (
+                          <h3 className="text-lg font-semibold">{tip.title}</h3>
+                        )}
+                        <Badge variant="outline">
+                          {editingTipId === tip.id ? (
+                            <Input 
+                              value={editedTip?.category || ''}
+                              onChange={(e) => setEditedTip({...editedTip!, category: e.target.value})}
+                              className="bg-transparent text-sm border-none focus:outline-none"
+                            />
+                          ) : (
+                            tip.category
+                          )}
+                        </Badge>
                       </div>
-                      <Button variant="destructive" size="sm" onClick={() => deleteTip(tip.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <div className="flex gap-2">
+                        {editingTipId === tip.id ? (
+                          <Button variant="outline" size="sm" onClick={updateTip}>
+                            <Save className="h-4 w-4" />
+                          </Button>
+                        ) : (
+                          <Button variant="ghost" size="sm" onClick={() => startEditTip(tip)}>
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        )}
+                        <Button variant="destructive" size="sm" onClick={() => deleteTip(tip.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
-                    <p className="text-sm text-muted-foreground">{tip.content}</p>
+                    {editingTipId === tip.id ? (
+                      <Textarea 
+                        value={editedTip?.content || ''}
+                        onChange={(e) => setEditedTip({...editedTip!, content: e.target.value})}
+                        className="text-sm text-muted-foreground"
+                      />
+                    ) : (
+                      <p className="text-sm text-muted-foreground">{tip.content}</p>
+                    )}
                   </CardContent>
                 </Card>
               ))}
@@ -307,17 +645,61 @@ const Admin = () => {
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <h3 className="text-lg font-semibold">{expert.name}</h3>
-                        <Badge variant="secondary">{expert.specialization}</Badge>
+                        {editingExpertId === expert.id ? (
+                          <Input 
+                            value={editedExpert?.name || ''}
+                            onChange={(e) => setEditedExpert({...editedExpert!, name: e.target.value})}
+                            className="text-lg font-semibold"
+                          />
+                        ) : (
+                          <h3 className="text-lg font-semibold">{expert.name}</h3>
+                        )}
+                        <Badge variant="secondary">
+                          {editingExpertId === expert.id ? (
+                            <Input 
+                              value={editedExpert?.specialization || ''}
+                              onChange={(e) => setEditedExpert({...editedExpert!, specialization: e.target.value})}
+                              className="bg-transparent text-sm border-none focus:outline-none"
+                            />
+                          ) : (
+                            expert.specialization
+                          )}
+                        </Badge>
                       </div>
-                      <Button variant="destructive" size="sm" onClick={() => deleteExpert(expert.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <div className="flex gap-2">
+                        {editingExpertId === expert.id ? (
+                          <Button variant="outline" size="sm" onClick={updateExpert}>
+                            <Save className="h-4 w-4" />
+                          </Button>
+                        ) : (
+                          <Button variant="ghost" size="sm" onClick={() => startEditExpert(expert)}>
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        )}
+                        <Button variant="destructive" size="sm" onClick={() => deleteExpert(expert.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
-                    <div className="space-y-1 text-sm text-muted-foreground">
-                      <p><strong>Contact:</strong> {expert.contact}</p>
-                      <p><strong>Availability:</strong> {expert.availability}</p>
-                    </div>
+                    {editingExpertId === expert.id ? (
+                      <div className="space-y-1 text-sm text-muted-foreground">
+                        <Input 
+                          value={editedExpert?.contact || ''}
+                          onChange={(e) => setEditedExpert({...editedExpert!, contact: e.target.value})}
+                          placeholder="Contact"
+                        />
+                        <Input 
+                          value={editedExpert?.availability || ''}
+                          onChange={(e) => setEditedExpert({...editedExpert!, availability: e.target.value})}
+                          placeholder="Availability"
+                        />
+                      </div>
+                    ) : (
+                      <div className="space-y-1 text-sm text-muted-foreground">
+                        <p><strong>Contact:</strong> {expert.contact}</p>
+                        <p><strong>Availability:</strong> {expert.availability}</p>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}

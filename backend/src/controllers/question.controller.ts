@@ -14,7 +14,7 @@ export const getQuestions = async (req: Request, res: Response) => {
 // Submit a new question
 export const createQuestion = async (req: Request, res: Response) => {
   try {
-    // Note: In a real app, you'd associate this with a user ID
+    // TODO:
     const newQuestion = new Question({
       ...req.body,
       status: 'pending',

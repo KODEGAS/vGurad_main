@@ -2,6 +2,7 @@ export const translations = {
   // Header
   login: "Login",
   signUp: "Sign Up",
+  signOut: "Sign Out",
 
   // Hero Section
   heroTitle: "Protect Your Crops with AI",

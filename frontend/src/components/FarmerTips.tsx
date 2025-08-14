@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Calendar, Cloud, Thermometer, Droplets, Sun, Moon } from 'lucide-react';
+import { LoadingDots } from './LoadingDots';
 import { ScrollAnimatedSection } from '@/components/ScrollAnimatedSection';
 import { LucideIcon } from 'lucide-react';
 
@@ -55,7 +56,7 @@ export const FarmerTips: React.FC<FarmerTipsProps> = ({ onBack }) => {
   useEffect(() => {
     const fetchTips = async () => {
       try {
-        const response = await axios.get<Tip[]>('http://localhost:5000/api/tips');
+        const response = await axios.get<Tip[]>('http://localhost:5001/api/tips');
         setTips(response.data);
       } catch (err) {
         setError('Failed to fetch tips. Please check the backend server.');
@@ -74,7 +75,10 @@ export const FarmerTips: React.FC<FarmerTipsProps> = ({ onBack }) => {
     : tips.filter(tip => tip.category === selectedCategory);
 
   if (loading) {
-    return <div className="max-w-4xl mx-auto p-8 text-center text-gray-500">Loading farmer tips...</div>;
+    return (
+      <div className="max-w-4xl mx-auto p-8 text-center flex flex-col items-center justify-center gap-2">
+      </div>
+    );
   }
 
   if (error) {

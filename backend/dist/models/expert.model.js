@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Expert = void 0;
 const mongoose_1 = require("mongoose");
-// Define the Mongoose schema
 const expertSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     specialty: { type: String, required: true },

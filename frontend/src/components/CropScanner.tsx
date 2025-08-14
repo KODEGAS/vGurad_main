@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Camera, Upload, Scan, ArrowLeft, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/contexts/TranslationContext';
 
 const DEMO_IMAGE_URL = 'https://placehold.co/600x400/8B4513/FFFFFF?text=Infected+Crop';
@@ -33,7 +34,42 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
+  const [savingResult, setSavingResult] = useState(false);
   const { t } = useTranslation();
+  const { toast: customToast } = useToast();
+  // Save analysis result to backend
+  const handleSaveResults = async () => {
+    if (!analysisResult) return;
+    const userId = localStorage.getItem('user_id');
+    if (!userId) {
+      customToast({ title: 'Error', description: 'User not logged in', variant: 'destructive' });
+      return;
+    }
+    setSavingResult(true);
+    try {
+      const res = await fetch('http://localhost:5001/api/detection-results', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          disease: analysisResult.disease,
+          confidence: analysisResult.confidence,
+          description: analysisResult.description,
+          symptoms: analysisResult.symptoms,
+          causes: analysisResult.causes,
+          prevention: analysisResult.prevention,
+          medicines: analysisResult.medicines,
+        }),
+      });
+      if (!res.ok) throw new Error('Failed to save result');
+      customToast({ title: 'Success', description: 'Result saved to your profile!' });
+    } catch (error) {
+      console.error('Error saving result:', error);
+      customToast({ title: 'Error', description: 'Failed to save result', variant: 'destructive' });
+    } finally {
+      setSavingResult(false);
+    }
+  };
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -134,18 +170,28 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
     }
   };
 
-  const takeDemoPhoto = async () => {
+  // Capture photo from device camera
+  const captureFromCamera = async () => {
     try {
-      const response = await fetch(DEMO_IMAGE_URL);
-      const blob = await response.blob();
-      const file = new File([blob], 'demo-image.png', { type: blob.type });
-      setSelectedFile(file);
-      setSelectedImage(DEMO_IMAGE_URL);
-      setAnalysisResult(null);
-      toast.success('Demo photo captured!');
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.capture = 'environment';
+      input.onchange = (event: any) => {
+        const file = event.target.files?.[0];
+        if (file) {
+          setSelectedFile(file);
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            setSelectedImage(e.target?.result as string);
+            setAnalysisResult(null);
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+      input.click();
     } catch (error) {
-      console.error('Error fetching demo image:', error);
-      toast.error('Failed to load demo image.');
+      toast.error('Failed to capture photo from camera.');
     }
   };
 
@@ -192,9 +238,9 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
                   <Camera className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                   <p className="text-muted-foreground mb-4">{t('dragDrop')}</p>
                   <div className="flex flex-col gap-2">
-                    <Button onClick={takeDemoPhoto} variant="farmer">
+                    <Button onClick={captureFromCamera} variant="farmer">
                       <Camera className="h-4 w-4 mr-2" />
-                      {t('useDemoPhoto')}
+                      Capture from Camera
                     </Button>
                     <Button onClick={handleUploadButtonClick} variant="outline" className="w-full">
                       <Upload className="h-4 w-4 mr-2" />
@@ -296,8 +342,13 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
                     </div>
                   )}
 
-                  <Button variant="farmer" className="w-full">
-                    {t('saveResults')}
+                  <Button 
+                    variant="farmer" 
+                    className="w-full"
+                    onClick={handleSaveResults}
+                    disabled={savingResult}
+                  >
+                    {savingResult ? 'Saving...' : t('saveResults')}
                   </Button>
                 </div>
               )

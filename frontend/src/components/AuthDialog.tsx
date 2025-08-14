@@ -1,47 +1,110 @@
+// src/components/AuthDialog.tsx
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Separator } from './ui/separator';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { LogIn, UserPlus, Mail, Lock, User } from 'lucide-react';
+import { LogIn, UserPlus, Mail, Lock } from 'lucide-react';
+import { auth } from '../firebase';
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup
+} from 'firebase/auth';
+import { toast } from 'sonner';
 
 interface AuthDialogProps {
-  children: React.ReactNode;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-export const AuthDialog: React.FC<AuthDialogProps> = ({ children }) => {
+export const AuthDialog: React.FC<AuthDialogProps> = ({ open, onOpenChange }) => {
   const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    name: ''
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement actual authentication when Supabase is connected
-    console.log(isLogin ? 'Login attempt:' : 'Signup attempt:', formData);
+    setLoading(true);
+
+    try {
+      if (isLogin) {
+        await signInWithEmailAndPassword(auth, formData.email, formData.password);
+        toast.success('Successfully signed in!');
+      } else {
+        const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+        const user = userCredential.user;
+        const idToken = await user.getIdToken();
+        const response = await fetch('http://localhost:5001/api/auth/create-user-profile', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`,
+          },
+          body: JSON.stringify({ email: user.email }),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to create user profile on the backend.');
+        }
+        
+        toast.success('Account created successfully! Welcome.');
+      }
+      onOpenChange(false); 
+    } catch (error: any) {
+      console.error('Authentication error:', error);
+      toast.error(error.message || 'An unexpected error occurred.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleGoogleLogin = () => {
-    // TODO: Implement Google authentication when Supabase is connected
-    console.log('Google login attempt');
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      const idToken = await user.getIdToken();
+      
+      const response = await fetch('http://localhost:5001/api/auth/create-user-profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ email: user.email }),
+      });
+
+      if (response.ok || response.status === 409) {
+        toast.success('Signed in with Google!');
+      } else {
+        throw new Error('Failed to create or verify user profile.');
+      }
+      onOpenChange(false); 
+    } catch (error: any) {
+      console.error('Google sign-in error:', error);
+      toast.error(error.message || 'Google sign-in failed.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-center">
@@ -60,11 +123,11 @@ export const AuthDialog: React.FC<AuthDialogProps> = ({ children }) => {
           </CardHeader>
           
           <CardContent className="space-y-4">
-            {/* Google Login Button */}
             <Button 
               variant="outline" 
               className="w-full" 
               onClick={handleGoogleLogin}
+              disabled={loading}
             >
               <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
                 <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -86,27 +149,7 @@ export const AuthDialog: React.FC<AuthDialogProps> = ({ children }) => {
               </div>
             </div>
 
-            {/* Email/Password Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
-              {!isLogin && (
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="name"
-                      name="name"
-                      type="text"
-                      placeholder="Enter your full name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className="pl-10"
-                      required={!isLogin}
-                    />
-                  </div>
-                </div>
-              )}
-              
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
@@ -141,17 +184,21 @@ export const AuthDialog: React.FC<AuthDialogProps> = ({ children }) => {
                 </div>
               </div>
               
-              <Button type="submit" className="w-full" variant="default">
-                {isLogin ? (
-                  <>
-                    <LogIn className="w-4 h-4 mr-2" />
-                    Sign In
-                  </>
+              <Button type="submit" className="w-full" variant="default" disabled={loading}>
+                {loading ? (
+                  isLogin ? 'Signing In...' : 'Creating...'
                 ) : (
-                  <>
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    Create Account
-                  </>
+                  isLogin ? (
+                    <>
+                      <LogIn className="w-4 h-4 mr-2" />
+                      Sign In
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Create Account
+                    </>
+                  )
                 )}
               </Button>
             </form>
@@ -161,6 +208,7 @@ export const AuthDialog: React.FC<AuthDialogProps> = ({ children }) => {
                 variant="link"
                 className="text-sm"
                 onClick={() => setIsLogin(!isLogin)}
+                disabled={loading}
               >
                 {isLogin 
                   ? "Don't have an account? Sign up" 

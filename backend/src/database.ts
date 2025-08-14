@@ -16,7 +16,6 @@ const connectDB = async () => {
       throw new Error("GEMINI_API_KEY is not defined in the environment variables. Please check your .env file.");
     }
 
-    // The `useNewUrlParser`, `useUnifiedTopology` options are now defaults in recent Mongoose versions.
     await mongoose.connect(mongoUri);
     console.log('✅ MongoDB cloud database connected successfully!');
   } catch (error) {

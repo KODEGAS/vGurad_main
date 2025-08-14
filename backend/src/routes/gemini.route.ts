@@ -6,7 +6,7 @@ if (!API_KEY) {
 }
 const genAI = new GoogleGenerativeAI(API_KEY);
 
-const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 export default async function handler(req: { method: string; body: { prompt: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { message?: string; text?: string; }): void; new(): any; }; }; }) {
   if (req.method !== 'POST') {

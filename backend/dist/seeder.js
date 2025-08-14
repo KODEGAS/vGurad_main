@@ -18,6 +18,65 @@ const disease_model_1 = require("./models/disease.model");
 const tip_model_1 = require("./models/tip.model");
 const expert_model_1 = require("./models/expert.model");
 const question_model_1 = require("./models/question.model");
+const product_model_1 = require("./models/product.model");
+const mockProducts = [
+    {
+        name: 'Organic Neem Oil',
+        description: 'Natural pesticide for a variety of crops.',
+        category: 'organic',
+        price: 1200,
+        currency: 'LKR',
+        dosage_instructions: 'Mix 5ml per liter of water and spray weekly.',
+        seller_name: 'GreenGrow Ltd.',
+        seller_contact: '+94771234567',
+        seller_location: 'Colombo',
+        image_url: '',
+        stock_quantity: 50,
+        is_approved: true,
+    },
+    {
+        name: 'NPK Fertilizer 20-20-20',
+        description: 'Balanced fertilizer for all crops.',
+        category: 'fertilizers',
+        price: 950,
+        currency: 'LKR',
+        dosage_instructions: 'Apply 50g per plant every 2 weeks.',
+        seller_name: 'AgroMart',
+        seller_contact: '+94772345678',
+        seller_location: 'Kandy',
+        image_url: '',
+        stock_quantity: 100,
+        is_approved: true,
+    },
+    {
+        name: 'Copper Oxychloride',
+        description: 'Fungicide for disease control.',
+        category: 'pesticides',
+        price: 800,
+        currency: 'LKR',
+        dosage_instructions: 'Mix 2g per liter of water and spray as needed.',
+        seller_name: 'CropCare',
+        seller_contact: '+94773456789',
+        seller_location: 'Galle',
+        image_url: '',
+        stock_quantity: 75,
+        is_approved: true,
+    },
+    {
+        name: 'Hand Trowel',
+        description: 'Durable gardening tool for planting and transplanting.',
+        category: 'tools',
+        price: 350,
+        currency: 'LKR',
+        dosage_instructions: '',
+        seller_name: 'ToolHouse',
+        seller_contact: '+94774567890',
+        seller_location: 'Matara',
+        image_url: '',
+        stock_quantity: 200,
+        is_approved: true,
+    },
+];
 const mockDiseases = [
     {
         name: 'Leaf Blight',
@@ -142,11 +201,13 @@ const seedDB = () => __awaiter(void 0, void 0, void 0, function* () {
         yield tip_model_1.Tip.deleteMany({});
         yield expert_model_1.Expert.deleteMany({});
         yield question_model_1.Question.deleteMany({});
+        yield product_model_1.Product.deleteMany({});
         console.log('Populating the database with mock data...');
         yield disease_model_1.Disease.insertMany(mockDiseases);
         yield tip_model_1.Tip.insertMany(mockTips);
         yield expert_model_1.Expert.insertMany(mockExperts);
         yield question_model_1.Question.insertMany(mockQuestions);
+        yield product_model_1.Product.insertMany(mockProducts);
         console.log('Database seeded successfully!');
     }
     catch (error) {
