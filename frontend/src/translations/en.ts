@@ -8,6 +8,17 @@ export const translations = {
   welcome: "Welcome",
   profile: "Profile",
   settings: "Settings",
+  theme: "Theme",
+  lightMode: "Light Mode",
+  darkMode: "Dark Mode",
+  
+  // Settings
+  general: "General",
+  account: "Account",
+  notifications: "Notifications",
+  privacy: "Privacy & Security",
+  appearance: "Appearance",
+  dataStorage: "Data & Storage",
 
   // Hero Section
   heroTitle: "Protect Your Crops with AI",

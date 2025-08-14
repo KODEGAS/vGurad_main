@@ -8,6 +8,17 @@ export const translations = {
   welcome: "வரவேற்கிறோம்",
   profile: "சுயவிவரம்",
   settings: "அமைப்புகள்",
+  theme: "தீம்",
+  lightMode: "ஒளி முறை",
+  darkMode: "இருண்ட முறை",
+  
+  // Settings
+  general: "பொது",
+  account: "கணக்கு",
+  notifications: "அறிவிப்புகள்",
+  privacy: "தனியுரிமை மற்றும் பாதுகாப்பு",
+  appearance: "தோற்றம்",
+  dataStorage: "தரவு மற்றும் சேமிப்பு",
 
   // Hero Section
   heroTitle: "AI உடன் உங்கள் பயிர்களைப் பாதுகாக்கவும்",

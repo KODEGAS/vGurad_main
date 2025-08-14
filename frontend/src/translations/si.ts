@@ -8,6 +8,17 @@ export const translations = {
   welcome: "ආයුබෝවන්",
   profile: "පැතිකඩ",
   settings: "සැකසුම්",
+  theme: "තේමාව",
+  lightMode: "ආලෝක මාදිලිය",
+  darkMode: "අඳුරු මාදිලිය",
+  
+  // Settings
+  general: "සාමාන්‍ය",
+  account: "ගිණුම",
+  notifications: "දැනුම්දීම්",
+  privacy: "පෞද්ගලිකත්වය සහ ආරක්ෂාව",
+  appearance: "පෙනුම",
+  dataStorage: "දත්ත සහ ගබඩා කිරීම",
 
   // Hero Section
   heroTitle: "AI සමඟ ඔබේ බෝග ආරක්ෂා කරන්න",

@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { AuthDialog } from './AuthDialog';
 import { UserProfile } from './UserProfile';
 import { AuthLoading } from './AuthLoading';
+import { ThemeToggle } from './ui/theme-toggle';
 import { LogIn, UserPlus, Home, Menu, X } from 'lucide-react';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { Link, useLocation } from 'react-router-dom';
@@ -64,6 +65,7 @@ export const Header: React.FC = () => {
 
           {/* Desktop right side */}
           <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle variant="ghost" className="text-white hover:bg-white/20" />
             <LanguageSelector />
             {isLoading ? (
               <AuthLoading />
@@ -89,6 +91,7 @@ export const Header: React.FC = () => {
 
           {/* Mobile menu button and language selector */}
           <div className="flex md:hidden items-center gap-2">
+            <ThemeToggle variant="ghost" size="sm" className="text-white hover:bg-white/20" />
             <LanguageSelector />
             <Button
               variant="ghost"

@@ -75,6 +75,10 @@ export const UserProfile: React.FC<UserProfileProps> = ({ user, userProfile, isM
         navigate('/profile');
     }, [navigate]);
 
+    const handleSettingsClick = useCallback(() => {
+        navigate('/settings');
+    }, [navigate]);
+
     // Mobile version renders as a simple button
     if (isMobile) {
         return (
@@ -109,6 +113,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ user, userProfile, isM
                     <Button
                         variant="ghost"
                         size="sm"
+                        onClick={handleSettingsClick}
                         className="w-full text-white hover:bg-white/20 justify-start"
                     >
                         <Settings className="w-4 h-4 mr-3" />
@@ -163,7 +168,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ user, userProfile, isM
                     <User className="mr-2 h-4 w-4" />
                     <span>{t('profile')}</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSettingsClick}>
                     <Settings className="mr-2 h-4 w-4" />
                     <span>{t('settings')}</span>
                 </DropdownMenuItem>
