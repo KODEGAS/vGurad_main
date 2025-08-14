@@ -3,6 +3,11 @@ export const translations = {
   login: "Login",
   signUp: "Sign Up",
   signOut: "Sign Out",
+  logout: "Logout",
+  loggingOut: "Logging out...",
+  welcome: "Welcome",
+  profile: "Profile",
+  settings: "Settings",
 
   // Hero Section
   heroTitle: "Protect Your Crops with AI",

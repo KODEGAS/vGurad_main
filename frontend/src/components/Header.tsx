@@ -2,14 +2,18 @@ import React, { useState } from 'react';
 import { LanguageSelector } from './LanguageSelector';
 import { Button } from './ui/button';
 import { AuthDialog } from './AuthDialog';
+import { UserProfile } from './UserProfile';
+import { AuthLoading } from './AuthLoading';
 import { LogIn, UserPlus, Home, Menu, X } from 'lucide-react';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuthContext } from '@/contexts/AuthContext';
 
 export const Header: React.FC = () => {
   const { t } = useTranslation();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, userProfile, isLoading } = useAuthContext();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -61,20 +65,26 @@ export const Header: React.FC = () => {
           {/* Desktop right side */}
           <div className="hidden md:flex items-center gap-3">
             <LanguageSelector />
-            <div className="flex gap-2">
-              <AuthDialog>
-                <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
-                  <LogIn className="w-4 h-4 mr-2" />
-                  {t('login')}
-                </Button>
-              </AuthDialog>
-              <AuthDialog>
-                <Button variant="secondary" size="sm">
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  {t('signUp')}
-                </Button>
-              </AuthDialog>
-            </div>
+            {isLoading ? (
+              <AuthLoading />
+            ) : user ? (
+              <UserProfile user={user} userProfile={userProfile} />
+            ) : (
+              <div className="flex gap-2">
+                <AuthDialog>
+                  <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+                    <LogIn className="w-4 h-4 mr-2" />
+                    {t('login')}
+                  </Button>
+                </AuthDialog>
+                <AuthDialog>
+                  <Button variant="secondary" size="sm">
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    {t('signUp')}
+                  </Button>
+                </AuthDialog>
+              </div>
+            )}
           </div>
 
           {/* Mobile menu button and language selector */}
@@ -150,36 +160,48 @@ export const Header: React.FC = () => {
 
               {/* Mobile auth buttons with enhanced animations */}
               <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-white/20">
-                <AuthDialog>
-                  <div
-                    className="animate-in slide-in-from-left-5 duration-300"
-                    style={{ animationDelay: '200ms' }}
-                  >
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20 justify-start transition-all duration-200 hover:translate-x-1 hover:shadow-lg backdrop-blur-sm"
-                    >
-                      <LogIn className="w-4 h-4 mr-3 transition-transform duration-200 group-hover:scale-110" />
-                      {t('login')}
-                    </Button>
+                {isLoading ? (
+                  <div className="animate-in slide-in-from-left-5 duration-300">
+                    <AuthLoading isMobile={true} />
                   </div>
-                </AuthDialog>
-                <AuthDialog>
-                  <div
-                    className="animate-in slide-in-from-left-5 duration-300"
-                    style={{ animationDelay: '300ms' }}
-                  >
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      className="w-full justify-start transition-all duration-200 hover:translate-x-1 hover:shadow-lg"
-                    >
-                      <UserPlus className="w-4 h-4 mr-3 transition-transform duration-200 group-hover:scale-110" />
-                      {t('signUp')}
-                    </Button>
+                ) : user ? (
+                  <div className="animate-in slide-in-from-left-5 duration-300">
+                    <UserProfile user={user} userProfile={userProfile} isMobile={true} />
                   </div>
-                </AuthDialog>
+                ) : (
+                  <>
+                    <AuthDialog>
+                      <div
+                        className="animate-in slide-in-from-left-5 duration-300"
+                        style={{ animationDelay: '200ms' }}
+                      >
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20 justify-start transition-all duration-200 hover:translate-x-1 hover:shadow-lg backdrop-blur-sm"
+                        >
+                          <LogIn className="w-4 h-4 mr-3 transition-transform duration-200 group-hover:scale-110" />
+                          {t('login')}
+                        </Button>
+                      </div>
+                    </AuthDialog>
+                    <AuthDialog>
+                      <div
+                        className="animate-in slide-in-from-left-5 duration-300"
+                        style={{ animationDelay: '300ms' }}
+                      >
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          className="w-full justify-start transition-all duration-200 hover:translate-x-1 hover:shadow-lg"
+                        >
+                          <UserPlus className="w-4 h-4 mr-3 transition-transform duration-200 group-hover:scale-110" />
+                          {t('signUp')}
+                        </Button>
+                      </div>
+                    </AuthDialog>
+                  </>
+                )}
               </div>
             </nav>
           </div>

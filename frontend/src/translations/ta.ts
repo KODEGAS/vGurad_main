@@ -2,6 +2,12 @@ export const translations = {
   // Header
   login: "உள்நுழைய",
   signUp: "பதிவு செய்யுங்கள்",
+  signOut: "வெளியேறு",
+  logout: "வெளியேறு",
+  loggingOut: "வெளியேறுகிறது...",
+  welcome: "வரவேற்கிறோம்",
+  profile: "சுயவிவரம்",
+  settings: "அமைப்புகள்",
 
   // Hero Section
   heroTitle: "AI உடன் உங்கள் பயிர்களைப் பாதுகாக்கவும்",

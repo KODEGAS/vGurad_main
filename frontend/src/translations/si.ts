@@ -2,6 +2,12 @@ export const translations = {
   // Header
   login: "ප්‍රවේශ වන්න",
   signUp: "ලියාපදිංචි වන්න",
+  signOut: "ප්‍රවේශයෙන් ඉවත් වන්න",
+  logout: "ප්‍රවේශයෙන් ඉවත් වන්න",
+  loggingOut: "ප්‍රවේශයෙන් ඉවත් වෙමින්...",
+  welcome: "ආයුබෝවන්",
+  profile: "පැතිකඩ",
+  settings: "සැකසුම්",
 
   // Hero Section
   heroTitle: "AI සමඟ ඔබේ බෝග ආරක්ෂා කරන්න",
