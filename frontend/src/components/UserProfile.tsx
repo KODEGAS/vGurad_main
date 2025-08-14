@@ -46,6 +46,11 @@ export const UserProfile: React.FC<UserProfileProps> = ({ user, userProfile, isM
             return 'User';
         };
 
+        const getPhotoURL = () => {
+            // Prioritize MongoDB stored photoURL, then Firebase photoURL
+            return userProfile?.photoURL || user?.photoURL || undefined;
+        };
+
         const fullName = getDisplayName();
         const firstName = fullName.split(' ')[0];
         const initials = fullName
@@ -55,7 +60,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ user, userProfile, isM
             .toUpperCase()
             .substring(0, 2);
 
-        return { fullName, firstName, initials };
+        return { fullName, firstName, initials, photoURL: getPhotoURL() };
     }, [user, userProfile]);
 
     const handleLogout = useCallback(async () => {
