@@ -25,6 +25,7 @@ interface UserProfileProps {
         displayName?: string;
         firstName?: string;
         full_name?: string;
+        photoURL?: string;
     } | null;
     isMobile?: boolean;
 }
