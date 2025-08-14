@@ -56,7 +56,7 @@ const verifyAndFetchUser = async (req: any, res: any, next: any) => {
 // Route to create user profile after Firebase sign-up
 app.post('/api/auth/create-user-profile', verifyAndFetchUser, async (req: any, res) => {
   try {
-    const { email } = req.body;
+    const { email, displayName, photoURL } = req.body;
     const firebaseUid = req.user.uid;
 
     const existingUser = await userModel.findOne({ firebaseUid });
@@ -68,6 +68,8 @@ app.post('/api/auth/create-user-profile', verifyAndFetchUser, async (req: any, r
     const newUser = new userModel({
       firebaseUid,
       email,
+      displayName: displayName || '',
+      photoURL: photoURL || '',
       role: 'user', // Assign a default role
       createdAt: new Date(),
     });
