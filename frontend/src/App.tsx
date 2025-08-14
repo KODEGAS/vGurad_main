@@ -8,8 +8,7 @@ import Index from "./pages/Index";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute"; 
-import SavedResultsPage from "./pages/saved-results";
-import SavedNotesPage from "./pages/saved-notes";
+
 
 const queryClient = new QueryClient();
 
