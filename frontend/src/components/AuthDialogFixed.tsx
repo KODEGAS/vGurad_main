@@ -92,7 +92,11 @@ export const AuthDialog: React.FC<AuthDialogProps> = ({ children, open: controll
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${idToken}`,
                 },
-                body: JSON.stringify({ email: user.email }),
+                body: JSON.stringify({ 
+                    email: user.email,
+                    displayName: user.displayName,
+                    photoURL: user.photoURL
+                }),
             });
 
             if (response.ok || response.status === 409) {
