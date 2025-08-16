@@ -10,9 +10,13 @@ vGuard is a full-stack application designed to help farmers and agricultural pro
 -   **Disease Database:** A comprehensive and searchable database of crop diseases with detailed information.
 -   **Expert Help:** Connect with agricultural experts to get personalized advice and solutions.
 -   **Farming Tips:** A collection of tips and best practices for sustainable and effective farming.
+-   **Treatment Calendar:** Schedule and manage recommended treatments to stay on top of crop health.
+-   **Marketplace:** Discover and purchase essential agricultural products and tools directly through the app.
+-   **Admin Dashboard:** A dedicated dashboard for administrators to manage diseases, farming tips, and expert profiles...
 -   **Chat Bot:** AI power chat bot for get instance answers.
 -   **Multi-language Support:** The user interface is available in multiple languages to cater to a diverse user base.
 -   **3D Interactive Models:** Engaging 3D models to visualize and understand crop-related concepts.
+
 
 ## 🛠️ Tech Stack
 
