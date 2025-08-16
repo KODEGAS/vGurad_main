@@ -23,6 +23,8 @@ const question_routes_1 = __importDefault(require("./routes/question.routes"));
 const treatment_routes_1 = __importDefault(require("./routes/treatment.routes"));
 const product_routes_1 = __importDefault(require("./routes/product.routes"));
 const gemini_proxy_route_1 = __importDefault(require("./routes/gemini-proxy.route"));
+const detectionResult_routes_1 = __importDefault(require("./routes/detectionResult.routes"));
+const note_routes_1 = __importDefault(require("./routes/note.routes"));
 const firebase_admin_1 = require("./firebase-admin");
 const User_1 = require("./models/User");
 dotenv_1.default.config();
@@ -125,6 +127,8 @@ app.use('/api/experts', expert_routes_1.default);
 app.use('/api/questions', question_routes_1.default);
 app.use('/api/treatments', treatment_routes_1.default);
 app.use('/api/gemini-proxy', gemini_proxy_route_1.default);
+app.use('/api/detection-results', detectionResult_routes_1.default);
+app.use('/api/notes', note_routes_1.default);
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
