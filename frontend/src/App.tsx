@@ -8,8 +8,7 @@ import Index from "./pages/Index";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute"; 
-import SavedResultsPage from "./pages/saved-results";
-import SavedNotesPage from "./pages/saved-notes";
+import MarketPrices from "./pages/MarketPrices";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +32,7 @@ const App = () => (
               }
             />
             {/* Catch-all route for 404 pages */}
+            <Route path="/market-prices" element={<MarketPrices />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
