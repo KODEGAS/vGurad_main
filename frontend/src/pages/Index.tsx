@@ -52,11 +52,11 @@ const Index = () => {
 
   const renderCurrentPage = () => {
     if (isPageLoading) {
-       return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
+      return (
+        <div className="flex items-center justify-center p-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      );
     }
 
     switch (currentPage) {
@@ -93,7 +93,7 @@ const Index = () => {
             <ChatScreen onBack={() => handlePageChange('help')} question={chatQuestion} />
           </Suspense>
         );
-        case 'calendar':
+      case 'calendar':
         return (
           <Suspense fallback={<SectionLoadingSpinner text="Loading treatment calendar..." />}>
             <TreatmentCalendar />
@@ -164,13 +164,13 @@ const Index = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Card className="bg-gradient-to-br from-success/10 to-success/5 border-success/20 hover-lift animate-stagger-1">
                 <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-success mb-1 animate-float">50+</div>
+                  <div className="text-2xl font-bold text-success mb-1 animate-float">10+</div>
                   <div className="text-xs text-muted-foreground">{t('diseasesDetected')}</div>
                 </CardContent>
               </Card>
               <Card className="bg-gradient-to-br from-crop-primary/10 to-crop-primary/5 border-crop-primary/20 hover-lift animate-stagger-2">
                 <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-crop-primary mb-1 animate-float" style={{ animationDelay: '0.5s' }}>1000+</div>
+                  <div className="text-2xl font-bold text-crop-primary mb-1 animate-float" style={{ animationDelay: '0.5s' }}>150+</div>
                   <div className="text-xs text-muted-foreground">{t('farmersHelped')}</div>
                 </CardContent>
               </Card>
@@ -182,7 +182,7 @@ const Index = () => {
               </Card>
               <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 hover-lift animate-stagger-4">
                 <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-primary mb-1 animate-float" style={{ animationDelay: '1.5s' }}>95%</div>
+                  <div className="text-2xl font-bold text-primary mb-1 animate-float" style={{ animationDelay: '1.5s' }}>90%*</div>
                   <div className="text-xs text-muted-foreground">{t('accuracyRate')}</div>
                 </CardContent>
               </Card>
@@ -256,7 +256,7 @@ const Index = () => {
               handlePageChange('chat');
             }} />
           </div>
-        <Separator className="my-8 bg-white/20" />
+          <Separator className="my-8 bg-white/20" />
         </>
       )}
 

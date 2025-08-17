@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Camera, Upload, Scan, ArrowLeft, Loader2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Camera, Upload, Scan, ArrowLeft, Loader2, X, Package, DollarSign, Clock, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { auth } from '../firebase';
@@ -14,8 +15,18 @@ interface CropScannerProps {
 
 interface Medicine {
   name: string;
-  application_rate: string;
-  frequency: string;
+  brand?: string;
+  type?: string;
+  active_ingredient?: string;
+  pack_size?: string;
+  price?: string;
+  image_url?: string;
+  application_rate?: string;
+  method?: string;
+  frequency?: string;
+  availability?: string;
+  priority?: number;
+  note?: string;
 }
 
 interface AnalysisResult {
@@ -33,6 +44,8 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
+  const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
+  const [isMedicineModalOpen, setIsMedicineModalOpen] = useState(false);
   const { t } = useTranslation();
   const { toast } = useToast();
 
@@ -173,6 +186,16 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
         variant: "destructive",
       });
     }
+  };
+
+  const handleMedicineClick = (medicine: Medicine) => {
+    setSelectedMedicine(medicine);
+    setIsMedicineModalOpen(true);
+  };
+
+  const closeMedicineModal = () => {
+    setIsMedicineModalOpen(false);
+    setSelectedMedicine(null);
   };
 
   const saveResults = () => {
@@ -373,10 +396,57 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
                       <h4 className="font-semibold mb-2">{t('recommendedMedicines')}:</h4>
                       <div className="space-y-3">
                         {analysisResult.medicines.map((medicine: Medicine, index: number) => (
-                          <div key={index} className="bg-success/10 p-3 rounded-lg border border-success/20">
-                            <h5 className="font-medium text-success">{medicine.name}</h5>
-                            <p className="text-sm text-muted-foreground">{t('dosage')}: {medicine.application_rate}</p>
-                            <p className="text-sm text-muted-foreground">{t('application')}: {medicine.frequency}</p>
+                          <div
+                            key={index}
+                            className="bg-success/10 p-3 rounded-lg border border-success/20 cursor-pointer hover:bg-success/20 transition-colors"
+                            onClick={() => handleMedicineClick(medicine)}
+                          >
+                            <div className="flex justify-between items-start">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  {medicine.priority === 1 && (
+                                    <div className="w-5 h-5 flex-shrink-0">
+                                      <svg width="20px" height="20px" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" preserveAspectRatio="xMidYMid meet">
+                                        <path fill="#D1D1D1" d="M243.207,80.209c-2.648-3.627-6.917-5.707-11.707-5.707c-1.749,0-3.566,0.273-5.4,0.813l-37.591,11.046
+	c-9.815,2.885-16.771,12.763-16.178,22.977l1.097,18.824h-10.914l5.639-19.97c2.273-8.05,0.699-19.037-3.744-26.126l-22.821-36.404
+	c-3.259-5.199-8.28-8.181-13.776-8.181c-5.505,0-10.53,2.99-13.787,8.203L91.294,82.07c-4.427,7.087-5.998,18.069-3.734,26.114
+	l5.621,19.978H82.376l1.092-18.824c0.592-10.21-6.359-20.09-16.167-22.983L29.908,75.327c-1.84-0.542-3.663-0.818-5.416-0.818
+	c-4.787,0-9.052,2.078-11.702,5.702c-2.874,3.93-3.514,9.058-1.802,14.44l28.557,89.794c1.099,3.455,3.109,6.593,5.694,9.188
+	c-4.013,3.059-6.489,7.374-6.489,12.242c0,9.48,9.346,16.907,21.277,16.907h131.946c11.932,0,21.276-7.427,21.276-16.907
+	c0-4.012-1.688-7.646-4.521-10.516c3.504-2.866,6.25-6.643,7.608-10.902l28.661-89.8C246.717,89.273,246.081,84.143,243.207,80.209z"/>
+                                        <g>
+                                          <path fill="#464646" d="M191.973,198.968H60.027c-6.202,0-11.277,3.108-11.277,6.907s5.074,6.907,11.277,6.907h131.946
+		c6.202,0,11.277-3.108,11.277-6.907S198.175,198.968,191.973,198.968z"/>
+                                          <path fill="#464646" d="M228.918,84.91l-37.59,11.046c-5.277,1.551-9.333,7.312-9.014,12.802l1.129,19.421
+		c0.32,5.491-3.918,9.983-9.418,9.983h-14.728c-5.5,0-8.776-4.33-7.282-9.623l6.512-23.065c1.496-5.293,0.328-13.437-2.594-18.096
+		l-22.82-36.404c-2.922-4.66-7.695-4.656-10.609,0.009L99.775,87.368c-2.914,4.665-4.079,12.813-2.59,18.108l6.488,23.059
+		c1.489,5.295-1.792,9.627-7.292,9.627H81.779c-5.5,0-9.739-4.492-9.421-9.983l1.126-19.42c0.318-5.491-3.737-11.256-9.013-12.812
+		L27.079,84.919c-5.275-1.556-8.229,1.46-6.562,6.701l28.557,89.794c1.667,5.24,7.53,9.529,13.03,9.529h55.697c5.5,0,14.5,0,20,0
+		h55.971c5.5,0,11.367-4.287,13.039-9.526c7.166-22.45,28.662-89.8,28.662-89.8C237.145,86.377,234.195,83.359,228.918,84.91z
+		 M84.167,179.223c-5.615,0-10.167-4.552-10.167-10.166c0-5.615,4.552-10.168,10.167-10.168c5.615,0,10.167,4.553,10.167,10.168
+		C94.334,174.671,89.782,179.223,84.167,179.223z M128,176.572l-16-16.001l15.999-16L144,160.572L128,176.572z M171.834,178.891
+		c-5.432,0-9.834-4.402-9.834-9.834c0-5.433,4.402-9.834,9.834-9.834s9.834,4.401,9.834,9.834
+		C181.668,174.488,177.266,178.891,171.834,178.891z"/>
+                                        </g>
+                                      </svg>
+                                    </div>
+                                  )}
+                                  <h5 className="font-medium text-success">{medicine.name}</h5>
+                                </div>
+                                {medicine.brand && (
+                                  <p className="text-xs text-muted-foreground">Brand: {medicine.brand}</p>
+                                )}
+                                {medicine.application_rate && (
+                                  <p className="text-sm text-muted-foreground">{t('dosage')}: {medicine.application_rate}</p>
+                                )}
+                                {medicine.frequency && (
+                                  <p className="text-sm text-muted-foreground">{t('application')}: {medicine.frequency}</p>
+                                )}
+                              </div>
+                              <div className="text-xs text-muted-foreground ml-2">
+                                Click for details →
+                              </div>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -396,6 +466,126 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Medicine Details Modal */}
+      <Dialog open={isMedicineModalOpen} onOpenChange={setIsMedicineModalOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Package className="h-5 w-5 text-success" />
+              Medicine Details
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedMedicine && (
+            <div className="space-y-6">
+              {/* Header with Image */}
+              <div className="flex gap-4">
+                {selectedMedicine.image_url && (
+                  <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                    <img
+                      src={selectedMedicine.image_url}
+                      alt={selectedMedicine.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-success">{selectedMedicine.name}</h3>
+                  {selectedMedicine.brand && (
+                    <p className="text-sm text-muted-foreground">Brand: {selectedMedicine.brand}</p>
+                  )}
+                  {selectedMedicine.type && (
+                    <p className="text-sm text-muted-foreground">Type: {selectedMedicine.type}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Product Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {selectedMedicine.active_ingredient && (
+                  <div className="space-y-1">
+                    <h4 className="font-semibold text-sm">Active Ingredient</h4>
+                    <p className="text-sm text-muted-foreground">{selectedMedicine.active_ingredient}</p>
+                  </div>
+                )}
+
+                {selectedMedicine.pack_size && (
+                  <div className="space-y-1">
+                    <h4 className="font-semibold text-sm flex items-center gap-1">
+                      <Package className="h-4 w-4" />
+                      Pack Size
+                    </h4>
+                    <p className="text-sm text-muted-foreground">{selectedMedicine.pack_size}</p>
+                  </div>
+                )}
+
+                {selectedMedicine.price && (
+                  <div className="space-y-1">
+                    <h4 className="font-semibold text-sm flex items-center gap-1">
+                      <DollarSign className="h-4 w-4" />
+                      Price
+                    </h4>
+                    <p className="text-sm text-muted-foreground">{selectedMedicine.price}</p>
+                  </div>
+                )}
+
+                {selectedMedicine.availability && (
+                  <div className="space-y-1">
+                    <h4 className="font-semibold text-sm">Availability</h4>
+                    <p className="text-sm text-muted-foreground">{selectedMedicine.availability}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Application Details */}
+              <div className="space-y-4">
+                <h4 className="font-semibold text-lg border-b pb-2">Application Details</h4>
+
+                {selectedMedicine.application_rate && (
+                  <div className="space-y-1">
+                    <h5 className="font-medium text-sm">Dosage</h5>
+                    <p className="text-sm text-muted-foreground">{selectedMedicine.application_rate}</p>
+                  </div>
+                )}
+
+                {selectedMedicine.method && (
+                  <div className="space-y-1">
+                    <h5 className="font-medium text-sm">Method</h5>
+                    <p className="text-sm text-muted-foreground">{selectedMedicine.method}</p>
+                  </div>
+                )}
+
+                {selectedMedicine.frequency && (
+                  <div className="space-y-1">
+                    <h5 className="font-medium text-sm flex items-center gap-1">
+                      <Clock className="h-4 w-4" />
+                      Frequency
+                    </h5>
+                    <p className="text-sm text-muted-foreground">{selectedMedicine.frequency}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Additional Notes */}
+              {selectedMedicine.note && (
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-sm flex items-center gap-1">
+                    <Info className="h-4 w-4" />
+                    Important Notes
+                  </h4>
+                  <div className="bg-warning/10 p-3 rounded-lg border border-warning/20">
+                    <p className="text-sm text-muted-foreground">{selectedMedicine.note}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
