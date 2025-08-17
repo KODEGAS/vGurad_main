@@ -36,9 +36,12 @@ const firebaseAdmin = firebase_admin_1.admin;
 // Connect to the database
 (0, database_1.default)();
 // Middleware
-if (process.env.NODE_ENV === 'dev') {
-    app.use((0, cors_1.default)());
-}
+app.use((0, cors_1.default)({
+    origin: true, // Allow all origins in development
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express_1.default.json());
 // User role management routes
 app.use('/api/users', user_routes_1.default);
