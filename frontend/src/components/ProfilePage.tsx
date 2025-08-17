@@ -574,9 +574,9 @@ export const ProfilePage = () => {
                       <p className="text-sm text-muted-foreground mb-4">
                         Get access to treatment calendar, expert consultations, and advanced analytics
                       </p>
-                      <Button onClick={upgradeToP0ro} className="flex items-center gap-2">
+                      <Button onClick={upgradeToP0ro} className="flex items-center gap-2 text-xs sm:text-sm px-3 sm:px-4 w-full sm:w-auto">
                         <TrendingUp className="w-4 h-4" />
-                        Upgrade Now - LKR 1,500/month
+                        <span className="truncate">Upgrade Now - LKR 1,500/month</span>
                       </Button>
                     </div>
                   </div>
