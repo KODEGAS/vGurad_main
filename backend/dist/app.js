@@ -25,8 +25,10 @@ const product_routes_1 = __importDefault(require("./routes/product.routes"));
 const gemini_proxy_route_1 = __importDefault(require("./routes/gemini-proxy.route"));
 const detectionResult_routes_1 = __importDefault(require("./routes/detectionResult.routes"));
 const note_routes_1 = __importDefault(require("./routes/note.routes"));
+const weatherAlert_routes_1 = __importDefault(require("./routes/weatherAlert.routes"));
 const firebase_admin_1 = require("./firebase-admin");
 const User_1 = require("./models/User");
+const user_routes_1 = __importDefault(require("./routes/user.routes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 5001;
@@ -38,6 +40,8 @@ if (process.env.NODE_ENV === 'dev') {
     app.use((0, cors_1.default)());
 }
 app.use(express_1.default.json());
+// User role management routes
+app.use('/api/users', user_routes_1.default);
 // Middleware to verify Firebase ID token and fetch user profile
 const verifyAndFetchUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const authHeader = req.headers.authorization;
@@ -129,6 +133,7 @@ app.use('/api/treatments', treatment_routes_1.default);
 app.use('/api/gemini-proxy', gemini_proxy_route_1.default);
 app.use('/api/detection-results', detectionResult_routes_1.default);
 app.use('/api/notes', note_routes_1.default);
+app.use('/api/weather-alerts', weatherAlert_routes_1.default);
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

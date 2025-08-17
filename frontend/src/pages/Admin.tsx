@@ -32,6 +32,9 @@ import {
   onAuthStateChanged,
   signInAnonymously
 } from 'firebase/auth';
+import { UserRoleManager } from '@/components/admin/UserRoleManager';
+import { ProductManager } from '@/components/admin/ProductManager';
+import { WeatherAlertManager } from '@/components/admin/WeatherAlertManager';
 
 // Define the data types for better type safety
 interface Disease {
@@ -346,6 +349,9 @@ const Admin = () => {
             <TabsTrigger value="diseases">Disease Database</TabsTrigger>
             <TabsTrigger value="tips">Farmer Tips</TabsTrigger>
             <TabsTrigger value="experts">Expert Help</TabsTrigger>
+            <TabsTrigger value="users">User Management</TabsTrigger>
+            <TabsTrigger value="products">Product Management</TabsTrigger>
+            <TabsTrigger value="alerts">Weather Alerts</TabsTrigger>
           </TabsList>
 
           {/* Disease Database Tab */}
@@ -704,7 +710,18 @@ const Admin = () => {
                 </Card>
               ))}
             </div>
+
           </TabsContent>
+          <TabsContent value="users" className="space-y-6">
+            <UserRoleManager />
+          </TabsContent>
+
+          <TabsContent value="products" className="space-y-6">
+            <ProductManager />
+          </TabsContent>
+
+          <TabsContent value="alerts" className="space-y-6">
+            <WeatherAlertManager />
         </Tabs>
       </main>
     </div>

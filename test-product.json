@@ -1,0 +1,10 @@
+{
+  "name": "Test Product MongoDB",
+  "description": "Test Description for MongoDB",
+  "category": "pesticides",
+  "price": 500,
+  "seller_name": "Test Seller",
+  "seller_contact": "+94777777777",
+  "seller_location": "Colombo",
+  "stock_quantity": 10
+}

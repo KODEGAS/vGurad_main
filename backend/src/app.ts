@@ -11,9 +11,11 @@ import productRoutes from './routes/product.routes';
 import geminiProxyRoute from './routes/gemini-proxy.route';
 import detectionResultRoutes from './routes/detectionResult.routes';
 import noteRoutes from './routes/note.routes';
+import weatherAlertRoutes from './routes/weatherAlert.routes';
 import { admin, auth } from './firebase-admin';
 import { userModel } from './models/User';
 import path from 'path';
+import userRoutes from './routes/user.routes';
 
 dotenv.config();
 
@@ -27,11 +29,16 @@ const firebaseAdmin = admin;
 connectDB();
 
 // Middleware
-if (process.env.NODE_ENV === 'dev') {
-  app.use(cors());
-}
+app.use(cors({
+  origin: true, // Allow all origins in development
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.use(express.json());
+// User role management routes
+app.use('/api/users', userRoutes);
 // Middleware to verify Firebase ID token and fetch user profile
 const verifyAndFetchUser = async (req: any, res: any, next: any) => {
   const authHeader = req.headers.authorization;
@@ -128,6 +135,7 @@ app.use('/api/treatments', treatmentRoutes);
 app.use('/api/gemini-proxy', geminiProxyRoute);
 app.use('/api/detection-results', detectionResultRoutes);
 app.use('/api/notes', noteRoutes);
+app.use('/api/weather-alerts', weatherAlertRoutes);
 
 
 
