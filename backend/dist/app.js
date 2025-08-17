@@ -44,8 +44,6 @@ app.use((0, cors_1.default)({
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express_1.default.json());
-// User role management routes
-app.use('/api/users', user_routes_1.default);
 // Middleware to verify Firebase ID token and fetch user profile
 const verifyAndFetchUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const authHeader = req.headers.authorization;
@@ -63,6 +61,8 @@ const verifyAndFetchUser = (req, res, next) => __awaiter(void 0, void 0, void 0,
         return res.status(403).json({ message: 'Invalid or expired token.' });
     }
 });
+// User role management routes (protected)
+app.use('/api/users', verifyAndFetchUser, user_routes_1.default);
 // Route to create user profile after Firebase sign-up
 app.post('/api/auth/create-user-profile', verifyAndFetchUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Search, User, Crown, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { auth } from '../../firebase';
 
 interface UserProfile {
   _id: string;
@@ -31,7 +32,17 @@ export const UserRoleManager = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/users');
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error('Not authenticated');
+      }
+      
+      const idToken = await user.getIdToken();
+      const res = await fetch('https://vgurad-backend.onrender.com/api/users', {
+        headers: {
+          'Authorization': `Bearer ${idToken}`,
+        },
+      });
       if (!res.ok) throw new Error('Failed to fetch users');
       const data = await res.json();
       setUsers(data || []);
@@ -49,10 +60,17 @@ export const UserRoleManager = () => {
 
   const updateUserRole = async (userId: string, newRole: string) => {
     try {
-      const res = await fetch(`/api/users/${userId}/role`, {
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error('Not authenticated');
+      }
+      
+      const idToken = await user.getIdToken();
+      const res = await fetch(`https://vgurad-backend.onrender.com/api/users/${userId}/role`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`,
         },
         body: JSON.stringify({ role: newRole }),
       });
@@ -60,7 +78,7 @@ export const UserRoleManager = () => {
       const updatedUser = await res.json();
       setUsers(users.map(user => 
         user._id === userId 
-          ? { ...user, subscription_tier: newRole }
+          ? { ...user, role: newRole as 'admin' | 'proUser' | 'user' }
           : user
       ));
 

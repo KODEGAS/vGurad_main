@@ -61,7 +61,7 @@ export const ProductManager = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/products');
+      const res = await fetch('https://vgurad-backend.onrender.com/api/products');
       if (!res.ok) throw new Error('Failed to fetch products');
       const data = await res.json();
       setProducts(data || []);
@@ -88,7 +88,7 @@ export const ProductManager = () => {
         return;
       }
 
-      const res = await fetch('/api/products', {
+      const res = await fetch('https://vgurad-backend.onrender.com/api/products', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -144,7 +144,7 @@ export const ProductManager = () => {
 
   const toggleApproval = async (productId: string, currentStatus: boolean) => {
     try {
-      const res = await fetch(`/api/products/${productId}/approval`, {
+      const res = await fetch(`https://vgurad-backend.onrender.com/api/products/${productId}/approval`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -176,7 +176,7 @@ export const ProductManager = () => {
 
   const deleteProduct = async (productId: string) => {
     try {
-      const res = await fetch(`/api/products/${productId}`, {
+      const res = await fetch(`https://vgurad-backend.onrender.com/api/products/${productId}`, {
         method: 'DELETE',
       });
 
