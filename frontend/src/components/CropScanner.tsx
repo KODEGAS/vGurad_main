@@ -40,7 +40,7 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
 
-  const API_BASE_URL = 'http://kodegas-paddy-api.centralindia.cloudapp.azure.com';
+  const API_BASE_URL = 'https://kodegas-paddy-api.centralindia.cloudapp.azure.com';
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
