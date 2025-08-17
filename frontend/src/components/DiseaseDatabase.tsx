@@ -20,6 +20,7 @@ interface Disease {
   treatment: string;
   prevention: string;
   severity: 'High' | 'Medium' | 'Low';
+  image_url?: string;
 }
 
 interface DiseaseDatabaseProps {
@@ -153,6 +154,7 @@ ${disease.prevention}`;
           </Button>
           <h2 className="text-2xl font-bold text-foreground">{selectedDisease.name}</h2>
         </div>
+        
         <div className="grid md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
@@ -162,6 +164,20 @@ ${disease.prevention}`;
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* Disease Image */}
+              {selectedDisease.image_url && (
+                <div className="mb-4">
+                  <img 
+                    src={selectedDisease.image_url} 
+                    alt={selectedDisease.name}
+                    className="w-full h-48 object-cover rounded-lg border"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+              
               <div>
                 <h4 className="font-semibold mb-2">{t('affectedCrop')}:</h4>
                 <p className="text-crop-primary font-medium">{selectedDisease.crop}</p>

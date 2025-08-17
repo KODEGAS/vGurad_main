@@ -155,6 +155,26 @@ export const Marketplace = () => {
                 animationType="fade-up"
               >
                 <Card className="hover:shadow-lg transition-all duration-300 group">
+                  {/* Product Image */}
+                  <div className="relative overflow-hidden rounded-t-lg bg-gray-100 dark:bg-gray-800">
+                    {product.image_url ? (
+                      <img 
+                        src={product.image_url} 
+                        alt={product.name}
+                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.nextElementSibling?.classList.remove('hidden');
+                        }}
+                      />
+                    ) : null}
+                    {/* Fallback placeholder */}
+                    <div className={`w-full h-48 flex items-center justify-center ${product.image_url ? 'hidden' : ''}`}>
+                      <Package className="w-16 h-16 text-muted-foreground" />
+                    </div>
+                  </div>
+                  
                   <CardHeader className="pb-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -168,7 +188,7 @@ export const Marketplace = () => {
                           {product.description}
                         </CardDescription>
                       </div>
-                      <Package className="w-8 h-8 text-muted-foreground ml-4" />
+                      {!product.image_url && <Package className="w-8 h-8 text-muted-foreground ml-4" />}
                     </div>
                   </CardHeader>
                   

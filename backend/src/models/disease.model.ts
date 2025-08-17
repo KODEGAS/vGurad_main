@@ -9,6 +9,7 @@ export interface IDisease {
   treatment: string;
   prevention: string;
   severity: 'High' | 'Medium' | 'Low';
+  image_url?: string;
 }
 
 // Define the Mongoose schema
@@ -20,6 +21,7 @@ const diseaseSchema = new Schema<IDisease>({
   treatment: { type: String, required: true },
   prevention: { type: String, required: true },
   severity: { type: String, enum: ['High', 'Medium', 'Low'], required: true },
+  image_url: { type: String, required: false },
 }, {
   timestamps: true, // Automatically adds createdAt and updatedAt fields
 });
