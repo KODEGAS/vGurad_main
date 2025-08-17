@@ -7,6 +7,7 @@ import { ArrowLeft, Search, Leaf, Bug, Shield } from 'lucide-react';
 import { ScrollAnimatedSection } from '@/components/ScrollAnimatedSection';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { LoadingDots } from './LoadingDots';
+import { LoadingSpinner } from './LoadingSpinner';
 
 interface Disease {
   _id: string;
@@ -63,7 +64,10 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
   };
 
   if (loading) {
-    return <LoadingDots />;
+    return (
+      <div className="max-w-4xl mx-auto p-8 text-center flex flex-col items-center justify-center gap-2">
+      </div>
+    );
   }
 
   if (error) {

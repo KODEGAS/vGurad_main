@@ -345,7 +345,7 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="diseases" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
             <TabsTrigger value="diseases">Disease Database</TabsTrigger>
             <TabsTrigger value="tips">Farmer Tips</TabsTrigger>
             <TabsTrigger value="experts">Expert Help</TabsTrigger>
@@ -722,6 +722,7 @@ const Admin = () => {
 
           <TabsContent value="alerts" className="space-y-6">
             <WeatherAlertManager />
+          </TabsContent>
         </Tabs>
       </main>
     </div>
