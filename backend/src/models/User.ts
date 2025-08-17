@@ -52,6 +52,7 @@ const userSchema: Schema = new Schema({
     enum: ['en', 'si', 'ta'],
     default: 'en',
   },
+
   subscription_tier: {
     type: String,
     enum: ['free', 'pro'],
@@ -61,6 +62,7 @@ const userSchema: Schema = new Schema({
     type: Date,
   },
   savedNotes: [{ type: Schema.Types.ObjectId, ref: 'Note' }], // Array of saved note ObjectIds
+
 });
 
 // 3. Export the model, using the IUser interface
