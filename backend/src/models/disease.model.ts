@@ -26,5 +26,4 @@ const diseaseSchema = new Schema<IDisease>({
   timestamps: true, // Automatically adds createdAt and updatedAt fields
 });
 
-// Export the Mongoose model
 export const Disease = model<IDisease>('Disease', diseaseSchema);

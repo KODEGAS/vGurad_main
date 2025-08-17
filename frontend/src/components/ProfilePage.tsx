@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
 import { ScrollAnimatedSection } from './ScrollAnimatedSection';
 import { useToast } from '@/hooks/use-toast';
 import { AuthDialog } from './AuthDialog';
@@ -666,6 +667,8 @@ export const ProfilePage = () => {
               </CardContent>
             </Card>
           </ScrollAnimatedSection>
+
+          <Separator className="my-8 bg-white/20" />
         </div>
       </ScrollAnimatedSection>
     </div>

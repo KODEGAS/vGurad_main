@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollAnimatedSection } from './ScrollAnimatedSection';
 import { useToast } from '@/hooks/use-toast';
+import { Separator } from '@/components/ui/separator';
+
 
 interface Product {
   id: string;
@@ -249,11 +251,15 @@ export const Marketplace = () => {
                   </CardContent>
                 </Card>
               </ScrollAnimatedSection>
-            ))}
+
+            )
+            )}
           </div>
 
+          <Separator className="my-8 bg-white/20" />
+
           {filteredProducts.length === 0 && (
-            <ScrollAnimatedSection animationType="fade-up">{/* ... keep existing code */}
+            <ScrollAnimatedSection animationType="fade-up">
               <Card className="text-center p-8">
                 <Package className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
                 <h3 className="text-lg font-semibold mb-2">No products found</h3>
