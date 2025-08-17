@@ -11,6 +11,7 @@ const diseaseSchema = new mongoose_1.Schema({
     treatment: { type: String, required: true },
     prevention: { type: String, required: true },
     severity: { type: String, enum: ['High', 'Medium', 'Low'], required: true },
+    image_url: { type: String, required: false },
 }, {
     timestamps: true, // Automatically adds createdAt and updatedAt fields
 });

@@ -12,6 +12,7 @@ import geminiProxyRoute from './routes/gemini-proxy.route';
 import detectionResultRoutes from './routes/detection-result.routes';
 import noteRoutes from './routes/note.routes';
 import weatherAlertRoutes from './routes/weatherAlert.routes';
+import cropAnalysisProxyRoutes from './routes/crop-analysis-proxy.routes';
 
 import { admin, auth } from './firebase-admin';
 import { userModel } from './models/User';
@@ -136,6 +137,7 @@ app.use('/api/gemini-proxy', geminiProxyRoute);
 app.use('/api/detection-results', detectionResultRoutes);
 app.use('/api/notes', noteRoutes);
 app.use('/api/weather-alerts', weatherAlertRoutes);
+app.use('/api/crop-analysis', cropAnalysisProxyRoutes);
 
 
 

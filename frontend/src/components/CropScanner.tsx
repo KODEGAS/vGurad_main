@@ -8,7 +8,6 @@ import { auth } from '../firebase';
 
 const DEMO_IMAGE_URL = 'https://placehold.co/600x400/8B4513/FFFFFF?text=Infected+Crop';
 
-
 interface CropScannerProps {
   onBack: () => void;
 }
@@ -39,8 +38,8 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-
-  const API_BASE_URL = 'https://kodegas-paddy-api.centralindia.cloudapp.azure.com';
+  // Use proxy through your backend instead of direct HTTP calls
+  const API_BASE_URL = 'https://vgurad-backend.onrender.com/api/crop-analysis';
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -76,7 +75,7 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
     formData.append('file', selectedFile);
 
     try {
-      // Step 1: Send image to prediction API
+      // Step 1: Send image to prediction API via proxy
       const predictionResponse = await fetch(`${API_BASE_URL}/predict`, {
         method: 'POST',
         body: formData,
@@ -93,7 +92,7 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
         throw new Error('Could not get a disease name from the prediction.');
       }
 
-      // Step 2: Fetch detailed disease info and medicines in parallel
+      // Step 2: Fetch detailed disease info and medicines in parallel via proxy
       const diseaseInfoUrl = `${API_BASE_URL}/disease-info/${encodeURIComponent(diseaseName)}`;
       const medicinesUrl = `${API_BASE_URL}/disease-medicines?name=${encodeURIComponent(diseaseName)}`;
 
