@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react';
 import { LanguageSelector } from './LanguageSelector';
 import { Button } from './ui/button';
 import { AuthDialog } from './AuthDialog';
-import { LogIn, UserPlus, LogOut } from 'lucide-react';
+import { LogIn, UserPlus, LogOut, TrendingUp } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from './ui/dropdown-menu';
 import { auth } from '../firebase';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate  , Link} from 'react-router-dom';
 import { useTranslation } from '@/contexts/TranslationContext';
 
 interface UserProfile {
@@ -64,15 +64,21 @@ export const Header: React.FC = () => {
         <div className="flex flex-col items-center gap-3">
           <img src="/uploads/logo.png" alt="Vguard Logo" className="h-10 w-auto" />
         </div>
-
+        
         <div className="flex items-center gap-3">
+            <Link to="/market-prices">
+            <Button variant="ghost" size="lg" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+              <TrendingUp className="w-4 h-4 mr-2" />
+              Market Prices
+            </Button>
+          </Link>
           <LanguageSelector />
           {/* Show Admin button only if userProfile.role === 'admin' */}
           {userProfile && userProfile.role === 'admin' && !profileLoading && (
             <Button
               variant="ghost"
               size="lg"
-              className="h-11 bg-white/30 text-white border border-white/20 hover:bg-white/70 transition-all duration-200"
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20"
               onClick={() => navigate('/admin')}
             >
               Admin Panel

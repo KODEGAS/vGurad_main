@@ -13,6 +13,8 @@ export interface IProduct extends Document {
   image_url?: string;
   stock_quantity: number;
   is_approved: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const ProductSchema: Schema = new Schema({
@@ -20,14 +22,16 @@ const ProductSchema: Schema = new Schema({
   description: { type: String, required: true },
   category: { type: String, required: true },
   price: { type: Number, required: true },
-  currency: { type: String, required: true },
+  currency: { type: String, required: true, default: 'LKR' },
   dosage_instructions: { type: String },
   seller_name: { type: String, required: true },
   seller_contact: { type: String, required: true },
   seller_location: { type: String, required: true },
   image_url: { type: String },
-  stock_quantity: { type: Number, required: true },
+  stock_quantity: { type: Number, required: true, default: 0 },
   is_approved: { type: Boolean, default: false },
+}, {
+  timestamps: true
 });
 
 export const Product = mongoose.model<IProduct>('Product', ProductSchema);

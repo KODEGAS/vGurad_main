@@ -10,6 +10,8 @@ export interface IUser extends Document {
   phone?: string;
   location?: string;
   language_preference?: 'en' | 'si' | 'ta';
+  subscription_tier?: 'free' | 'pro';
+  subscription_expires_at?: Date;
 }
 
 // 2. Define the schema
@@ -50,6 +52,17 @@ const userSchema: Schema = new Schema({
     enum: ['en', 'si', 'ta'],
     default: 'en',
   },
+
+  subscription_tier: {
+    type: String,
+    enum: ['free', 'pro'],
+    default: 'free',
+  },
+  subscription_expires_at: {
+    type: Date,
+  },
+  savedNotes: [{ type: Schema.Types.ObjectId, ref: 'Note' }], // Array of saved note ObjectIds
+
 });
 
 // 3. Export the model, using the IUser interface

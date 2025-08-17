@@ -14,6 +14,7 @@ import { TreatmentCalendar } from '@/components/TreatmentCalendar';
 import { Marketplace } from '@/components/Marketplace';
 import { ProfilePage } from '@/components/ProfilePage';
 import { BottomNavigation } from '@/components/BottomNavigation';
+import { Footer } from '@/components/Footer';
 import { ScrollAnimatedSection } from '@/components/ScrollAnimatedSection';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -31,6 +32,7 @@ import {
 import heroImage from '@/assets/hero-image.jpg';
 import { ChatBot } from '@/components/ChatBot';
 import WeatherCard from '@/components/WeatherCard';
+import { Separator } from '@radix-ui/react-select';
 
 type Page = 'home' | 'scanner' | 'database' | 'tips' | 'help' | 'chat' | 'calendar' | 'marketplace' | 'profile';
 
@@ -244,14 +246,22 @@ const Index = () => {
       <main className="container mx-auto px-4 py-8">
         {renderCurrentPage()}
       </main>
-      
-      {currentPage === 'home' && <ChatBot onStartChat={(question) => {
-        setChatQuestion(question);
-        handlePageChange('chat');
-      }} />}
 
-          <BottomNavigation 
-        activeTab={ currentPage === 'home' ? 'home' :currentPage === 'scanner' ? 'scan' : currentPage === 'calendar' ? 'calendar' : currentPage === 'marketplace' ? 'marketplace' : 'profile'}
+
+      {currentPage === 'home' && (
+        <>
+          <div className="container mx-auto px-4 pb-8">
+            <ChatBot onStartChat={(question) => {
+              setChatQuestion(question);
+              handlePageChange('chat');
+            }} />
+          </div>
+        <Separator className="my-8 bg-white/20" />
+        </>
+      )}
+
+      <BottomNavigation
+        activeTab={currentPage === 'home' ? 'home' : currentPage === 'scanner' ? 'scan' : currentPage === 'calendar' ? 'calendar' : currentPage === 'marketplace' ? 'marketplace' : 'profile'}
         onTabChange={(tab) => {
           if (tab === 'home') handlePageChange('home');
           else if (tab === 'scan') handlePageChange('scanner');

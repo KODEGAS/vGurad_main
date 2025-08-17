@@ -9,6 +9,9 @@ import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute"; 
 
+import MarketPrices from "./pages/MarketPrices";
+
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -35,6 +38,7 @@ const App = () => (
             />
             
             {/* Catch-all route for 404 pages */}
+            <Route path="/market-prices" element={<MarketPrices />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

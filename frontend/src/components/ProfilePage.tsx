@@ -51,14 +51,34 @@ export const ProfilePage = () => {
     try {
       const user = auth.currentUser;
       if (!user) return;
+      
       const idToken = await user.getIdToken();
+      console.log('Fetching profile for user:', user.uid);
+      
       const response = await fetch('http://localhost:5001/api/user-profile', {
         headers: {
           'Authorization': `Bearer ${idToken}`,
         },
       });
-      if (!response.ok) throw new Error('Failed to fetch profile');
+      
+      console.log('Profile fetch response status:', response.status);
+      
+      if (response.status === 404) {
+        // User profile doesn't exist, create one
+        console.log('Profile not found, creating new profile...');
+        await createUserProfile();
+        return;
+      }
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Profile fetch error:', errorText);
+        throw new Error(`Failed to fetch profile: ${response.status} ${errorText}`);
+      }
+      
       const data = await response.json();
+      console.log('Profile data received:', data);
+      
       setProfile({
         id: data._id,
         full_name: data.displayName || '',
@@ -72,11 +92,58 @@ export const ProfilePage = () => {
       console.error('Error fetching profile:', error);
       toast({
         title: "Error",
-        description: "Failed to load profile",
+        description: `Failed to load profile: ${error.message}`,
         variant: "destructive",
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const createUserProfile = async () => {
+    try {
+      const user = auth.currentUser;
+      if (!user) return;
+      
+      const idToken = await user.getIdToken();
+      console.log('Creating profile for user:', user.uid, user.email);
+      
+      const response = await fetch('http://localhost:5001/api/auth/create-user-profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({
+          email: user.email,
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Profile creation error:', errorText);
+        
+        if (response.status === 409) {
+          // Profile already exists, try fetching again
+          await fetchProfile();
+          return;
+        }
+        
+        throw new Error(`Failed to create profile: ${response.status} ${errorText}`);
+      }
+      
+      const data = await response.json();
+      console.log('Profile created:', data);
+      
+      // After creating, fetch the profile
+      await fetchProfile();
+    } catch (error) {
+      console.error('Error creating profile:', error);
+      toast({
+        title: "Error",
+        description: `Failed to create profile: ${error.message}`,
+        variant: "destructive",
+      });
     }
   };
 

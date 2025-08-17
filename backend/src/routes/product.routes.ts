@@ -1,16 +1,31 @@
 import express from 'express';
-import { Product } from '../models/product.model';
+import { 
+  getAllProducts, 
+  getProductById, 
+  createProduct, 
+  updateProduct, 
+  updateProductApproval, 
+  deleteProduct 
+} from '../controllers/product.controller';
 
 const router = express.Router();
 
-// GET /api/products - Get all approved products
-router.get('/', async (req, res) => {
-  try {
-    const products = await Product.find({ is_approved: true }).sort({ name: 1 });
-    res.json(products);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching products', error });
-  }
-});
+// GET /api/products - Get all products (with optional approved filter)
+router.get('/', getAllProducts);
+
+// GET /api/products/:id - Get product by ID
+router.get('/:id', getProductById);
+
+// POST /api/products - Create new product
+router.post('/', createProduct);
+
+// PUT /api/products/:id - Update product
+router.put('/:id', updateProduct);
+
+// PUT /api/products/:id/approval - Update product approval status
+router.put('/:id/approval', updateProductApproval);
+
+// DELETE /api/products/:id - Delete product
+router.delete('/:id', deleteProduct);
 
 export default router;
