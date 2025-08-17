@@ -28,7 +28,9 @@ const note_routes_1 = __importDefault(require("./routes/note.routes"));
 const weatherAlert_routes_1 = __importDefault(require("./routes/weatherAlert.routes"));
 const firebase_admin_1 = require("./firebase-admin");
 const User_1 = require("./models/User");
-const user_routes_1 = __importDefault(require("./routes/user.routes"));
+
+const path_1 = __importDefault(require("path"));
+
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 5001;
@@ -134,9 +136,11 @@ app.use('/api/experts', expert_routes_1.default);
 app.use('/api/questions', question_routes_1.default);
 app.use('/api/treatments', treatment_routes_1.default);
 app.use('/api/gemini-proxy', gemini_proxy_route_1.default);
+
 app.use('/api/detection-results', detectionResult_routes_1.default);
 app.use('/api/notes', note_routes_1.default);
 app.use('/api/weather-alerts', weatherAlert_routes_1.default);
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
