@@ -17,20 +17,21 @@ export const ScrollAnimatedSection: React.FC<ScrollAnimatedSectionProps> = ({
   const { ref, isVisible } = useScrollAnimation();
 
   const getAnimationClass = () => {
-    if (!isVisible) return 'opacity-0 translate-y-8';
-    
-    switch (animationType) {
-      case 'fade-up':
-        return 'animate-fade-in-up';
-      case 'slide-left':
-        return 'animate-slide-in-left';
-      case 'slide-right':
-        return 'animate-slide-in-right';
-      case 'scale-in':
-        return 'animate-scale-in';
-      default:
-        return 'animate-fade-in-up';
+    if (isVisible) {
+      switch (animationType) {
+        case 'fade-up':
+          return 'animate-fade-in-up';
+        case 'slide-left':
+          return 'animate-slide-in-left';
+        case 'slide-right':
+          return 'animate-slide-in-right';
+        case 'scale-in':
+          return 'animate-scale-in';
+        default:
+          return 'animate-fade-in-up';
+      }
     }
+    return 'opacity-0 translate-y-8';
   };
 
   return (

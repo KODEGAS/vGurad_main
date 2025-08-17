@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { Camera, Upload, Scan, ArrowLeft, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/contexts/TranslationContext';
@@ -386,8 +387,11 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
                   <Button variant="farmer" className="w-full" onClick={saveResults}>
                     {t('saveResults')}
                   </Button>
+                  
+                  <Separator className="my-8 bg-white/20" />
                 </div>
               )
+              
             ) : (
               <div className="flex items-center justify-center h-64">
                 <p className="text-muted-foreground">Upload an image to see analysis results</p>

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Search, Leaf, Bug, Shield } from 'lucide-react';
+import { ArrowLeft, Search, Leaf, Bug, Shield, ChevronDown } from 'lucide-react';
 import { ScrollAnimatedSection } from '@/components/ScrollAnimatedSection';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { LoadingDots } from './LoadingDots';
@@ -37,6 +37,19 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
   const [diseases, setDiseases] = useState<Disease[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [showScrollIndicator, setShowScrollIndicator] = useState<boolean>(true);
+
+  // Hide scroll indicator when user starts scrolling
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setShowScrollIndicator(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const fetchDiseases = async () => {
@@ -266,13 +279,27 @@ ${disease.prevention}`;
         </CardContent>
       </Card>
 
+      {/* Scroll Indicator */}
+      {showScrollIndicator && (
+        <div className="fixed bottom-1/4 left-1/2 transform -translate-x-1/2 z-50 flex flex-col items-center">
+          <div className="bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg border border-gray-200 animate-bounce">
+            <ChevronDown className="h-6 w-6 text-gray-600" />
+          </div>
+          <div className="mt-2">
+            <span className="text-sm text-gray-600 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm">
+              Scroll to see diseases
+            </span>
+          </div>
+        </div>
+      )}
+
       <ScrollAnimatedSection animationType="fade-up" delay={400}>
         <div className="grid md:grid-cols-2 gap-4">
           {filteredDiseases.map((disease, index) => (
             <ScrollAnimatedSection
               key={disease._id}
               animationType="scale-in"
-              delay={600 + (index * 100)}
+              delay={600 + index * 100}
             >
               <Card className="hover:shadow-card transition-all duration-300 cursor-pointer" onClick={() => setSelectedDisease(disease)}>
                 <CardContent className="p-4">
@@ -304,7 +331,7 @@ ${disease.prevention}`;
       </ScrollAnimatedSection>
 
       {filteredDiseases.length === 0 && (
-        <ScrollAnimatedSection animationType="fade-up" delay={300}>
+        <ScrollAnimatedSection animationType="fade-up" delay={400}>
           <Card>
             <CardContent className="p-8 text-center">
               <p className="text-muted-foreground">{t('noDiseasesFound')}</p>

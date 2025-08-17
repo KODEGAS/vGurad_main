@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Calendar, Cloud, Thermometer, Droplets, Sun, Moon } from 'lucide-react';
+import { ArrowLeft, Calendar, Cloud, Thermometer, Droplets, Sun, Moon, ChevronDown } from 'lucide-react';
 import { LoadingDots } from './LoadingDots';
 import { ScrollAnimatedSection } from '@/components/ScrollAnimatedSection';
 import { LucideIcon } from 'lucide-react';
@@ -55,7 +55,20 @@ export const FarmerTips: React.FC<FarmerTipsProps> = ({ onBack }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [savingNote, setSavingNote] = useState<string | null>(null);
+  const [showScrollIndicator, setShowScrollIndicator] = useState<boolean>(true);
   const { toast } = useToast();
+
+  // Hide scroll indicator when user scrolls
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setShowScrollIndicator(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const saveToNotes = (tip: Tip) => {
     try {
@@ -209,6 +222,20 @@ ${tip.content.map(item => `• ${item}`).join('\n')}`;
             </div>
           </CardContent>
         </Card>
+
+      {/* Scroll Indicator */}
+      {showScrollIndicator && (
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 flex flex-col items-center">
+          <div className="bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg border border-gray-200 animate-bounce">
+            <ChevronDown className="h-6 w-6 text-gray-600" />
+          </div>
+          <div className="mt-2">
+            <span className="text-sm text-gray-600 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm">
+              Scroll to see tips
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Tips Grid */}
       <ScrollAnimatedSection animationType="fade-up" delay={600}>
