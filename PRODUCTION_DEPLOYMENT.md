@@ -118,4 +118,4 @@ NODE_ENV=production
 1. Start backend: `cd backend && npm start`
 2. Serve frontend: `serve -s frontend/dist -l 8080`
 3. Open browser: `http://localhost:8080`
-4. Verify API connection to `http://localhost:5001`
+4. Verify API connection to `https://vgurad-backend.onrender.com`

@@ -47,8 +47,8 @@ export const ExpertHelp: React.FC<ExpertHelpProps> = ({ onBack, onNavigateToChat
     const fetchData = async () => {
       try {
         const [expertsRes, questionsRes] = await Promise.all([
-          axios.get<Expert[]>('http://localhost:5001/api/experts'),
-          axios.get<Question[]>('http://localhost:5001/api/questions'),
+          axios.get<Expert[]>('https://vgurad-backend.onrender.com/api/experts'),
+          axios.get<Question[]>('https://vgurad-backend.onrender.com/api/questions'),
         ]);
         setExperts(expertsRes.data);
         setRecentQuestions(questionsRes.data);
@@ -80,7 +80,7 @@ export const ExpertHelp: React.FC<ExpertHelpProps> = ({ onBack, onNavigateToChat
     }
     
     try {
-      await axios.post('http://localhost:5001/api/questions', {
+      await axios.post('https://vgurad-backend.onrender.com/api/questions', {
         question,
         expert: 'Not yet assigned', 
       });
@@ -88,7 +88,7 @@ export const ExpertHelp: React.FC<ExpertHelpProps> = ({ onBack, onNavigateToChat
       setQuestion('');
       setSelectedImage(null);
 
-      const questionsRes = await axios.get<Question[]>('http://localhost:5001/api/questions');
+      const questionsRes = await axios.get<Question[]>('https://vgurad-backend.onrender.com/api/questions');
       setRecentQuestions(questionsRes.data);
     } catch (error) {
       console.error('Error submitting question:', error);

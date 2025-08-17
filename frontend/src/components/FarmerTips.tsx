@@ -56,7 +56,7 @@ export const FarmerTips: React.FC<FarmerTipsProps> = ({ onBack }) => {
   useEffect(() => {
     const fetchTips = async () => {
       try {
-        const response = await axios.get<Tip[]>('http://localhost:5001/api/tips');
+        const response = await axios.get<Tip[]>('https://vgurad-backend.onrender.com/api/tips');
         setTips(response.data);
       } catch (err) {
         setError('Failed to fetch tips. Please check the backend server.');

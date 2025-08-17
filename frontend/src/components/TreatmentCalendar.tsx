@@ -27,7 +27,7 @@ export const TreatmentCalendar = () => {
 
   const fetchTreatments = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/treatments');
+      const response = await fetch('https://vgurad-backend.onrender.com/api/treatments');
       if (!response.ok) throw new Error('Failed to fetch treatments');
       const data = await response.json();
       setTreatments((data || []) as TreatmentEvent[]);
@@ -45,7 +45,7 @@ export const TreatmentCalendar = () => {
 
   const markAsCompleted = async (treatmentId: string) => {
     try {
-      const response = await fetch(`http://localhost:5001/api/treatments/${treatmentId}/complete`, {
+      const response = await fetch(`https://vgurad-backend.onrender.com/api/treatments/${treatmentId}/complete`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
       });

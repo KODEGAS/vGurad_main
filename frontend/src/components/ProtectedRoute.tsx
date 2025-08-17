@@ -25,7 +25,7 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
       if (user) {
         try {
           const idToken = await user.getIdToken();
-          const response = await fetch('http://localhost:5001/api/user-profile', {
+          const response = await fetch('https://vgurad-backend.onrender.com/api/user-profile', {
             headers: { 'Authorization': `Bearer ${idToken}` },
           });
 

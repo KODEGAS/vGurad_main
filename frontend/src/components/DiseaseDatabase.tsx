@@ -35,7 +35,7 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
   useEffect(() => {
     const fetchDiseases = async () => {
       try {
-        const response = await axios.get<Disease[]>('http://localhost:5001/api/diseases');
+        const response = await axios.get<Disease[]>('https://vgurad-backend.onrender.com/api/diseases');
         setDiseases(response.data);
       } catch (err) {
         setError('Failed to fetch disease data. Please check the backend server.');

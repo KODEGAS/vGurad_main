@@ -55,7 +55,7 @@ export const ProfilePage = () => {
       const idToken = await user.getIdToken();
       console.log('Fetching profile for user:', user.uid);
       
-      const response = await fetch('http://localhost:5001/api/user-profile', {
+      const response = await fetch('https://vgurad-backend.onrender.com/api/user-profile', {
         headers: {
           'Authorization': `Bearer ${idToken}`,
         },
@@ -108,7 +108,7 @@ export const ProfilePage = () => {
       const idToken = await user.getIdToken();
       console.log('Creating profile for user:', user.uid, user.email);
       
-      const response = await fetch('http://localhost:5001/api/auth/create-user-profile', {
+      const response = await fetch('https://vgurad-backend.onrender.com/api/auth/create-user-profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -153,7 +153,7 @@ export const ProfilePage = () => {
       const user = auth.currentUser;
       if (!user) return;
       const idToken = await user.getIdToken();
-      const response = await fetch('http://localhost:5001/api/user-profile', {
+      const response = await fetch('https://vgurad-backend.onrender.com/api/user-profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

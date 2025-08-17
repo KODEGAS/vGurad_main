@@ -48,7 +48,7 @@ export const AuthDialog: React.FC<AuthDialogProps> = ({ open, onOpenChange }) =>
         const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
         const user = userCredential.user;
         const idToken = await user.getIdToken();
-        const response = await fetch('http://localhost:5001/api/auth/create-user-profile', {
+        const response = await fetch('https://vgurad-backend.onrender.com/api/auth/create-user-profile', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ export const AuthDialog: React.FC<AuthDialogProps> = ({ open, onOpenChange }) =>
       const user = result.user;
       const idToken = await user.getIdToken();
       
-      const response = await fetch('http://localhost:5001/api/auth/create-user-profile', {
+      const response = await fetch('https://vgurad-backend.onrender.com/api/auth/create-user-profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

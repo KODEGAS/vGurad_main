@@ -59,7 +59,7 @@ export const WeatherAlertManager = () => {
 
   const fetchAlerts = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/weather-alerts');
+      const response = await fetch('https://vgurad-backend.onrender.com/api/weather-alerts');
       const result = await response.json();
 
       if (!response.ok) {
@@ -100,7 +100,7 @@ export const WeatherAlertManager = () => {
         end_date: newAlert.end_date || undefined,
       };
 
-      const response = await fetch('http://localhost:5001/api/weather-alerts', {
+      const response = await fetch('https://vgurad-backend.onrender.com/api/weather-alerts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -142,7 +142,7 @@ export const WeatherAlertManager = () => {
 
   const toggleAlert = async (alertId: string, currentStatus: boolean) => {
     try {
-      const response = await fetch(`http://localhost:5001/api/weather-alerts/${alertId}/toggle`, {
+      const response = await fetch(`https://vgurad-backend.onrender.com/api/weather-alerts/${alertId}/toggle`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -177,7 +177,7 @@ export const WeatherAlertManager = () => {
 
   const deleteAlert = async (alertId: string) => {
     try {
-      const response = await fetch(`http://localhost:5001/api/weather-alerts/${alertId}`, {
+      const response = await fetch(`https://vgurad-backend.onrender.com/api/weather-alerts/${alertId}`, {
         method: 'DELETE',
       });
 

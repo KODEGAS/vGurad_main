@@ -107,7 +107,7 @@ export const ChatBot = ({ onStartChat }) => {
   const callGeminiAPI = async (userPrompt) => {
     setIsLoading(true);
     try {
-      const response = await axios.post('http://localhost:5001/api/gemini-proxy', {
+      const response = await axios.post('https://vgurad-backend.onrender.com/api/gemini-proxy', {
         prompt: `Act as a friendly, concise, and helpful agricultural assistant. Respond to this question: ${userPrompt}`
       });
       const botResponseText = response.data.text;

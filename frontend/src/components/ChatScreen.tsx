@@ -53,7 +53,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ onBack, question, expert
     setIsLoading(true);
     
     try {
-      const API_BASE = 'http://localhost:5001';
+      const API_BASE = 'https://vgurad-backend.onrender.com';
       const response = await fetch(`${API_BASE}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

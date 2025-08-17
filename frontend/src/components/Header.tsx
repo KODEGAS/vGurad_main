@@ -31,7 +31,7 @@ export const Header: React.FC = () => {
         setProfileLoading(true);
         try {
           const idToken = await firebaseUser.getIdToken();
-          const response = await fetch('http://localhost:5001/api/user-profile', {
+          const response = await fetch('https://vgurad-backend.onrender.com/api/user-profile', {
             headers: {
               'Authorization': `Bearer ${idToken}`,
             },
