@@ -9,7 +9,7 @@ import questionRoutes from './routes/question.routes';
 import treatmentRoutes from './routes/treatment.routes';
 import productRoutes from './routes/product.routes';
 import geminiProxyRoute from './routes/gemini-proxy.route';
-import detectionResultRoutes from './routes/detectionResult.routes';
+import detectionResultRoutes from './routes/detection-result.routes';
 import noteRoutes from './routes/note.routes';
 import weatherAlertRoutes from './routes/weatherAlert.routes';
 
