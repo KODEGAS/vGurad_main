@@ -427,22 +427,26 @@ export const ProfilePage = () => {
                 </div>
                 
                 {/* Save Notes and Save Results buttons */}
-                <div className="flex gap-2 pt-2">
+                <div className="flex flex-col sm:flex-row gap-2 pt-2">
                   <Button 
                     variant="outline" 
                     onClick={() => setShowSavedNotes(!showSavedNotes)}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 text-xs sm:text-sm px-3 sm:px-4"
                   >
                     <FileText className="w-4 h-4" />
-                    {showSavedNotes ? 'Hide' : 'Show'} Saved Notes
+                    <span className="truncate">
+                      {showSavedNotes ? 'Hide' : 'Show'} Saved Notes
+                    </span>
                   </Button>
                   <Button 
                     variant="outline" 
                     onClick={() => setShowSavedResults(!showSavedResults)}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 text-xs sm:text-sm px-3 sm:px-4"
                   >
                     <Search className="w-4 h-4" />
-                    {showSavedResults ? 'Hide' : 'Show'} Saved Results
+                    <span className="truncate">
+                      {showSavedResults ? 'Hide' : 'Show'} Saved Results
+                    </span>
                   </Button>
                 </div>
               </CardContent>
