@@ -7,6 +7,8 @@ import { ArrowLeft, Calendar, Cloud, Thermometer, Droplets, Sun, Moon } from 'lu
 import { LoadingDots } from './LoadingDots';
 import { ScrollAnimatedSection } from '@/components/ScrollAnimatedSection';
 import { LucideIcon } from 'lucide-react';
+import { auth } from '../firebase';
+import { useToast } from '@/hooks/use-toast';
 
 interface FarmerTipsProps {
   onBack: () => void;
@@ -52,6 +54,77 @@ export const FarmerTips: React.FC<FarmerTipsProps> = ({ onBack }) => {
   const [tips, setTips] = useState<Tip[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [savingNote, setSavingNote] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  const saveToNotes = (tip: Tip) => {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        toast({
+          title: "Authentication Required",
+          description: "Please log in to save notes",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setSavingNote(tip._id);
+
+      // Create note content
+      const noteContent = `Category: ${tip.category}
+Season: ${tip.season}
+Timing: ${tip.timing}
+
+Tips:
+${tip.content.map(item => `• ${item}`).join('\n')}`;
+
+      // Create note object
+      const noteToSave = {
+        _id: Date.now().toString(), // Simple ID generation
+        user_id: user.uid,
+        title: `Farmer Tip: ${tip.title}`,
+        content: noteContent,
+        created_at: new Date().toISOString(),
+      };
+
+      // Get existing notes from local storage
+      const savedNotesKey = `savedNotes_${user.uid}`;
+      const existingNotes = localStorage.getItem(savedNotesKey);
+      let notes = existingNotes ? JSON.parse(existingNotes) : [];
+
+      // Check if tip is already saved
+      const alreadySaved = notes.some((note: any) => note.title === noteToSave.title);
+      if (alreadySaved) {
+        toast({
+          title: "Already Saved",
+          description: "This tip is already saved to your notes",
+        });
+        setSavingNote(null);
+        return;
+      }
+
+      // Add new note
+      notes.push(noteToSave);
+
+      // Save back to local storage
+      localStorage.setItem(savedNotesKey, JSON.stringify(notes));
+
+      toast({
+        title: "Success",
+        description: "Farmer tip saved to your notes",
+      });
+    } catch (error) {
+      console.error('Error saving tip:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save tip. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setSavingNote(null);
+    }
+  };
 
   useEffect(() => {
     const fetchTips = async () => {
@@ -183,8 +256,14 @@ export const FarmerTips: React.FC<FarmerTipsProps> = ({ onBack }) => {
                         ))}
                       </ul>
 
-                      <Button variant="outline" size="sm" className="w-full mt-4">
-                        Save to My Notes
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full mt-4"
+                        onClick={() => saveToNotes(tip)}
+                        disabled={savingNote === tip._id}
+                      >
+                        {savingNote === tip._id ? 'Saving...' : 'Save to My Notes'}
                       </Button>
                     </div>
                   </CardContent>

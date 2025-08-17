@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { auth } from '../firebase';
-import { User, Settings, Crown, Calendar, BarChart3, MessageCircle, TrendingUp, Lock } from 'lucide-react';
+import { User, Settings, Crown, Calendar, BarChart3, MessageCircle, TrendingUp, Lock, FileText, Search, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -32,6 +32,10 @@ export const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const [showSavedNotes, setShowSavedNotes] = useState(false);
+  const [showSavedResults, setShowSavedResults] = useState(false);
+  const [savedNotes, setSavedNotes] = useState<any[]>([]);
+  const [savedResults, setSavedResults] = useState<any[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -189,6 +193,118 @@ export const ProfilePage = () => {
     });
   };
 
+  const fetchSavedNotes = () => {
+    try {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const savedNotesKey = `savedNotes_${user.uid}`;
+      const storedNotes = localStorage.getItem(savedNotesKey);
+      
+      if (storedNotes) {
+        const notes = JSON.parse(storedNotes);
+        setSavedNotes(notes);
+      } else {
+        setSavedNotes([]);
+      }
+    } catch (error) {
+      console.error('Error fetching notes from local storage:', error);
+      setSavedNotes([]);
+    }
+  };
+
+  const fetchSavedResults = () => {
+    try {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const savedResultsKey = `savedResults_${user.uid}`;
+      const storedResults = localStorage.getItem(savedResultsKey);
+      
+      if (storedResults) {
+        const results = JSON.parse(storedResults);
+        setSavedResults(results);
+      } else {
+        setSavedResults([]);
+      }
+    } catch (error) {
+      console.error('Error fetching results from local storage:', error);
+      setSavedResults([]);
+    }
+  };
+
+  const deleteNote = (noteId: string) => {
+    try {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const savedNotesKey = `savedNotes_${user.uid}`;
+      const storedNotes = localStorage.getItem(savedNotesKey);
+      
+      if (storedNotes) {
+        const notes = JSON.parse(storedNotes);
+        const updatedNotes = notes.filter((note: any) => note._id !== noteId);
+        localStorage.setItem(savedNotesKey, JSON.stringify(updatedNotes));
+        setSavedNotes(updatedNotes);
+        
+        toast({
+          title: "Success",
+          description: "Note deleted successfully",
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete note",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const deleteResult = (resultId: string) => {
+    try {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const savedResultsKey = `savedResults_${user.uid}`;
+      const storedResults = localStorage.getItem(savedResultsKey);
+      
+      if (storedResults) {
+        const results = JSON.parse(storedResults);
+        const updatedResults = results.filter((result: any) => result._id !== resultId);
+        localStorage.setItem(savedResultsKey, JSON.stringify(updatedResults));
+        setSavedResults(updatedResults);
+        
+        toast({
+          title: "Success",
+          description: "Detection result deleted successfully",
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting result:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete detection result",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Fetch saved notes when showSavedNotes becomes true
+  useEffect(() => {
+    if (showSavedNotes) {
+      fetchSavedNotes();
+    }
+  }, [showSavedNotes]);
+
+  // Fetch saved results when showSavedResults becomes true
+  useEffect(() => {
+    if (showSavedResults) {
+      fetchSavedResults();
+    }
+  }, [showSavedResults]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -309,9 +425,127 @@ export const ProfilePage = () => {
                     <Button onClick={() => setEditing(true)}>Edit Profile</Button>
                   )}
                 </div>
+                
+                {/* Save Notes and Save Results buttons */}
+                <div className="flex gap-2 pt-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setShowSavedNotes(!showSavedNotes)}
+                    className="flex items-center gap-2"
+                  >
+                    <FileText className="w-4 h-4" />
+                    {showSavedNotes ? 'Hide' : 'Show'} Saved Notes
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setShowSavedResults(!showSavedResults)}
+                    className="flex items-center gap-2"
+                  >
+                    <Search className="w-4 h-4" />
+                    {showSavedResults ? 'Hide' : 'Show'} Saved Results
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </ScrollAnimatedSection>
+
+          {/* Saved Notes Display */}
+          {showSavedNotes && (
+            <ScrollAnimatedSection animationType="fade-up">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    Saved Notes
+                  </CardTitle>
+                  <CardDescription>
+                    Your saved disease information and notes
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {savedNotes.length === 0 ? (
+                    <p className="text-muted-foreground">No saved notes yet. Save disease information from the Disease Database to see them here.</p>
+                  ) : (
+                    <div className="space-y-4">
+                      {savedNotes.map((note, index) => (
+                        <div key={note._id || index} className="p-4 border rounded-lg">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-semibold">{note.title}</h4>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => deleteNote(note._id)}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-2">{note.content}</p>
+                          <div className="text-xs text-muted-foreground">
+                            Saved on: {new Date(note.created_at).toLocaleDateString()}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </ScrollAnimatedSection>
+          )}
+
+          {/* Saved Detection Results Display */}
+          {showSavedResults && (
+            <ScrollAnimatedSection animationType="fade-up">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Search className="w-5 h-5" />
+                    Saved Detection Results
+                  </CardTitle>
+                  <CardDescription>
+                    Your saved crop disease detection results
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {savedResults.length === 0 ? (
+                    <p className="text-muted-foreground">No saved detection results yet. Use the Crop Scanner to analyze diseases and save results.</p>
+                  ) : (
+                    <div className="space-y-4">
+                      {savedResults.map((result, index) => (
+                        <div key={result._id || index} className="p-4 border rounded-lg">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-semibold">{result.disease_name}</h4>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline">{result.confidence}% confidence</Badge>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => deleteResult(result._id)}
+                                className="text-red-600 hover:text-red-700"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-2">{result.description}</p>
+                          {result.image_url && (
+                            <img 
+                              src={result.image_url} 
+                              alt="Detection result" 
+                              className="w-20 h-20 object-cover rounded-md mb-2"
+                            />
+                          )}
+                          <div className="text-xs text-muted-foreground">
+                            Detected on: {new Date(result.created_at).toLocaleDateString()}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </ScrollAnimatedSection>
+          )}
 
           {/* Subscription Status */}
           <ScrollAnimatedSection animationType="fade-up">{/* ... keep existing code */}

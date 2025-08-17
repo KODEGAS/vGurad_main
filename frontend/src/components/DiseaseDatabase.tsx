@@ -8,6 +8,8 @@ import { ScrollAnimatedSection } from '@/components/ScrollAnimatedSection';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { LoadingDots } from './LoadingDots';
 import { LoadingSpinner } from './LoadingSpinner';
+import { auth } from '../firebase';
+import { useToast } from '@/hooks/use-toast';
 
 interface Disease {
   _id: string;
@@ -27,7 +29,9 @@ interface DiseaseDatabaseProps {
 export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDisease, setSelectedDisease] = useState<Disease | null>(null);
+  const [savingNote, setSavingNote] = useState(false);
   const { t } = useTranslation();
+  const { toast } = useToast();
 
   const [diseases, setDiseases] = useState<Disease[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -60,6 +64,71 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
       case 'Medium': return 'text-warning';
       case 'Low': return 'text-success';
       default: return 'text-muted-foreground';
+    }
+  };
+
+  const saveToNotes = async (disease: Disease) => {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        toast({
+          title: "Authentication Required",
+          description: "Please log in to save notes",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setSavingNote(true);
+
+      // Create note content
+      const noteContent = `Disease: ${disease.name}
+Crop: ${disease.crop}
+Severity: ${disease.severity}
+Cause: ${disease.cause}
+
+Symptoms:
+${disease.symptoms.map(symptom => `• ${symptom}`).join('\n')}
+
+Treatment:
+${disease.treatment}
+
+Prevention:
+${disease.prevention}`;
+
+      // Create note object
+      const noteToSave = {
+        _id: Date.now().toString(), // Simple ID generation
+        user_id: user.uid,
+        title: `Disease Info: ${disease.name}`,
+        content: noteContent,
+        created_at: new Date().toISOString(),
+      };
+
+      // Get existing notes from local storage
+      const savedNotesKey = `savedNotes_${user.uid}`;
+      const existingNotes = localStorage.getItem(savedNotesKey);
+      let notes = existingNotes ? JSON.parse(existingNotes) : [];
+
+      // Add new note
+      notes.push(noteToSave);
+
+      // Save back to local storage
+      localStorage.setItem(savedNotesKey, JSON.stringify(notes));
+
+      toast({
+        title: "Success",
+        description: "Disease information saved to your notes",
+      });
+    } catch (error) {
+      console.error('Error saving note:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save note. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setSavingNote(false);
     }
   };
 
@@ -139,8 +208,13 @@ export const DiseaseDatabase: React.FC<DiseaseDatabaseProps> = ({ onBack }) => {
                 <p className="text-muted-foreground">{selectedDisease.prevention}</p>
               </div>
 
-              <Button variant="farmer" className="w-full">
-                {t('saveToNotes')}
+              <Button 
+                variant="farmer" 
+                className="w-full"
+                onClick={() => saveToNotes(selectedDisease)}
+                disabled={savingNote}
+              >
+                {savingNote ? 'Saving...' : t('saveToNotes')}
               </Button>
             </CardContent>
           </Card>

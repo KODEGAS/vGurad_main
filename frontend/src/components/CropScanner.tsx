@@ -2,8 +2,9 @@ import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Camera, Upload, Scan, ArrowLeft, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { auth } from '../firebase';
 
 const DEMO_IMAGE_URL = 'https://placehold.co/600x400/8B4513/FFFFFF?text=Infected+Crop';
 
@@ -34,6 +35,7 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const { t } = useTranslation();
+  const { toast } = useToast();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -59,7 +61,11 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
 
   const analyzeCrop = async () => {
     if (!selectedFile) {
-      toast.error('Please select an image to analyze.');
+      toast({
+        title: "Error",
+        description: "Please select an image to analyze.",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -115,11 +121,18 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
       };
 
       setAnalysisResult(combinedResult);
-      toast.success('Crop analysis completed!');
+      toast({
+        title: "Success",
+        description: "Crop analysis completed!",
+      });
 
     } catch (error) {
       console.error('Error during analysis:', error);
-      toast.error('Failed to analyze crop. Please try again.');
+      toast({
+        title: "Error",
+        description: "Failed to analyze crop. Please try again.",
+        variant: "destructive",
+      });
       setAnalysisResult({
         disease: 'Analysis Failed',
         confidence: 0,
@@ -155,7 +168,72 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
       };
       input.click();
     } catch (error) {
-      toast.error('Failed to capture photo from camera.');
+      toast({
+        title: "Error",
+        description: "Failed to capture photo from camera.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const saveResults = () => {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        toast({
+          title: "Authentication Required",
+          description: "Please log in to save results",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!analysisResult) {
+        toast({
+          title: "No Results",
+          description: "No analysis results to save",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Create result object
+      const resultToSave = {
+        _id: Date.now().toString(),
+        user_id: user.uid,
+        disease_name: analysisResult.disease,
+        confidence: analysisResult.confidence,
+        description: analysisResult.description,
+        symptoms: analysisResult.symptoms,
+        causes: analysisResult.causes,
+        prevention: analysisResult.prevention,
+        medicines: analysisResult.medicines,
+        image_url: selectedImage,
+        created_at: new Date().toISOString(),
+      };
+
+      // Get existing results from local storage
+      const savedResultsKey = `savedResults_${user.uid}`;
+      const existingResults = localStorage.getItem(savedResultsKey);
+      let results = existingResults ? JSON.parse(existingResults) : [];
+
+      // Add new result
+      results.push(resultToSave);
+
+      // Save back to local storage
+      localStorage.setItem(savedResultsKey, JSON.stringify(results));
+
+      toast({
+        title: "Success",
+        description: "Detection results saved successfully!",
+      });
+    } catch (error) {
+      console.error('Error saving results:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save results. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -306,7 +384,7 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
                     </div>
                   )}
 
-                  <Button variant="farmer" className="w-full">
+                  <Button variant="farmer" className="w-full" onClick={saveResults}>
                     {t('saveResults')}
                   </Button>
                 </div>
