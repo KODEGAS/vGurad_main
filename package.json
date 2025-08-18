@@ -6,7 +6,6 @@
   "description": "vGuard is a full-stack application designed to help farmers and agricultural professionals identify and manage crop diseases effectively. The platform leverages AI-powered image recognition to detect diseases from crop images, provides a comprehensive database of crop diseases, and offers expert advice and agricultural tips.",
   "version": "1.0.0",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix backend && npm run build --prefix frontend",
     "start": "npm run start --prefix backend",

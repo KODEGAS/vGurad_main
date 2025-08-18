@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { Header } from '@/components/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -81,6 +82,7 @@ interface NewExpert {
 }
 
 const Admin = () => {
+  const { t } = useTranslation();
   const { toast } = useToast();
 
   const [diseases, setDiseases] = useState<Disease[]>([]);
@@ -327,7 +329,7 @@ const Admin = () => {
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <p>Loading...</p>
+        <p>{t('loading')}</p>
       </div>
     );
   }
@@ -337,21 +339,21 @@ const Admin = () => {
       <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage disease database, farmer tips, and expert help content</p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">{t('adminDashboard')}</h1>
+          <p className="text-muted-foreground">{t('manageContent')}</p>
           <div className="mt-4 p-3 bg-secondary text-secondary-foreground rounded-md">
-            <span className="font-semibold">Current User ID:</span> {userId}
+            <span className="font-semibold">{t('currentUserId')}:</span> {userId}
           </div>
         </div>
 
         <Tabs defaultValue="diseases" className="space-y-6">
           <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
-            <TabsTrigger value="diseases">Disease Database</TabsTrigger>
-            <TabsTrigger value="tips">Farmer Tips</TabsTrigger>
-            <TabsTrigger value="experts">Expert Help</TabsTrigger>
-            <TabsTrigger value="users">User Management</TabsTrigger>
-            <TabsTrigger value="products">Product Management</TabsTrigger>
-            <TabsTrigger value="alerts">Weather Alerts</TabsTrigger>
+            <TabsTrigger value="diseases">{t('diseaseDatabaseTab')}</TabsTrigger>
+            <TabsTrigger value="tips">{t('farmerTipsTab')}</TabsTrigger>
+            <TabsTrigger value="experts">{t('expertHelpTab')}</TabsTrigger>
+            <TabsTrigger value="users">{t('userManagementTab')}</TabsTrigger>
+            <TabsTrigger value="products">{t('productManagementTab')}</TabsTrigger>
+            <TabsTrigger value="alerts">{t('weatherAlertsTab')}</TabsTrigger>
           </TabsList>
 
           {/* Disease Database Tab */}
@@ -360,55 +362,55 @@ const Admin = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Plus className="h-5 w-5" />
-                  Add New Disease
+                  {t('addNewDisease')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="disease-name">Disease Name</Label>
+                    <Label htmlFor="disease-name">{t('diseaseName')}</Label>
                     <Input
                       id="disease-name"
                       value={newDisease.name}
                       onChange={(e) => setNewDisease({...newDisease, name: e.target.value})}
-                      placeholder="Enter disease name"
+                      placeholder={t('enterDiseaseName')}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="disease-severity">Severity</Label>
+                    <Label htmlFor="disease-severity">{t('severity')}</Label>
                     <select
                       id="disease-severity"
                       value={newDisease.severity}
                       onChange={(e) => setNewDisease({...newDisease, severity: e.target.value as 'Low' | 'Medium' | 'High'})}
                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                     >
-                      <option value="Low">Low</option>
-                      <option value="Medium">Medium</option>
-                      <option value="High">High</option>
+                      <option value="Low">{t('severityLow')}</option>
+                      <option value="Medium">{t('severityMedium')}</option>
+                      <option value="High">{t('severityHigh')}</option>
                     </select>
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="disease-description">Description</Label>
+                  <Label htmlFor="disease-description">{t('descriptionLabel')}</Label>
                   <Textarea
                     id="disease-description"
                     value={newDisease.description}
                     onChange={(e) => setNewDisease({...newDisease, description: e.target.value})}
-                    placeholder="Enter disease description"
+                    placeholder={t('enterDescription')}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="disease-treatment">Treatment</Label>
+                  <Label htmlFor="disease-treatment">{t('treatmentLabel')}</Label>
                   <Textarea
                     id="disease-treatment"
                     value={newDisease.treatment}
                     onChange={(e) => setNewDisease({...newDisease, treatment: e.target.value})}
-                    placeholder="Enter treatment recommendations"
+                    placeholder={t('enterTreatment')}
                   />
                 </div>
                 <Button onClick={addDisease} className="w-full">
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Disease
+                  {t('addDiseaseButton')}
                 </Button>
               </CardContent>
             </Card>
@@ -429,19 +431,21 @@ const Admin = () => {
                           <h3 className="text-lg font-semibold">{disease.name}</h3>
                         )}
                         <Badge variant={disease.severity === 'High' ? 'destructive' : disease.severity === 'Medium' ? 'default' : 'secondary'}>
-                          {editingDiseaseId === disease.id ? (
-                            <select
-                              value={editedDisease?.severity}
-                              onChange={(e) => setEditedDisease({...editedDisease!, severity: e.target.value as 'Low' | 'Medium' | 'High'})}
-                              className="bg-transparent text-sm border-none focus:outline-none"
-                            >
-                              <option value="Low">Low</option>
-                              <option value="Medium">Medium</option>
-                              <option value="High">High</option>
-                            </select>
-                          ) : (
-                            disease.severity
-                          )}
+                          <span>
+                            {editingDiseaseId === disease.id ? (
+                              <select
+                                value={editedDisease?.severity}
+                                onChange={(e) => setEditedDisease({...editedDisease!, severity: e.target.value as 'Low' | 'Medium' | 'High'})}
+                                className="bg-transparent text-sm border-none focus:outline-none"
+                              >
+                                <option value="Low">{t('severityLow')}</option>
+                                <option value="Medium">{t('severityMedium')}</option>
+                                <option value="High">{t('severityHigh')}</option>
+                              </select>
+                            ) : (
+                              disease.severity
+                            )}
+                          </span>
                         </Badge>
                       </div>
                       <div className="flex gap-2">
@@ -475,7 +479,7 @@ const Admin = () => {
                     ) : (
                       <>
                         <p className="text-sm text-muted-foreground mb-2">{disease.description}</p>
-                        <p className="text-sm"><strong>Treatment:</strong> {disease.treatment}</p>
+                        <p className="text-sm"><strong>{t('treatment')}:</strong> {disease.treatment}</p>
                       </>
                     )}
                   </CardContent>
@@ -490,43 +494,43 @@ const Admin = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Plus className="h-5 w-5" />
-                  Add New Tip
+                  {t('addNewTip')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="tip-title">Title</Label>
+                    <Label htmlFor="tip-title">{t('titleLabel')}</Label>
                     <Input
                       id="tip-title"
                       value={newTip.title}
                       onChange={(e) => setNewTip({...newTip, title: e.target.value})}
-                      placeholder="Enter tip title"
+                      placeholder={t('enterTitle')}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="tip-category">Category</Label>
+                    <Label htmlFor="tip-category">{t('categoryLabel')}</Label>
                     <Input
                       id="tip-category"
                       value={newTip.category}
                       onChange={(e) => setNewTip({...newTip, category: e.target.value})}
-                      placeholder="Enter category"
+                      placeholder={t('enterCategory')}
                     />
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="tip-content">Content</Label>
+                  <Label htmlFor="tip-content">{t('contentLabel')}</Label>
                   <Textarea
                     id="tip-content"
                     value={newTip.content}
                     onChange={(e) => setNewTip({...newTip, content: e.target.value})}
-                    placeholder="Enter tip content"
+                    placeholder={t('enterContent')}
                     rows={4}
                   />
                 </div>
                 <Button onClick={addTip} className="w-full">
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Tip
+                  {t('addTipButton')}
                 </Button>
               </CardContent>
             </Card>
@@ -547,15 +551,17 @@ const Admin = () => {
                           <h3 className="text-lg font-semibold">{tip.title}</h3>
                         )}
                         <Badge variant="outline">
-                          {editingTipId === tip.id ? (
-                            <Input 
-                              value={editedTip?.category || ''}
-                              onChange={(e) => setEditedTip({...editedTip!, category: e.target.value})}
-                              className="bg-transparent text-sm border-none focus:outline-none"
-                            />
-                          ) : (
-                            tip.category
-                          )}
+                          <span>
+                            {editingTipId === tip.id ? (
+                              <Input
+                                value={editedTip?.category || ''}
+                                onChange={(e) => setEditedTip({...editedTip!, category: e.target.value})}
+                                className="bg-transparent text-sm border-none focus:outline-none"
+                              />
+                            ) : (
+                              tip.category
+                            )}
+                          </span>
                         </Badge>
                       </div>
                       <div className="flex gap-2">
@@ -594,53 +600,53 @@ const Admin = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Plus className="h-5 w-5" />
-                  Add New Expert
+                  {t('addNewExpert')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="expert-name">Name</Label>
+                    <Label htmlFor="expert-name">{t('nameLabel')}</Label>
                     <Input
                       id="expert-name"
                       value={newExpert.name}
                       onChange={(e) => setNewExpert({...newExpert, name: e.target.value})}
-                      placeholder="Enter expert name"
+                      placeholder={t('enterName')}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="expert-specialization">Specialization</Label>
+                    <Label htmlFor="expert-specialization">{t('specializationLabel')}</Label>
                     <Input
                       id="expert-specialization"
                       value={newExpert.specialization}
                       onChange={(e) => setNewExpert({...newExpert, specialization: e.target.value})}
-                      placeholder="Enter specialization"
+                      placeholder={t('enterSpecialization')}
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="expert-contact">Contact</Label>
+                    <Label htmlFor="expert-contact">{t('contactLabel')}</Label>
                     <Input
                       id="expert-contact"
                       value={newExpert.contact}
                       onChange={(e) => setNewExpert({...newExpert, contact: e.target.value})}
-                      placeholder="Enter contact information"
+                      placeholder={t('enterContact')}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="expert-availability">Availability</Label>
+                    <Label htmlFor="expert-availability">{t('availabilityLabel')}</Label>
                     <Input
                       id="expert-availability"
                       value={newExpert.availability}
                       onChange={(e) => setNewExpert({...newExpert, availability: e.target.value})}
-                      placeholder="Enter availability hours"
+                      placeholder={t('enterAvailability')}
                     />
                   </div>
                 </div>
                 <Button onClick={addExpert} className="w-full">
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Expert
+                  {t('addExpertButton')}
                 </Button>
               </CardContent>
             </Card>
@@ -661,15 +667,17 @@ const Admin = () => {
                           <h3 className="text-lg font-semibold">{expert.name}</h3>
                         )}
                         <Badge variant="secondary">
-                          {editingExpertId === expert.id ? (
-                            <Input 
-                              value={editedExpert?.specialization || ''}
-                              onChange={(e) => setEditedExpert({...editedExpert!, specialization: e.target.value})}
-                              className="bg-transparent text-sm border-none focus:outline-none"
-                            />
-                          ) : (
-                            expert.specialization
-                          )}
+                          <span>
+                            {editingExpertId === expert.id ? (
+                              <Input
+                                value={editedExpert?.specialization || ''}
+                                onChange={(e) => setEditedExpert({...editedExpert!, specialization: e.target.value})}
+                                className="bg-transparent text-sm border-none focus:outline-none"
+                              />
+                            ) : (
+                              expert.specialization
+                            )}
+                          </span>
                         </Badge>
                       </div>
                       <div className="flex gap-2">
@@ -692,18 +700,18 @@ const Admin = () => {
                         <Input 
                           value={editedExpert?.contact || ''}
                           onChange={(e) => setEditedExpert({...editedExpert!, contact: e.target.value})}
-                          placeholder="Contact"
+                          placeholder={t('contactLabel')}
                         />
-                        <Input 
+                        <Input
                           value={editedExpert?.availability || ''}
                           onChange={(e) => setEditedExpert({...editedExpert!, availability: e.target.value})}
-                          placeholder="Availability"
+                          placeholder={t('availabilityLabel')}
                         />
                       </div>
                     ) : (
                       <div className="space-y-1 text-sm text-muted-foreground">
-                        <p><strong>Contact:</strong> {expert.contact}</p>
-                        <p><strong>Availability:</strong> {expert.availability}</p>
+                        <p><strong>{t('contactLabel')}:</strong> {expert.contact}</p>
+                        <p><strong>{t('availabilityLabel')}:</strong> {expert.availability}</p>
                       </div>
                     )}
                   </CardContent>
