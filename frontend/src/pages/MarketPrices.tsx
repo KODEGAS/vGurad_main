@@ -4,17 +4,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  Search, 
-  Filter,
-  MapPin,
-  Calendar,
-  ArrowLeft,
-  Wheat
-} from 'lucide-react';
+import { TrendingUp, TrendingDown, Search, Filter, MapPin, Calendar, ArrowLeft, Wheat } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface RicePrice {
   id: string;
@@ -29,6 +21,7 @@ interface RicePrice {
 }
 
 const MarketPrices: React.FC = () => {
+  const { t } = useTranslation();
   const [prices, setPrices] = useState<RicePrice[]>([]);
   const [filteredPrices, setFilteredPrices] = useState<RicePrice[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -115,10 +108,10 @@ const MarketPrices: React.FC = () => {
       const matchesSearch = price.variety.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesLocation = selectedLocation === 'all' || price.location === selectedLocation;
       const matchesQuality = selectedQuality === 'all' || price.quality === selectedQuality;
-      
+
       return matchesSearch && matchesLocation && matchesQuality;
     });
-    
+
     setFilteredPrices(filtered);
   }, [prices, searchTerm, selectedLocation, selectedQuality]);
 
@@ -163,15 +156,15 @@ const MarketPrices: React.FC = () => {
             <Link to="/">
               <Button variant="ghost" size="sm" className="text-white hover:bg-white/20">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Home
+                {t('backToHome')}
               </Button>
             </Link>
           </div>
           <div className="flex items-center gap-3 mb-2">
             <Wheat className="h-8 w-8" />
-            <h1 className="text-3xl font-bold">Rice Market Prices</h1>
+            <h1 className="text-3xl font-bold">{t('riceMarketPrices') || 'Rice Market Prices'}</h1>
           </div>
-          <p className="text-white/80">Real-time market prices for various rice varieties across Sri Lanka</p>
+          <p className="text-white/80">{t('marketPricesDescription') || 'Real-time market prices for various rice varieties across Sri Lanka'}</p>
         </div>
       </div>
 
@@ -184,39 +177,39 @@ const MarketPrices: React.FC = () => {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search rice variety..."
+                    placeholder={t('searchRiceVariety') || 'Search rice variety...'}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
                   />
                 </div>
               </div>
-              
+
               <Select value={selectedLocation} onValueChange={setSelectedLocation}>
                 <SelectTrigger className="w-full md:w-48">
-                  <SelectValue placeholder="Select location" />
+                  <SelectValue placeholder={t('selectLocation') || 'Select location'} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Locations</SelectItem>
-                  <SelectItem value="Colombo">Colombo</SelectItem>
-                  <SelectItem value="Kandy">Kandy</SelectItem>
-                  <SelectItem value="Galle">Galle</SelectItem>
-                  <SelectItem value="Anuradhapura">Anuradhapura</SelectItem>
-                  <SelectItem value="Ratnapura">Ratnapura</SelectItem>
-                  <SelectItem value="Kurunegala">Kurunegala</SelectItem>
+                  <SelectItem value="all">{t('allLocations') || 'All Locations'}</SelectItem>
+                  <SelectItem value="Colombo">{t('colombo') || 'Colombo'}</SelectItem>
+                  <SelectItem value="Kandy">{t('kandy') || 'Kandy'}</SelectItem>
+                  <SelectItem value="Galle">{t('galle') || 'Galle'}</SelectItem>
+                  <SelectItem value="Anuradhapura">{t('anuradhapura') || 'Anuradhapura'}</SelectItem>
+                  <SelectItem value="Ratnapura">{t('ratnapura') || 'Ratnapura'}</SelectItem>
+                  <SelectItem value="Kurunegala">{t('kurunegala') || 'Kurunegala'}</SelectItem>
                 </SelectContent>
               </Select>
 
               <Select value={selectedQuality} onValueChange={setSelectedQuality}>
                 <SelectTrigger className="w-full md:w-48">
-                  <SelectValue placeholder="Select quality" />
+                  <SelectValue placeholder={t('selectQuality') || 'Select quality'} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Qualities</SelectItem>
-                  <SelectItem value="Premium">Premium</SelectItem>
-                  <SelectItem value="Grade A">Grade A</SelectItem>
-                  <SelectItem value="Grade B">Grade B</SelectItem>
-                  <SelectItem value="Organic">Organic</SelectItem>
+                  <SelectItem value="all">{t('allQualities') || 'All Qualities'}</SelectItem>
+                  <SelectItem value="Premium">{t('premium') || 'Premium'}</SelectItem>
+                  <SelectItem value="Grade A">{t('gradeA') || 'Grade A'}</SelectItem>
+                  <SelectItem value="Grade B">{t('gradeB') || 'Grade B'}</SelectItem>
+                  <SelectItem value="Organic">{t('organic') || 'Organic'}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -228,21 +221,21 @@ const MarketPrices: React.FC = () => {
           <Card className="bg-gradient-to-br from-success/10 to-success/5 border-success/20">
             <CardContent className="p-6 text-center">
               <div className="text-2xl font-bold text-success mb-1">6</div>
-              <div className="text-sm text-muted-foreground">Rice Varieties</div>
+              <div className="text-sm text-muted-foreground">{t('riceVarieties') || 'Rice Varieties'}</div>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
             <CardContent className="p-6 text-center">
               <div className="text-2xl font-bold text-primary mb-1">LKR 228</div>
-              <div className="text-sm text-muted-foreground">Average Price/kg</div>
+              <div className="text-sm text-muted-foreground">{t('averagePricePerKg') || 'Average Price/kg'}</div>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gradient-to-br from-warning/10 to-warning/5 border-warning/20">
             <CardContent className="p-6 text-center">
               <div className="text-2xl font-bold text-warning-foreground mb-1">6</div>
-              <div className="text-sm text-muted-foreground">Markets</div>
+              <div className="text-sm text-muted-foreground">{t('markets') || 'Markets'}</div>
             </CardContent>
           </Card>
         </div>
@@ -251,7 +244,7 @@ const MarketPrices: React.FC = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPrices.map((rice) => {
             const priceChange = getPriceChange(rice.price, rice.previousPrice);
-            
+
             return (
               <Card key={rice.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
@@ -264,11 +257,11 @@ const MarketPrices: React.FC = () => {
                       </div>
                     </div>
                     <Badge variant={rice.quality === 'Premium' || rice.quality === 'Organic' ? 'default' : 'secondary'}>
-                      {rice.quality}
+                      {t(rice.quality.toLowerCase().replace(' ', '') as any) || rice.quality}
                     </Badge>
                   </div>
                 </CardHeader>
-                
+
                 <CardContent className="pt-0">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
@@ -288,10 +281,10 @@ const MarketPrices: React.FC = () => {
                         )}
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Calendar className="h-3 w-3" />
-                      <span>Updated: {rice.lastUpdated}</span>
+                      <span>{t('updated') || 'Updated'}: {rice.lastUpdated}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -304,8 +297,8 @@ const MarketPrices: React.FC = () => {
           <Card className="text-center py-12">
             <CardContent>
               <Filter className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No prices found</h3>
-              <p className="text-muted-foreground">Try adjusting your search or filter criteria.</p>
+              <h3 className="text-lg font-semibold mb-2">{t('noPricesFound') || 'No prices found'}</h3>
+              <p className="text-muted-foreground">{t('tryAdjustingSearch') || 'Try adjusting your search or filter criteria.'}</p>
             </CardContent>
           </Card>
         )}
@@ -314,8 +307,7 @@ const MarketPrices: React.FC = () => {
         <Card className="mt-8 bg-muted/50">
           <CardContent className="p-4">
             <p className="text-sm text-muted-foreground text-center">
-              <strong>Disclaimer:</strong> Prices are indicative and may vary based on quality, quantity, and market conditions. 
-              Please verify current rates with local traders before making transactions.
+              <strong>{t('disclaimer') || 'Disclaimer'}:</strong> {t('pricesDisclaimer') || 'Prices are indicative and may vary based on quality, quantity, and market conditions. Please verify current rates with local traders before making transactions.'}
             </p>
           </CardContent>
         </Card>

@@ -1,7 +1,36 @@
 export const translations = {
+  // NotFound Page
+  notFoundMessage: "අපොයි! පිටුව සොයාගත නොහැක",
+  returnToHome: "මුල් පිටුවට යන්න",
   // Header
   login: "ප්‍රවේශ වන්න",
   signUp: "ලියාපදිංචි වන්න",
+  // Market Prices Page
+  riceMarketPrices: "ඇතුළු වෙළඳ මිල",
+  marketPricesDescription: "ශ්‍රී ලංකාවේ විවිධ සහල් වර්ග සඳහා සජීවී වෙළඳ මිල",
+  searchRiceVariety: "සහල් වර්ගය සොයන්න...",
+  selectLocation: "ස්ථානය තෝරන්න",
+  allLocations: "සියලු ස්ථාන",
+  colombo: "කොළඹ",
+  kandy: "මහනුවර",
+  galle: "ගාල්ල",
+  anuradhapura: "අනුරාධපුර",
+  ratnapura: "රත්නපුර",
+  kurunegala: "කුරුණෑගල",
+  selectQuality: "ගුණාත්මකභාවය තෝරන්න",
+  allQualities: "සියලු ගුණාත්මකභාව",
+  premium: "ප්‍රිමියම්",
+  gradeA: "ශ්‍රේණිය A",
+  gradeB: "ශ්‍රේණිය B",
+  organic: "ජෛවික",
+  riceVarieties: "සහල් වර්ග",
+  averagePricePerKg: "සාමාන්‍ය මිල/කිලෝග්‍රෑම්",
+  markets: "වෙළඳපොළ",
+  updated: "යාවත්කාලීන කරන ලදි",
+  noPricesFound: "මිල නොමැත",
+  tryAdjustingSearch: "කරුණාකර ඔබේ සෙවුම හෝ පෙරහන් වෙනස් කරන්න.",
+  disclaimer: "වගකීමෙන් තොරව",
+  pricesDisclaimer: "මිල සංඛ්‍යාතය පමණක් වන අතර ගුණාත්මකභාවය, ප්‍රමාණය සහ වෙළඳ තත්ත්වය අනුව වෙනස් විය හැක. කරුණාකර ගනුදෙනු කිරීමට පෙර ප්‍රාදේශීය වෙළඳුන්ගෙන් වත්මන් මිල තහවුරු කරන්න.",
 
   // Hero Section
   heroTitle: "AI සමඟ ඔබේ බෝග ආරක්ෂා කරන්න",

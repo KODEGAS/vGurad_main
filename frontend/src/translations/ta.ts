@@ -1,7 +1,36 @@
 export const translations = {
+  // NotFound Page
+  notFoundMessage: "அய்யோ! பக்கம் கிடைக்கவில்லை",
+  returnToHome: "முகப்புக்கு திரும்பவும்",
   // Header
   login: "உள்நுழைய",
   signUp: "பதிவு செய்யுங்கள்",
+  // Market Prices Page
+  riceMarketPrices: "அரிசி சந்தை விலைகள்",
+  marketPricesDescription: "இலங்கையின் பல்வேறு அரிசி வகைகளுக்கான நேரடி சந்தை விலைகள்",
+  searchRiceVariety: "அரிசி வகையைத் தேடுங்கள்...",
+  selectLocation: "இடத்தைத் தேர்ந்தெடுக்கவும்",
+  allLocations: "அனைத்து இடங்களும்",
+  colombo: "கொழும்பு",
+  kandy: "கண்டி",
+  galle: "காலி",
+  anuradhapura: "அனுராதபுரம்",
+  ratnapura: "ரத்னபுரம்",
+  kurunegala: "குருநாகல்",
+  selectQuality: "தரத்தைத் தேர்ந்தெடுக்கவும்",
+  allQualities: "அனைத்து தரங்களும்",
+  premium: "பிரீமியம்",
+  gradeA: "தரம் A",
+  gradeB: "தரம் B",
+  organic: "இயற்கை",
+  riceVarieties: "அரிசி வகைகள்",
+  averagePricePerKg: "சராசரி விலை/கிலோ",
+  markets: "சந்தைகள்",
+  updated: "புதுப்பிக்கப்பட்டது",
+  noPricesFound: "விலை இல்லை",
+  tryAdjustingSearch: "உங்கள் தேடல் அல்லது வடிகட்டலை மாற்ற முயற்சிக்கவும்.",
+  disclaimer: "குறிப்பு",
+  pricesDisclaimer: "விலைகள் சுட்டிக்காட்டும் வகையில் மட்டுமே வழங்கப்படுகின்றன மற்றும் தரம், அளவு மற்றும் சந்தை நிலைமைகளின் அடிப்படையில் மாறுபடலாம். பரிவர்த்தனை செய்வதற்கு முன் உள்ளூர் வணிகர்களிடம் தற்போதைய விலைகளை உறுதிப்படுத்தவும்.",
 
   // Hero Section
   heroTitle: "AI உடன் உங்கள் பயிர்களைப் பாதுகாக்கவும்",
