@@ -279,9 +279,9 @@ ${disease.prevention}`;
         </CardContent>
       </Card>
 
-      {/* Scroll Indicator */}
+      {/* Scroll Indicator - Desktop only */}
       {showScrollIndicator && (
-        <div className="fixed bottom-1/4 left-1/2 transform -translate-x-1/2 z-50 flex flex-col items-center">
+        <div className="hidden md:flex fixed bottom-1/4 left-1/2 transform -translate-x-1/2 z-50 flex-col items-center">
           <div className="bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg border border-gray-200 animate-bounce">
             <ChevronDown className="h-6 w-6 text-gray-600" />
           </div>
@@ -293,51 +293,85 @@ ${disease.prevention}`;
         </div>
       )}
 
-      <ScrollAnimatedSection animationType="fade-up" delay={400}>
-        <div className="grid md:grid-cols-2 gap-4">
-          {filteredDiseases.map((disease, index) => (
-            <ScrollAnimatedSection
-              key={disease._id}
-              animationType="scale-in"
-              delay={600 + index * 100}
-            >
-              <Card className="hover:shadow-card transition-all duration-300 cursor-pointer" onClick={() => setSelectedDisease(disease)}>
-                <CardContent className="p-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <h3 className="font-semibold text-foreground">{disease.name}</h3>
-                    <span className={`text-xs px-2 py-1 rounded-full ${getSeverityColor(disease.severity)} bg-opacity-10`}>
-                      {disease.severity}
-                    </span>
-                  </div>
+      {/* Diseases Grid - Mobile first approach */}
+      <div className="block md:hidden">
+        {/* Mobile version without heavy animations */}
+        <div className="grid grid-cols-1 gap-4">
+          {filteredDiseases.map((disease) => (
+            <Card key={disease._id} className="hover:shadow-card transition-all duration-300 cursor-pointer" onClick={() => setSelectedDisease(disease)}>
+              <CardContent className="p-4">
+                <div className="flex justify-between items-start mb-3">
+                  <h3 className="font-semibold text-foreground">{disease.name}</h3>
+                  <span className={`text-xs px-2 py-1 rounded-full ${getSeverityColor(disease.severity)} bg-opacity-10`}>
+                    {disease.severity}
+                  </span>
+                </div>
 
-                  <div className="flex items-center gap-2 mb-2">
-                    <Leaf className="h-4 w-4 text-crop-primary" />
-                    <span className="text-sm text-crop-primary font-medium">{disease.crop}</span>
-                  </div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Leaf className="h-4 w-4 text-crop-primary" />
+                  <span className="text-sm text-crop-primary font-medium">{disease.crop}</span>
+                </div>
 
-                  <p className="text-sm text-muted-foreground mb-3">
-                    {disease.symptoms.slice(0, 2).join(', ')}
-                    {disease.symptoms.length > 2 && '...'}
-                  </p>
+                <p className="text-sm text-muted-foreground mb-3">
+                  {disease.symptoms.slice(0, 2).join(', ')}
+                  {disease.symptoms.length > 2 && '...'}
+                </p>
 
-                  <Button variant="outline" size="sm" className="w-full">
-                    {t('viewDetails')}
-                  </Button>
-                </CardContent>
-              </Card>
-            </ScrollAnimatedSection>
+                <Button variant="outline" size="sm" className="w-full">
+                  {t('viewDetails')}
+                </Button>
+              </CardContent>
+            </Card>
           ))}
         </div>
-      </ScrollAnimatedSection>
+      </div>
+
+      {/* Desktop version with animations */}
+      <div className="hidden md:block">
+        <ScrollAnimatedSection animationType="fade-up" delay={200}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filteredDiseases.map((disease, index) => (
+              <ScrollAnimatedSection
+                key={disease._id}
+                animationType="scale-in"
+                delay={300 + index * 50}
+              >
+                <Card className="hover:shadow-card transition-all duration-300 cursor-pointer" onClick={() => setSelectedDisease(disease)}>
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-start mb-3">
+                      <h3 className="font-semibold text-foreground">{disease.name}</h3>
+                      <span className={`text-xs px-2 py-1 rounded-full ${getSeverityColor(disease.severity)} bg-opacity-10`}>
+                        {disease.severity}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 mb-2">
+                      <Leaf className="h-4 w-4 text-crop-primary" />
+                      <span className="text-sm text-crop-primary font-medium">{disease.crop}</span>
+                    </div>
+
+                    <p className="text-sm text-muted-foreground mb-3">
+                      {disease.symptoms.slice(0, 2).join(', ')}
+                      {disease.symptoms.length > 2 && '...'}
+                    </p>
+
+                    <Button variant="outline" size="sm" className="w-full">
+                      {t('viewDetails')}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </ScrollAnimatedSection>
+            ))}
+          </div>
+        </ScrollAnimatedSection>
+      </div>
 
       {filteredDiseases.length === 0 && (
-        <ScrollAnimatedSection animationType="fade-up" delay={400}>
-          <Card>
-            <CardContent className="p-8 text-center">
-              <p className="text-muted-foreground">{t('noDiseasesFound')}</p>
-            </CardContent>
-          </Card>
-        </ScrollAnimatedSection>
+        <Card>
+          <CardContent className="p-8 text-center">
+            <p className="text-muted-foreground">{t('noDiseasesFound')}</p>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
