@@ -223,9 +223,9 @@ ${tip.content.map(item => `• ${item}`).join('\n')}`;
           </CardContent>
         </Card>
 
-      {/* Scroll Indicator */}
+      {/* Scroll Indicator - Desktop only */}
       {showScrollIndicator && (
-        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 flex flex-col items-center">
+        <div className="hidden md:flex fixed bottom-1/4 left-1/2 transform -translate-x-1/2 z-50 flex-col items-center">
           <div className="bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg border border-gray-200 animate-bounce">
             <ChevronDown className="h-6 w-6 text-gray-600" />
           </div>
@@ -237,69 +237,130 @@ ${tip.content.map(item => `• ${item}`).join('\n')}`;
         </div>
       )}
 
-      {/* Tips Grid */}
-      <ScrollAnimatedSection animationType="fade-up" delay={600}>
-        <div className="grid md:grid-cols-2 gap-6">
-          {filteredTips.map((tip, index) => {
+      {/* Tips Grid - Mobile first approach */}
+      <div className="block md:hidden">
+        {/* Mobile version without heavy animations */}
+        <div className="grid grid-cols-1 gap-6">
+          {filteredTips.map((tip) => {
             const IconComponent = iconMap[tip.icon] || Calendar; 
             return (
-              <ScrollAnimatedSection 
-                key={tip._id}
-                animationType="scale-in" 
-                delay={800 + (index * 150)}
-              >
-                <Card className="hover:shadow-card transition-all duration-300">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-gradient-to-br from-crop-secondary to-accent p-2 rounded-lg">
-                          <IconComponent className="h-6 w-6 text-crop-primary" />
-                        </div>
-                        <div>
-                          <CardTitle className="text-lg">{tip.title}</CardTitle>
-                          <p className="text-sm text-muted-foreground flex items-center gap-2">
-                            <Calendar className="h-4 w-4" />
-                            {tip.timing}
-                          </p>
-                        </div>
+              <Card key={tip._id} className="hover:shadow-card transition-all duration-300">
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-gradient-to-br from-crop-secondary to-accent p-2 rounded-lg">
+                        <IconComponent className="h-6 w-6 text-crop-primary" />
                       </div>
-                      <Badge variant="outline" className="text-crop-primary border-crop-primary">
-                        {tip.category}
-                      </Badge>
+                      <div>
+                        <CardTitle className="text-lg">{tip.title}</CardTitle>
+                        <p className="text-sm text-muted-foreground flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+                          {tip.timing}
+                        </p>
+                      </div>
                     </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="bg-gradient-earth p-3 rounded-lg">
-                        <h4 className="font-medium mb-2 text-foreground">Season: {tip.season}</h4>
-                      </div>
-                      
-                      <ul className="space-y-2">
-                        {tip.content.map((item, index) => (
-                          <li key={index} className="flex items-start gap-2 text-sm">
-                            <span className="w-2 h-2 bg-crop-primary rounded-full mt-2 flex-shrink-0"></span>
-                            <span className="text-muted-foreground">{item}</span>
-                          </li>
-                        ))}
-                      </ul>
+                    <Badge variant="outline" className="text-crop-primary border-crop-primary">
+                      {tip.category}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="bg-gradient-earth p-3 rounded-lg">
+                      <h4 className="font-medium mb-2 text-foreground">Season: {tip.season}</h4>
+                    </div>
+                    
+                    <ul className="space-y-2">
+                      {tip.content.map((item, index) => (
+                        <li key={index} className="flex items-start gap-2 text-sm">
+                          <span className="w-2 h-2 bg-crop-primary rounded-full mt-2 flex-shrink-0"></span>
+                          <span className="text-muted-foreground">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
 
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="w-full mt-4"
-                        onClick={() => saveToNotes(tip)}
-                        disabled={savingNote === tip._id}
-                      >
-                        {savingNote === tip._id ? 'Saving...' : 'Save to My Notes'}
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </ScrollAnimatedSection>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full mt-4"
+                      onClick={() => saveToNotes(tip)}
+                      disabled={savingNote === tip._id}
+                    >
+                      {savingNote === tip._id ? 'Saving...' : 'Save to My Notes'}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             );
           })}
         </div>
-      </ScrollAnimatedSection>
+      </div>
+
+      {/* Desktop version with animations */}
+      <div className="hidden md:block">
+        <ScrollAnimatedSection animationType="fade-up" delay={300}>
+          <div className="grid md:grid-cols-2 gap-6">
+            {filteredTips.map((tip, index) => {
+              const IconComponent = iconMap[tip.icon] || Calendar; 
+              return (
+                <ScrollAnimatedSection 
+                  key={tip._id}
+                  animationType="scale-in" 
+                  delay={400 + (index * 100)}
+                >
+                  <Card className="hover:shadow-card transition-all duration-300">
+                    <CardHeader>
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="bg-gradient-to-br from-crop-secondary to-accent p-2 rounded-lg">
+                            <IconComponent className="h-6 w-6 text-crop-primary" />
+                          </div>
+                          <div>
+                            <CardTitle className="text-lg">{tip.title}</CardTitle>
+                            <p className="text-sm text-muted-foreground flex items-center gap-2">
+                              <Calendar className="h-4 w-4" />
+                              {tip.timing}
+                            </p>
+                          </div>
+                        </div>
+                        <Badge variant="outline" className="text-crop-primary border-crop-primary">
+                          {tip.category}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <div className="bg-gradient-earth p-3 rounded-lg">
+                          <h4 className="font-medium mb-2 text-foreground">Season: {tip.season}</h4>
+                        </div>
+                        
+                        <ul className="space-y-2">
+                          {tip.content.map((item, index) => (
+                            <li key={index} className="flex items-start gap-2 text-sm">
+                              <span className="w-2 h-2 bg-crop-primary rounded-full mt-2 flex-shrink-0"></span>
+                              <span className="text-muted-foreground">{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="w-full mt-4"
+                          onClick={() => saveToNotes(tip)}
+                          disabled={savingNote === tip._id}
+                        >
+                          {savingNote === tip._id ? 'Saving...' : 'Save to My Notes'}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </ScrollAnimatedSection>
+              );
+            })}
+          </div>
+        </ScrollAnimatedSection>
+      </div>
 
       {filteredTips.length === 0 && (
           <Card>

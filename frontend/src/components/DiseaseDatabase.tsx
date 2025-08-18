@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Search, Leaf, Bug, Shield, ChevronDown } from 'lucide-react';
 import { ScrollAnimatedSection } from '@/components/ScrollAnimatedSection';
 import { useTranslation } from '@/contexts/TranslationContext';
@@ -245,6 +246,8 @@ ${disease.prevention}`;
               >
                 {savingNote ? 'Saving...' : t('saveToNotes')}
               </Button>
+              
+              <Separator className="my-8 bg-white/20" />
             </CardContent>
           </Card>
         </div>
