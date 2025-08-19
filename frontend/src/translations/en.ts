@@ -35,7 +35,7 @@ export const translations = {
 
   // Hero Section
   heroTitle: "Protect Your Crops with AI",
-  heroDescription: "Detect diseases early, get expert treatment advice, and keep your farm healthy with Vguard's intelligent crop protection system.",
+  heroDescription: "Detect diseases early, get expert treatment advice, and keep your farm healthy with WeGuard's intelligent crop protection system.",
   aiDetection: "AI Disease Detection",
   expertAdvice: "Expert Advice",
   organicSolutions: "Organic Solutions",
