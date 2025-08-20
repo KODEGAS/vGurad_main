@@ -15,12 +15,26 @@ const upload = multer({
   limits: {
     fileSize: 25 * 1024 * 1024, // 25MB limit
   },
-});
+}).single('file');
+
+// Error handling middleware for multer
+const handleMulterErrors = (req: Request, res: Response, next: Function) => {
+  upload(req, res, (err: any) => {
+    if (err) {
+      console.error('Multer error:', err);
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(413).json({ error: 'File too large. Maximum size is 25MB.' });
+      }
+      return res.status(400).json({ error: 'File upload error: ' + (err.message || 'Unknown error') });
+    }
+    next();
+  });
+};
 
 const CROP_API_BASE_URL = 'http://kodegas-paddy-api.centralindia.cloudapp.azure.com';
 
 // Proxy route for crop prediction
-router.post('/predict', upload.single('file'), async (req: MulterRequest, res: Response) => {
+router.post('/predict', handleMulterErrors, async (req: MulterRequest, res: Response) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
