@@ -4,7 +4,7 @@ import axios from 'axios';
 
 // Extend Request interface to include file
 interface MulterRequest extends Request {
-  file?: Express.Multer.File;
+  file?: any; // Use any as a temporary fix for the Express.Multer.File type
 }
 
 const router = express.Router();
@@ -13,7 +13,7 @@ const router = express.Router();
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
+    fileSize: 25 * 1024 * 1024, // 25MB limit
   },
 });
 
