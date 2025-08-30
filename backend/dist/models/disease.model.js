@@ -15,5 +15,4 @@ const diseaseSchema = new mongoose_1.Schema({
 }, {
     timestamps: true, // Automatically adds createdAt and updatedAt fields
 });
-// Export the Mongoose model
 exports.Disease = (0, mongoose_1.model)('Disease', diseaseSchema);
