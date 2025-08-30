@@ -26,8 +26,8 @@ const API_CONFIG: EnvironmentConfig = {
   }
 };
 
-// Determine current environment
-const environment = (import.meta.env.MODE || 'development') as keyof EnvironmentConfig;
+// Determine current environment - Using Vite environment variables
+const environment = (import.meta.env.VITE_NODE_ENV || import.meta.env.MODE || 'production') as keyof EnvironmentConfig;
 const isDevelopment = environment === 'development';
 const isProduction = environment === 'production';
 
