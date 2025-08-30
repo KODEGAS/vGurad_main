@@ -17,7 +17,7 @@ const upload = multer({
   },
 });
 
-const CROP_API_BASE_URL = 'http://kodegas-paddy-api.centralindia.cloudapp.azure.com';
+const CROP_API_BASE_URL = 'https://api.weguard.kodegas.com';
 
 // Proxy route for crop prediction
 router.post('/predict', upload.single('file'), async (req: MulterRequest, res: Response) => {
