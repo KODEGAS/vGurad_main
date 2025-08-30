@@ -23,8 +23,7 @@
     "form-data": "^4.0.4",
     "mongoose": "^8.17.1",
     "multer": "^2.0.2",
-    "node-fetch": "^3.3.2",
-    "vgurad": "file:.."
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
