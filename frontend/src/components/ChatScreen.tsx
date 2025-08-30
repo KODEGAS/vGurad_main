@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, Send, User, Bot, Loader2 } from 'lucide-react';
+import { API_ENDPOINTS } from '@/config/api';
 
 interface ChatScreenProps {
   onBack: () => void;
@@ -53,8 +54,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ onBack, question, expert
     setIsLoading(true);
     
     try {
-      const API_BASE = 'https://vgurad-backend.onrender.com';
-      const response = await fetch(`${API_BASE}/api/chat`, {
+      const response = await fetch(API_ENDPOINTS.chat, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userPrompt, expertName })

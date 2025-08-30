@@ -121,6 +121,29 @@ vGurad_main/
 └── README.md
 ```
 
+## 🌐 API Configuration
+
+### API Base URLs
+
+The application uses different API base URLs for different environments:
+
+- **Production**: `https://vgurad-backend.onrender.com`
+- **Local Development**: `http://localhost:5001` (configurable via PORT env variable)
+
+For detailed API configuration information, see [API_CONFIGURATION.md](./API_CONFIGURATION.md).
+
+### Centralized Configuration
+
+API URLs are now centralized in `frontend/src/config/api.ts` for better maintainability:
+
+```typescript
+import { API_ENDPOINTS } from '@/config/api';
+
+// Use predefined endpoints
+fetch(API_ENDPOINTS.experts)
+fetch(API_ENDPOINTS.cropPredict)
+```
+
 ## 📜 API Endpoints
 
 The backend provides a RESTful API with the following endpoints:

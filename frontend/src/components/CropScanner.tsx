@@ -10,6 +10,7 @@ import { Camera, Upload, Scan, ArrowLeft, Loader2, X, Package, DollarSign, Clock
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { auth } from '../firebase';
+import { API_ENDPOINTS } from '@/config/api';
 
 const DEMO_IMAGE_URL = 'https://placehold.co/600x400/8B4513/FFFFFF?text=Infected+Crop';
 
@@ -55,9 +56,6 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Use proxy through your backend instead of direct HTTP calls
-  const API_BASE_URL = 'https://vgurad-backend.onrender.com/api/crop-analysis';
-
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -93,7 +91,7 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
 
     try {
       // Step 1: Send image to prediction API via proxy
-      const predictionResponse = await fetch(`${API_BASE_URL}/predict`, {
+      const predictionResponse = await fetch(API_ENDPOINTS.cropPredict, {
         method: 'POST',
         body: formData,
       });
@@ -110,8 +108,8 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
       }
 
       // Step 2: Fetch detailed disease info and medicines in parallel via proxy
-      const diseaseInfoUrl = `${API_BASE_URL}/disease-info/${encodeURIComponent(diseaseName)}`;
-      const medicinesUrl = `${API_BASE_URL}/disease-medicines?name=${encodeURIComponent(diseaseName)}`;
+      const diseaseInfoUrl = API_ENDPOINTS.diseaseInfo(diseaseName);
+      const medicinesUrl = API_ENDPOINTS.diseaseMedicines(diseaseName);
 
       const [diseaseInfoResponse, medicinesResponse] = await Promise.all([
         fetch(diseaseInfoUrl),
