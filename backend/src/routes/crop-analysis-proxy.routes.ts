@@ -31,7 +31,7 @@ const handleMulterErrors = (req: Request, res: Response, next: Function) => {
   });
 };
 
-const CROP_API_BASE_URL = 'http://kodegas-paddy-api.centralindia.cloudapp.azure.com';
+const CROP_API_BASE_URL = 'https://api.weguard.kodegas.com';
 
 // Proxy route for crop prediction
 router.post('/predict', handleMulterErrors, async (req: MulterRequest, res: Response) => {
