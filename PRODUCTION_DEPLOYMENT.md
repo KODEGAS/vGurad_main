@@ -119,3 +119,12 @@ NODE_ENV=production
 2. Serve frontend: `serve -s frontend/dist -l 8080`
 3. Open browser: `http://localhost:8080`
 4. Verify API connection to `https://vgurad-backend.onrender.com`
+
+## 🔗 Predict Endpoints Reference
+
+For detailed information about predict endpoints base URLs and configuration, see [PREDICT_ENDPOINTS.md](./PREDICT_ENDPOINTS.md)
+
+**Quick Reference:**
+- External AI API: `http://kodegas-paddy-api.centralindia.cloudapp.azure.com`
+- Production Backend: `https://vgurad-backend.onrender.com/api/crop-analysis`
+- Predict Endpoint: `/predict` (POST with image file)

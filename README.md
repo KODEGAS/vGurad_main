@@ -130,6 +130,11 @@ The backend provides a RESTful API with the following endpoints:
 -   `POST /api/questions`: Submit a question to an expert.
 -   `GET /api/tips`: Get a list of all farming tips.
 -   `POST /api/gemini/generate`: Get AI-powered analysis of a crop image.
+-   `POST /api/crop-analysis/predict`: Upload crop image for disease prediction.
+-   `GET /api/crop-analysis/disease-info/:diseaseName`: Get detailed disease information.
+-   `GET /api/crop-analysis/disease-medicines?name=:diseaseName`: Get medicines for a specific disease.
+
+> **📋 Predict Endpoints Configuration:** For detailed information about predict endpoints base URLs and configuration, see [PREDICT_ENDPOINTS.md](./PREDICT_ENDPOINTS.md)
 
 ## 📦 Deployment
 
