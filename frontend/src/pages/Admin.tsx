@@ -35,6 +35,7 @@ import {
 import { UserRoleManager } from '@/components/admin/UserRoleManager';
 import { ProductManager } from '@/components/admin/ProductManager';
 import { WeatherAlertManager } from '@/components/admin/WeatherAlertManager';
+import { Helmet } from 'react-helmet-async'; // Import Helmet
 
 // Define the data types for better type safety
 interface Disease {
@@ -334,6 +335,10 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>WeGuard - Admin Dashboard</title>
+        <meta name="description" content="Manage WeGuard application data including diseases, farmer tips, experts, user roles, products, and weather alerts." />
+      </Helmet>
       <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">

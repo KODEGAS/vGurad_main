@@ -29,8 +29,6 @@ const App = () => (
             <Route
               path="/admin"
               element={
-                // Wrap the Admin component with the ProtectedRoute
-                // We specify that only the 'admin' role is allowed
                 <ProtectedRoute allowedRoles={['admin']}>
                   <Admin />
                 </ProtectedRoute>
