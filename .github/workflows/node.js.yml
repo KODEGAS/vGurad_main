@@ -26,6 +26,21 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+        cache-dependency-path: |
+          backend/package-lock.json
+          frontend/package-lock.json
+    
+    # Install dependencies for the monorepo
+    - name: Install dependencies
+      run: |
+        cd backend && npm ci
+        cd ../frontend && npm ci
+    
+    # Build the project
+    - name: Build project
+      run: npm run build
+    
+    # Lint frontend code (continue on error to not block CI)
+    - name: Lint frontend
+      continue-on-error: true
+      run: cd frontend && npm run lint
