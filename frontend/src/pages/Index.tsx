@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { Helmet } from 'react-helmet-async'; // Import Helmet
 import { useTranslation } from '@/contexts/TranslationContext';
 import { Header } from '@/components/Header';
@@ -8,7 +8,7 @@ import { DiseaseDatabase } from '@/components/DiseaseDatabase';
 import { FarmerTips } from '@/components/FarmerTips';
 import { ExpertHelp } from '@/components/ExpertHelp';
 import { ChatScreen } from '@/components/ChatScreen';
-import { Hero3D } from '@/components/Hero3D';
+const Hero3D = lazy(() => import('@/components/Hero3D').then(module => ({ default: module.Hero3D })));
 import { SectionLoadingSpinner } from '@/components/LoadingSpinner';
 import { LoadingDots } from '@/components/LoadingDots';
 import { TreatmentCalendar } from '@/components/TreatmentCalendar';
@@ -152,11 +152,14 @@ const Index = () => {
               <meta name="description" content="Protect your crops with WeGuard's intelligent AI disease detection system. Get instant crop health analysis, expert treatment advice, and 24/7 agricultural support with 90% accuracy rate. Transform your farming with smart technology." />
             </Helmet>
             {/* Hero Section */}
-            <div className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-card animate-fade-in-up hover-glow h-56 sm:h-64 md:h-80">
-              {/* 3D Background */}
+            <div className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-card h-56 sm:h-64 md:h-80">
+              {/* 3D Background - Lazy loaded */}
               <Suspense fallback={
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-crop-primary/80 flex items-center justify-center">
-                  <LoadingDots color="primary" />
+                  <div className="text-white text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
+                    <p className="text-sm">Loading 3D Experience...</p>
+                  </div>
                 </div>
               }>
                 <Hero3D />
