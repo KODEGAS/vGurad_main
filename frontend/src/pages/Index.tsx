@@ -1,4 +1,4 @@
-import React, { useState, Suspense, lazy } from 'react';
+import React, { useState, Suspense, lazy, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async'; // Import Helmet
 import { useTranslation } from '@/contexts/TranslationContext';
 import { Header } from '@/components/Header';
@@ -8,7 +8,11 @@ import { DiseaseDatabase } from '@/components/DiseaseDatabase';
 import { FarmerTips } from '@/components/FarmerTips';
 import { ExpertHelp } from '@/components/ExpertHelp';
 import { ChatScreen } from '@/components/ChatScreen';
-const Hero3D = lazy(() => import('@/components/Hero3D').then(module => ({ default: module.Hero3D })));
+const Hero3D = lazy(() =>
+  import('@/components/Hero3D').then(module => ({
+    default: module.Hero3D
+  }))
+);
 import { SectionLoadingSpinner } from '@/components/LoadingSpinner';
 import { LoadingDots } from '@/components/LoadingDots';
 import { TreatmentCalendar } from '@/components/TreatmentCalendar';
@@ -41,7 +45,17 @@ const Index = () => {
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [chatQuestion, setChatQuestion] = useState<string>('');
   const [isPageLoading, setIsPageLoading] = useState(false);
+  const [hero3DLoaded, setHero3DLoaded] = useState(false);
   const { t } = useTranslation();
+
+  // Delay loading of Hero3D component to improve initial page load
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setHero3DLoaded(true);
+    }, 2000); // Load after 2 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handlePageChange = (page: Page) => {
     setIsPageLoading(true);
@@ -154,22 +168,29 @@ const Index = () => {
             {/* Hero Section */}
             <div className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-card h-56 sm:h-64 md:h-80">
               {/* 3D Background - Lazy loaded */}
-              <Suspense fallback={
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-crop-primary/80 flex items-center justify-center">
-                  <div className="text-white text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
-                    <p className="text-sm">Loading 3D Experience...</p>
+              {hero3DLoaded && (
+                <Suspense fallback={
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-crop-primary/80 flex items-center justify-center">
+                    <div className="text-white text-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
+                      <p className="text-sm">Loading 3D Experience...</p>
+                    </div>
                   </div>
-                </div>
-              }>
-                <Hero3D />
-              </Suspense>
+                }>
+                  <Hero3D />
+                </Suspense>
+              )}
 
+              {/* Background Image with Overlay */}
               {/* Background Image with Overlay */}
               <img
                 src={heroImage}
                 alt="Healthy crops in agricultural field"
                 className="w-full h-full object-cover opacity-60"
+                width="800"
+                height="400"
+                loading="eager"
+                decoding="async"
                 draggable="false"
               />
 
@@ -179,19 +200,19 @@ const Index = () => {
                   <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-2 sm:mb-4 animate-slide-in-left leading-tight">
                     {t('heroTitle')}
                   </h1>
-                  <p className="text-base sm:text-lg md:text-xl mb-3 sm:mb-6 text-white/90 max-w-full sm:max-w-2xl animate-slide-in-right">
+                  <p className="text-base sm:text-lg md:text-xl mb-3 sm:mb-6 text-white/90 max-w-full sm:max-w-2xl">
                     {t('heroDescription')}
                   </p>
-                  <div className="flex flex-wrap gap-2 sm:gap-3 animate-fade-in">
-                    <Badge className="bg-white/20 text-white border-white/30 text-xs sm:text-sm px-2 sm:px-3 py-1 animate-stagger-1">
+                  <div className="flex flex-wrap gap-2 sm:gap-3">
+                    <Badge className="bg-white/20 text-white border-white/30 text-xs sm:text-sm px-2 sm:px-3 py-1">
                       <Camera className="h-4 w-4 mr-1 sm:mr-2" />
                       {t('aiDetection')}
                     </Badge>
-                    <Badge className="bg-white/20 text-white border-white/30 text-xs sm:text-sm px-2 sm:px-3 py-1 animate-stagger-2">
+                    <Badge className="bg-white/20 text-white border-white/30 text-xs sm:text-sm px-2 sm:px-3 py-1">
                       <Shield className="h-4 w-4 mr-1 sm:mr-2" />
                       {t('expertAdvice')}
                     </Badge>
-                    <Badge className="bg-white/20 text-white border-white/30 text-xs sm:text-sm px-2 sm:px-3 py-1 animate-stagger-3">
+                    <Badge className="bg-white/20 text-white border-white/30 text-xs sm:text-sm px-2 sm:px-3 py-1">
                       <Leaf className="h-4 w-4 mr-1 sm:mr-2" />
                       {t('organicSolutions')}
                     </Badge>
@@ -202,27 +223,27 @@ const Index = () => {
 
             {/* Quick Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Card className="bg-gradient-to-br from-success/10 to-success/5 border-success/20 hover-lift animate-stagger-1">
+              <Card className="bg-gradient-to-br from-success/10 to-success/5 border-success/20 hover-lift">
                 <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-success mb-1 animate-float">10+</div>
+                  <div className="text-2xl font-bold text-success mb-1">10+</div>
                   <div className="text-xs text-muted-foreground">{t('diseasesDetected')}</div>
                 </CardContent>
               </Card>
-              <Card className="bg-gradient-to-br from-crop-primary/10 to-crop-primary/5 border-crop-primary/20 hover-lift animate-stagger-2">
+              <Card className="bg-gradient-to-br from-crop-primary/10 to-crop-primary/5 border-crop-primary/20 hover-lift">
                 <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-crop-primary mb-1 animate-float" style={{ animationDelay: '0.5s' }}>150+</div>
+                  <div className="text-2xl font-bold text-crop-primary mb-1">150+</div>
                   <div className="text-xs text-muted-foreground">{t('farmersHelped')}</div>
                 </CardContent>
               </Card>
-              <Card className="bg-gradient-to-br from-warning/10 to-warning/5 border-warning/20 hover-lift animate-stagger-3">
+              <Card className="bg-gradient-to-br from-warning/10 to-warning/5 border-warning/20 hover-lift">
                 <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-warning-foreground mb-1 animate-float" style={{ animationDelay: '1s' }}>24/7</div>
+                  <div className="text-2xl font-bold text-warning-foreground mb-1">24/7</div>
                   <div className="text-xs text-muted-foreground">{t('expertSupport')}</div>
                 </CardContent>
               </Card>
-              <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 hover-lift animate-stagger-4">
+              <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 hover-lift">
                 <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-primary mb-1 animate-float" style={{ animationDelay: '1.5s' }}>90%*</div>
+                  <div className="text-2xl font-bold text-primary mb-1">90%*</div>
                   <div className="text-xs text-muted-foreground">{t('accuracyRate')}</div>
                 </CardContent>
               </Card>
@@ -236,7 +257,7 @@ const Index = () => {
                 icon={Camera}
                 onClick={() => handlePageChange('scanner')}
                 variant="scan"
-                className="border-success/20 bg-gradient-to-br from-success/5 to-transparent hover-lift animate-slide-in-left"
+                className="border-success/20 bg-gradient-to-br from-success/5 to-transparent hover-lift"
               />
 
               <QuickActionCard
@@ -257,7 +278,7 @@ const Index = () => {
                 icon={Lightbulb}
                 onClick={() => handlePageChange('tips')}
                 variant="crop"
-                className="border-warning/20 bg-gradient-to-br from-warning/5 to-transparent hover-lift animate-slide-in-left"
+                className="border-warning/20 bg-gradient-to-br from-warning/5 to-transparent hover-lift"
               />
 
               <QuickActionCard
@@ -271,9 +292,7 @@ const Index = () => {
             </div>
 
             {/* Today's Weather & Alerts */}
-            <ScrollAnimatedSection animationType="fade-up" delay={800}>
-              <WeatherCard />
-            </ScrollAnimatedSection>
+            <WeatherCard />
           </div>
         );
     }

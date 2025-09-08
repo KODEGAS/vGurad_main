@@ -100,7 +100,7 @@ const Admin = () => {
   const [editedDisease, setEditedDisease] = useState<Disease | null>(null);
   const [editedTip, setEditedTip] = useState<Tip | null>(null);
   const [editedExpert, setEditedExpert] = useState<Expert | null>(null);
-  
+
   // Firebase configuration and initialization
   const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
   const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
@@ -118,7 +118,7 @@ const Admin = () => {
         } else {
           await signInAnonymously(auth);
         }
-        
+
         const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
           if (user) {
             setUserId(user.uid);
@@ -137,7 +137,7 @@ const Admin = () => {
     };
     setupAuthAndFirestore();
   }, [auth, initialAuthToken]);
-  
+
   useEffect(() => {
     if (!userId) return;
 
@@ -215,14 +215,14 @@ const Admin = () => {
     setEditingDiseaseId(disease.id);
     setEditedDisease(disease);
   };
-  
+
   const updateDisease = async () => {
     if (!editedDisease || !editedDisease.name || !editedDisease.description) {
       toast({ title: "Please fill out all required fields", variant: "destructive" });
       return;
     }
     try {
-  await updateDoc(doc(db, `artifacts/${appId}/public/data/diseases`, editedDisease.id), { ...editedDisease });
+      await updateDoc(doc(db, `artifacts/${appId}/public/data/diseases`, editedDisease.id), { ...editedDisease });
       setEditingDiseaseId(null);
       setEditedDisease(null);
       toast({ title: "Disease updated successfully" });
@@ -268,7 +268,7 @@ const Admin = () => {
       return;
     }
     try {
-  await updateDoc(doc(db, `artifacts/${appId}/public/data/tips`, editedTip.id), { ...editedTip });
+      await updateDoc(doc(db, `artifacts/${appId}/public/data/tips`, editedTip.id), { ...editedTip });
       setEditingTipId(null);
       setEditedTip(null);
       toast({ title: "Tip updated successfully" });
@@ -307,14 +307,14 @@ const Admin = () => {
     setEditingExpertId(expert.id);
     setEditedExpert(expert);
   };
-  
+
   const updateExpert = async () => {
     if (!editedExpert || !editedExpert.name || !editedExpert.specialization) {
       toast({ title: "Please fill out all required fields", variant: "destructive" });
       return;
     }
     try {
-  await updateDoc(doc(db, `artifacts/${appId}/public/data/experts`, editedExpert.id), { ...editedExpert });
+      await updateDoc(doc(db, `artifacts/${appId}/public/data/experts`, editedExpert.id), { ...editedExpert });
       setEditingExpertId(null);
       setEditedExpert(null);
       toast({ title: "Expert updated successfully" });
@@ -375,7 +375,7 @@ const Admin = () => {
                     <Input
                       id="disease-name"
                       value={newDisease.name}
-                      onChange={(e) => setNewDisease({...newDisease, name: e.target.value})}
+                      onChange={(e) => setNewDisease({ ...newDisease, name: e.target.value })}
                       placeholder="Enter disease name"
                     />
                   </div>
@@ -384,7 +384,7 @@ const Admin = () => {
                     <select
                       id="disease-severity"
                       value={newDisease.severity}
-                      onChange={(e) => setNewDisease({...newDisease, severity: e.target.value as 'Low' | 'Medium' | 'High'})}
+                      onChange={(e) => setNewDisease({ ...newDisease, severity: e.target.value as 'Low' | 'Medium' | 'High' })}
                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                     >
                       <option value="Low">Low</option>
@@ -398,7 +398,7 @@ const Admin = () => {
                   <Textarea
                     id="disease-description"
                     value={newDisease.description}
-                    onChange={(e) => setNewDisease({...newDisease, description: e.target.value})}
+                    onChange={(e) => setNewDisease({ ...newDisease, description: e.target.value })}
                     placeholder="Enter disease description"
                   />
                 </div>
@@ -407,7 +407,7 @@ const Admin = () => {
                   <Textarea
                     id="disease-treatment"
                     value={newDisease.treatment}
-                    onChange={(e) => setNewDisease({...newDisease, treatment: e.target.value})}
+                    onChange={(e) => setNewDisease({ ...newDisease, treatment: e.target.value })}
                     placeholder="Enter treatment recommendations"
                   />
                 </div>
@@ -425,9 +425,9 @@ const Admin = () => {
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         {editingDiseaseId === disease.id ? (
-                          <Input 
+                          <Input
                             value={editedDisease?.name || ''}
-                            onChange={(e) => setEditedDisease({...editedDisease!, name: e.target.value})}
+                            onChange={(e) => setEditedDisease({ ...editedDisease!, name: e.target.value })}
                             className="text-lg font-semibold"
                           />
                         ) : (
@@ -437,7 +437,7 @@ const Admin = () => {
                           {editingDiseaseId === disease.id ? (
                             <select
                               value={editedDisease?.severity}
-                              onChange={(e) => setEditedDisease({...editedDisease!, severity: e.target.value as 'Low' | 'Medium' | 'High'})}
+                              onChange={(e) => setEditedDisease({ ...editedDisease!, severity: e.target.value as 'Low' | 'Medium' | 'High' })}
                               className="bg-transparent text-sm border-none focus:outline-none"
                             >
                               <option value="Low">Low</option>
@@ -451,15 +451,15 @@ const Admin = () => {
                       </div>
                       <div className="flex gap-2">
                         {editingDiseaseId === disease.id ? (
-                          <Button variant="outline" size="sm" onClick={updateDisease}>
+                          <Button variant="outline" size="sm" onClick={updateDisease} aria-label="Save disease changes">
                             <Save className="h-4 w-4" />
                           </Button>
                         ) : (
-                          <Button variant="ghost" size="sm" onClick={() => startEditDisease(disease)}>
+                          <Button variant="ghost" size="sm" onClick={() => startEditDisease(disease)} aria-label="Edit disease">
                             <Edit className="h-4 w-4" />
                           </Button>
                         )}
-                        <Button variant="destructive" size="sm" onClick={() => deleteDisease(disease.id)}>
+                        <Button variant="destructive" size="sm" onClick={() => deleteDisease(disease.id)} aria-label="Delete disease">
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -468,12 +468,12 @@ const Admin = () => {
                       <div className="space-y-2">
                         <Textarea
                           value={editedDisease?.description || ''}
-                          onChange={(e) => setEditedDisease({...editedDisease!, description: e.target.value})}
+                          onChange={(e) => setEditedDisease({ ...editedDisease!, description: e.target.value })}
                           className="text-sm text-muted-foreground"
                         />
                         <Textarea
                           value={editedDisease?.treatment || ''}
-                          onChange={(e) => setEditedDisease({...editedDisease!, treatment: e.target.value})}
+                          onChange={(e) => setEditedDisease({ ...editedDisease!, treatment: e.target.value })}
                           className="text-sm"
                         />
                       </div>
@@ -505,7 +505,7 @@ const Admin = () => {
                     <Input
                       id="tip-title"
                       value={newTip.title}
-                      onChange={(e) => setNewTip({...newTip, title: e.target.value})}
+                      onChange={(e) => setNewTip({ ...newTip, title: e.target.value })}
                       placeholder="Enter tip title"
                     />
                   </div>
@@ -514,7 +514,7 @@ const Admin = () => {
                     <Input
                       id="tip-category"
                       value={newTip.category}
-                      onChange={(e) => setNewTip({...newTip, category: e.target.value})}
+                      onChange={(e) => setNewTip({ ...newTip, category: e.target.value })}
                       placeholder="Enter category"
                     />
                   </div>
@@ -524,7 +524,7 @@ const Admin = () => {
                   <Textarea
                     id="tip-content"
                     value={newTip.content}
-                    onChange={(e) => setNewTip({...newTip, content: e.target.value})}
+                    onChange={(e) => setNewTip({ ...newTip, content: e.target.value })}
                     placeholder="Enter tip content"
                     rows={4}
                   />
@@ -543,9 +543,9 @@ const Admin = () => {
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         {editingTipId === tip.id ? (
-                          <Input 
+                          <Input
                             value={editedTip?.title || ''}
-                            onChange={(e) => setEditedTip({...editedTip!, title: e.target.value})}
+                            onChange={(e) => setEditedTip({ ...editedTip!, title: e.target.value })}
                             className="text-lg font-semibold"
                           />
                         ) : (
@@ -553,9 +553,9 @@ const Admin = () => {
                         )}
                         <Badge variant="outline">
                           {editingTipId === tip.id ? (
-                            <Input 
+                            <Input
                               value={editedTip?.category || ''}
-                              onChange={(e) => setEditedTip({...editedTip!, category: e.target.value})}
+                              onChange={(e) => setEditedTip({ ...editedTip!, category: e.target.value })}
                               className="bg-transparent text-sm border-none focus:outline-none"
                             />
                           ) : (
@@ -565,23 +565,23 @@ const Admin = () => {
                       </div>
                       <div className="flex gap-2">
                         {editingTipId === tip.id ? (
-                          <Button variant="outline" size="sm" onClick={updateTip}>
+                          <Button variant="outline" size="sm" onClick={updateTip} aria-label="Save tip changes">
                             <Save className="h-4 w-4" />
                           </Button>
                         ) : (
-                          <Button variant="ghost" size="sm" onClick={() => startEditTip(tip)}>
+                          <Button variant="ghost" size="sm" onClick={() => startEditTip(tip)} aria-label="Edit tip">
                             <Edit className="h-4 w-4" />
                           </Button>
                         )}
-                        <Button variant="destructive" size="sm" onClick={() => deleteTip(tip.id)}>
+                        <Button variant="destructive" size="sm" onClick={() => deleteTip(tip.id)} aria-label="Delete tip">
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
                     {editingTipId === tip.id ? (
-                      <Textarea 
+                      <Textarea
                         value={editedTip?.content || ''}
-                        onChange={(e) => setEditedTip({...editedTip!, content: e.target.value})}
+                        onChange={(e) => setEditedTip({ ...editedTip!, content: e.target.value })}
                         className="text-sm text-muted-foreground"
                       />
                     ) : (
@@ -609,7 +609,7 @@ const Admin = () => {
                     <Input
                       id="expert-name"
                       value={newExpert.name}
-                      onChange={(e) => setNewExpert({...newExpert, name: e.target.value})}
+                      onChange={(e) => setNewExpert({ ...newExpert, name: e.target.value })}
                       placeholder="Enter expert name"
                     />
                   </div>
@@ -618,7 +618,7 @@ const Admin = () => {
                     <Input
                       id="expert-specialization"
                       value={newExpert.specialization}
-                      onChange={(e) => setNewExpert({...newExpert, specialization: e.target.value})}
+                      onChange={(e) => setNewExpert({ ...newExpert, specialization: e.target.value })}
                       placeholder="Enter specialization"
                     />
                   </div>
@@ -629,7 +629,7 @@ const Admin = () => {
                     <Input
                       id="expert-contact"
                       value={newExpert.contact}
-                      onChange={(e) => setNewExpert({...newExpert, contact: e.target.value})}
+                      onChange={(e) => setNewExpert({ ...newExpert, contact: e.target.value })}
                       placeholder="Enter contact information"
                     />
                   </div>
@@ -638,7 +638,7 @@ const Admin = () => {
                     <Input
                       id="expert-availability"
                       value={newExpert.availability}
-                      onChange={(e) => setNewExpert({...newExpert, availability: e.target.value})}
+                      onChange={(e) => setNewExpert({ ...newExpert, availability: e.target.value })}
                       placeholder="Enter availability hours"
                     />
                   </div>
@@ -657,9 +657,9 @@ const Admin = () => {
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         {editingExpertId === expert.id ? (
-                          <Input 
+                          <Input
                             value={editedExpert?.name || ''}
-                            onChange={(e) => setEditedExpert({...editedExpert!, name: e.target.value})}
+                            onChange={(e) => setEditedExpert({ ...editedExpert!, name: e.target.value })}
                             className="text-lg font-semibold"
                           />
                         ) : (
@@ -667,9 +667,9 @@ const Admin = () => {
                         )}
                         <Badge variant="secondary">
                           {editingExpertId === expert.id ? (
-                            <Input 
+                            <Input
                               value={editedExpert?.specialization || ''}
-                              onChange={(e) => setEditedExpert({...editedExpert!, specialization: e.target.value})}
+                              onChange={(e) => setEditedExpert({ ...editedExpert!, specialization: e.target.value })}
                               className="bg-transparent text-sm border-none focus:outline-none"
                             />
                           ) : (
@@ -679,29 +679,29 @@ const Admin = () => {
                       </div>
                       <div className="flex gap-2">
                         {editingExpertId === expert.id ? (
-                          <Button variant="outline" size="sm" onClick={updateExpert}>
+                          <Button variant="outline" size="sm" onClick={updateExpert} aria-label="Save expert changes">
                             <Save className="h-4 w-4" />
                           </Button>
                         ) : (
-                          <Button variant="ghost" size="sm" onClick={() => startEditExpert(expert)}>
+                          <Button variant="ghost" size="sm" onClick={() => startEditExpert(expert)} aria-label="Edit expert">
                             <Edit className="h-4 w-4" />
                           </Button>
                         )}
-                        <Button variant="destructive" size="sm" onClick={() => deleteExpert(expert.id)}>
+                        <Button variant="destructive" size="sm" onClick={() => deleteExpert(expert.id)} aria-label="Delete expert">
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
                     {editingExpertId === expert.id ? (
                       <div className="space-y-1 text-sm text-muted-foreground">
-                        <Input 
+                        <Input
                           value={editedExpert?.contact || ''}
-                          onChange={(e) => setEditedExpert({...editedExpert!, contact: e.target.value})}
+                          onChange={(e) => setEditedExpert({ ...editedExpert!, contact: e.target.value })}
                           placeholder="Contact"
                         />
-                        <Input 
+                        <Input
                           value={editedExpert?.availability || ''}
-                          onChange={(e) => setEditedExpert({...editedExpert!, availability: e.target.value})}
+                          onChange={(e) => setEditedExpert({ ...editedExpert!, availability: e.target.value })}
                           placeholder="Availability"
                         />
                       </div>
