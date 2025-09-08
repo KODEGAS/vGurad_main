@@ -69,6 +69,11 @@ export default defineConfig(({ mode }) => ({
             }
           }
         ]
+      },
+      // Enable in development for testing
+      disable: false,
+      devOptions: {
+        enabled: true
       }
     })
   ],
