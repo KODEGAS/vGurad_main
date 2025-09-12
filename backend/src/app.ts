@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './database';
@@ -13,10 +13,10 @@ import detectionResultRoutes from './routes/detection-result.routes';
 import noteRoutes from './routes/note.routes';
 import weatherAlertRoutes from './routes/weatherAlert.routes';
 import cropAnalysisProxyRoutes from './routes/crop-analysis-proxy.routes';
+import paddyPriceRoutes from './routes/paddy-price.route';
 
-import { admin, auth } from './firebase-admin';
+import { admin } from './firebase-admin';
 import { userModel } from './models/User';
-import path from 'path';
 import userRoutes from './routes/user.routes';
 
 dotenv.config();
@@ -139,7 +139,7 @@ app.use('/api/detection-results', detectionResultRoutes);
 app.use('/api/notes', noteRoutes);
 app.use('/api/weather-alerts', weatherAlertRoutes);
 app.use('/api/crop-analysis', cropAnalysisProxyRoutes);
-
+app.use('/api/paddy-prices', paddyPriceRoutes);
 
 
 

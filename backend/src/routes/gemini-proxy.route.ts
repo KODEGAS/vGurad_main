@@ -20,9 +20,16 @@ router.post('/', async (req, res) => {
     const response = await result.response;
     const text = response.text();
     res.status(200).json({ text });
-  } catch (error) {
+  } catch (err) {
+    const error = err as any;
     console.error('Error with Gemini API:', error);
-    res.status(500).json({ message: 'Failed to get response from Gemini' });
+    if (error.response) {
+      console.error('Gemini API response:', error.response.data);
+    }
+    res.status(500).json({ 
+      message: 'Failed to get response from Gemini',
+      error: error.message || error.toString()
+    });
   }
 });
 
