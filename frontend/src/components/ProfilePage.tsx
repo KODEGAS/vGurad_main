@@ -56,34 +56,34 @@ export const ProfilePage = () => {
     try {
       const user = auth.currentUser;
       if (!user) return;
-      
+
       const idToken = await user.getIdToken();
       console.log('Fetching profile for user:', user.uid);
-      
+
       const response = await fetch('https://vgurad-backend.onrender.com/api/user-profile', {
         headers: {
           'Authorization': `Bearer ${idToken}`,
         },
       });
-      
+
       console.log('Profile fetch response status:', response.status);
-      
+
       if (response.status === 404) {
         // User profile doesn't exist, create one
         console.log('Profile not found, creating new profile...');
         await createUserProfile();
         return;
       }
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Profile fetch error:', errorText);
         throw new Error(`Failed to fetch profile: ${response.status} ${errorText}`);
       }
-      
+
       const data = await response.json();
       console.log('Profile data received:', data);
-      
+
       setProfile({
         id: data._id,
         full_name: data.displayName || '',
@@ -109,10 +109,10 @@ export const ProfilePage = () => {
     try {
       const user = auth.currentUser;
       if (!user) return;
-      
+
       const idToken = await user.getIdToken();
       console.log('Creating profile for user:', user.uid, user.email);
-      
+
       const response = await fetch('https://vgurad-backend.onrender.com/api/auth/create-user-profile', {
         method: 'POST',
         headers: {
@@ -123,23 +123,23 @@ export const ProfilePage = () => {
           email: user.email,
         }),
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Profile creation error:', errorText);
-        
+
         if (response.status === 409) {
           // Profile already exists, try fetching again
           await fetchProfile();
           return;
         }
-        
+
         throw new Error(`Failed to create profile: ${response.status} ${errorText}`);
       }
-      
+
       const data = await response.json();
       console.log('Profile created:', data);
-      
+
       // After creating, fetch the profile
       await fetchProfile();
     } catch (error) {
@@ -201,7 +201,7 @@ export const ProfilePage = () => {
 
       const savedNotesKey = `savedNotes_${user.uid}`;
       const storedNotes = localStorage.getItem(savedNotesKey);
-      
+
       if (storedNotes) {
         const notes = JSON.parse(storedNotes);
         setSavedNotes(notes);
@@ -221,7 +221,7 @@ export const ProfilePage = () => {
 
       const savedResultsKey = `savedResults_${user.uid}`;
       const storedResults = localStorage.getItem(savedResultsKey);
-      
+
       if (storedResults) {
         const results = JSON.parse(storedResults);
         setSavedResults(results);
@@ -241,13 +241,13 @@ export const ProfilePage = () => {
 
       const savedNotesKey = `savedNotes_${user.uid}`;
       const storedNotes = localStorage.getItem(savedNotesKey);
-      
+
       if (storedNotes) {
         const notes = JSON.parse(storedNotes);
         const updatedNotes = notes.filter((note: any) => note._id !== noteId);
         localStorage.setItem(savedNotesKey, JSON.stringify(updatedNotes));
         setSavedNotes(updatedNotes);
-        
+
         toast({
           title: "Success",
           description: "Note deleted successfully",
@@ -270,13 +270,13 @@ export const ProfilePage = () => {
 
       const savedResultsKey = `savedResults_${user.uid}`;
       const storedResults = localStorage.getItem(savedResultsKey);
-      
+
       if (storedResults) {
         const results = JSON.parse(storedResults);
         const updatedResults = results.filter((result: any) => result._id !== resultId);
         localStorage.setItem(savedResultsKey, JSON.stringify(updatedResults));
         setSavedResults(updatedResults);
-        
+
         toast({
           title: "Success",
           description: "Detection result deleted successfully",
@@ -351,7 +351,7 @@ export const ProfilePage = () => {
                     </CardTitle>
                     <CardDescription>Update your personal details</CardDescription>
                   </div>
-                  <Badge 
+                  <Badge
                     variant={profile.subscription_tier === 'pro' ? 'default' : 'secondary'}
                     className="flex items-center gap-1"
                   >
@@ -395,7 +395,7 @@ export const ProfilePage = () => {
                     <Label htmlFor="language">Language</Label>
                     <Select
                       value={profile.language_preference}
-                      onValueChange={(value: 'en' | 'si' | 'ta') => 
+                      onValueChange={(value: 'en' | 'si' | 'ta') =>
                         setProfile({ ...profile, language_preference: value })
                       }
                       disabled={!editing}
@@ -413,7 +413,7 @@ export const ProfilePage = () => {
                     </Select>
                   </div>
                 </div>
-                
+
                 <div className="flex gap-2 pt-4">
                   {editing ? (
                     <>
@@ -426,11 +426,11 @@ export const ProfilePage = () => {
                     <Button onClick={() => setEditing(true)}>Edit Profile</Button>
                   )}
                 </div>
-                
+
                 {/* Save Notes and Save Results buttons */}
                 <div className="flex flex-col sm:flex-row gap-2 pt-2">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => setShowSavedNotes(!showSavedNotes)}
                     className="flex items-center gap-2 text-xs sm:text-sm px-3 sm:px-4"
                   >
@@ -439,8 +439,8 @@ export const ProfilePage = () => {
                       {showSavedNotes ? 'Hide' : 'Show'} Saved Notes
                     </span>
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => setShowSavedResults(!showSavedResults)}
                     className="flex items-center gap-2 text-xs sm:text-sm px-3 sm:px-4"
                   >
@@ -481,6 +481,7 @@ export const ProfilePage = () => {
                               size="sm"
                               onClick={() => deleteNote(note._id)}
                               className="text-red-600 hover:text-red-700"
+                              aria-label="Delete saved note"
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
@@ -527,6 +528,7 @@ export const ProfilePage = () => {
                                 size="sm"
                                 onClick={() => deleteResult(result._id)}
                                 className="text-red-600 hover:text-red-700"
+                                aria-label="Delete saved detection result"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>
@@ -534,9 +536,9 @@ export const ProfilePage = () => {
                           </div>
                           <p className="text-sm text-muted-foreground mb-2">{result.description}</p>
                           {result.image_url && (
-                            <img 
-                              src={result.image_url} 
-                              alt="Detection result" 
+                            <img
+                              src={result.image_url}
+                              alt="Detection result"
                               className="w-20 h-20 object-cover rounded-md mb-2"
                             />
                           )}
@@ -561,7 +563,7 @@ export const ProfilePage = () => {
                   Subscription Status
                 </CardTitle>
                 <CardDescription>
-                  {profile.subscription_tier === 'pro' 
+                  {profile.subscription_tier === 'pro'
                     ? 'You have access to all premium features'
                     : 'Upgrade to unlock advanced farming features'
                   }
@@ -588,7 +590,7 @@ export const ProfilePage = () => {
                       Pro Subscription Active
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      {profile.subscription_expires_at 
+                      {profile.subscription_expires_at
                         ? `Expires on ${new Date(profile.subscription_expires_at).toLocaleDateString()}`
                         : 'Active subscription'
                       }
@@ -621,7 +623,7 @@ export const ProfilePage = () => {
                       <Lock className="w-4 h-4 text-muted-foreground" />
                     )}
                   </div>
-                  
+
                   <div className="flex items-center justify-between p-3 border rounded-lg">
                     <div className="flex items-center gap-3">
                       <BarChart3 className="w-5 h-5 text-purple-500" />
@@ -635,7 +637,7 @@ export const ProfilePage = () => {
                       <Lock className="w-4 h-4 text-muted-foreground" />
                     )}
                   </div>
-                  
+
                   <div className="flex items-center justify-between p-3 border rounded-lg">
                     <div className="flex items-center gap-3">
                       <MessageCircle className="w-5 h-5 text-green-500" />
@@ -649,7 +651,7 @@ export const ProfilePage = () => {
                       <Lock className="w-4 h-4 text-muted-foreground" />
                     )}
                   </div>
-                  
+
                   <div className="flex items-center justify-between p-3 border rounded-lg">
                     <div className="flex items-center gap-3">
                       <User className="w-5 h-5 text-orange-500" />

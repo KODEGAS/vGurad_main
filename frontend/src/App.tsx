@@ -4,12 +4,21 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { TranslationProvider } from "@/contexts/TranslationContext";
-import Index from "./pages/Index";
-import Admin from "./pages/Admin";
-import NotFound from "./pages/NotFound";
-import ProtectedRoute from "./components/ProtectedRoute"; 
+import { lazy, Suspense } from "react";
+import ProtectedRoute from "./components/ProtectedRoute";
 
-import MarketPrices from "./pages/MarketPrices";
+// Lazy load components
+const Index = lazy(() => import("./pages/Index"));
+const Admin = lazy(() => import("./pages/Admin"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const MarketPrices = lazy(() => import("./pages/MarketPrices"));
+
+// Loading component
+const LoadingSpinner = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+  </div>
+);
 
 
 const queryClient = new QueryClient();
@@ -21,24 +30,26 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            {/* Public route for the main page */}
-            <Route path="/" element={<Index />} />
-            
-            {/* Protected route for the admin page */}
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <Admin />
-                </ProtectedRoute>
-              }
-            />
-            
-            {/* Catch-all route for 404 pages */}
-            <Route path="/market-prices" element={<MarketPrices />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
+              {/* Public route for the main page */}
+              <Route path="/" element={<Index />} />
+
+              {/* Protected route for the admin page */}
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <Admin />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Catch-all route for 404 pages */}
+              <Route path="/market-prices" element={<MarketPrices />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </BrowserRouter>
       </TooltipProvider>
     </TranslationProvider>

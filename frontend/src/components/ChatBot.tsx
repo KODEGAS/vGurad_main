@@ -155,6 +155,8 @@ export const ChatBot = ({ onStartChat }) => {
         onClick={() => setIsOpen(true)}
         className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-[#0A7B31] text-white hover:bg-[#0A7B31]/90 shadow-lg animate-pulse-glow z-[110]"
         size="icon"
+        aria-label="Open chat with farm assistant"
+        title="Chat with Farm Assistant"
       >
         <MessageCircle className="h-6 w-6" />
       </Button>
@@ -162,7 +164,7 @@ export const ChatBot = ({ onStartChat }) => {
   }
 
   return (
-  <Card className="fixed bottom-6 right-6 w-80 h-100 bg-card shadow-xl z-[110] animate-scale-in">
+    <Card className="fixed bottom-6 right-6 w-80 h-100 bg-card shadow-xl z-[110] animate-scale-in">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div className="flex items-center gap-2">
           <div className="bg-[#0A7B31] p-2 rounded-full">
@@ -175,11 +177,13 @@ export const ChatBot = ({ onStartChat }) => {
           size="icon"
           onClick={() => setIsOpen(false)}
           className="h-8 w-8"
+          aria-label="Close chat"
+          title="Close Chat"
         >
           <X className="h-4 w-4" />
         </Button>
       </CardHeader>
-      
+
       <CardContent className="p-0 flex flex-col h-80">
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
@@ -194,11 +198,10 @@ export const ChatBot = ({ onStartChat }) => {
                 </div>
               )}
               <div
-                className={`max-w-[200px] p-2 rounded-lg text-sm ${
-                  message.sender === 'user'
+                className={`max-w-[200px] p-2 rounded-lg text-sm ${message.sender === 'user'
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted text-muted-foreground'
-                }`}
+                  }`}
               >
                 {/* Using ReactMarkdown to render the message text */}
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -252,6 +255,8 @@ export const ChatBot = ({ onStartChat }) => {
               size="icon"
               className="h-9 w-9 bg-[#0A7B31] hover:bg-[#0A7B31]/90"
               disabled={isLoading}
+              aria-label="Send message"
+              title="Send Message"
             >
               {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             </Button>
