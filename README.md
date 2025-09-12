@@ -1,6 +1,6 @@
-# vGuard: AI-Powered Crop Disease Detection and Management
+# WeGuard: AI-Powered Crop Disease Detection and Management
 
-vGuard is a full-stack application designed to help farmers and agricultural professionals identify and manage crop diseases effectively. The platform leverages AI-powered image recognition to detect diseases from crop images, provides a comprehensive database of crop diseases, and offers expert advice and agricultural tips.
+WeGuard is a full-stack application designed to help farmers and agricultural professionals identify and manage crop diseases effectively. The platform leverages AI-powered image recognition to detect diseases from crop images, provides a comprehensive database of crop diseases, and offers expert advice and agricultural tips.
 
  
 

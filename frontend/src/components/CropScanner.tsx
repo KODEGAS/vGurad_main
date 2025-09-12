@@ -453,8 +453,20 @@ export const CropScanner: React.FC<CropScannerProps> = ({ onBack }) => {
                                   <p className="text-sm text-muted-foreground">{t('application')}: {medicine.frequency}</p>
                                 )}
                               </div>
-                              <div className="text-xs text-muted-foreground ml-2">
-                                Click for details →
+                              <div className="flex flex-col items-end text-right ml-2">
+                                {medicine.image_url && (
+                                  <img
+                                    src={medicine.image_url}
+                                    alt={medicine.name}
+                                    className="w-12 h-12 object-cover rounded-md mb-1"
+                                    onError={(e) => {
+                                      e.currentTarget.style.display = 'none';
+                                    }}
+                                  />
+                                )}
+                                <span className="text-xs text-muted-foreground">
+                                  Click for details →
+                                </span>
                               </div>
                             </div>
                           </div>

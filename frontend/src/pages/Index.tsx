@@ -1,4 +1,5 @@
 import React, { useState, Suspense } from 'react';
+import { Helmet } from 'react-helmet-async'; // Import Helmet
 import { useTranslation } from '@/contexts/TranslationContext';
 import { Header } from '@/components/Header';
 import { QuickActionCard } from '@/components/QuickActionCard';
@@ -63,24 +64,40 @@ const Index = () => {
       case 'scanner':
         return (
           <Suspense fallback={<SectionLoadingSpinner text={t('loadingScanner')} />}>
+            <Helmet>
+              <title>WeGuard - Crop Scanner</title>
+              <meta name="description" content="Scan your crops for diseases with WeGuard's AI-powered scanner. Get instant diagnosis and recommendations." />
+            </Helmet>
             <CropScanner onBack={() => handlePageChange('home')} />
           </Suspense>
         );
       case 'database':
         return (
           <Suspense fallback={<SectionLoadingSpinner text={t('loadingDatabase')} />}>
+            <Helmet>
+              <title>WeGuard - Disease Database</title>
+              <meta name="description" content="Explore a comprehensive database of crop diseases, symptoms, causes, and treatments." />
+            </Helmet>
             <DiseaseDatabase onBack={() => handlePageChange('home')} />
           </Suspense>
         );
       case 'tips':
         return (
           <Suspense fallback={<SectionLoadingSpinner text={t('loadingTips')} />}>
+            <Helmet>
+              <title>WeGuard - Farmer Tips</title>
+              <meta name="description" content="Access valuable farmer tips and advice for optimal crop health and management." />
+            </Helmet>
             <FarmerTips onBack={() => handlePageChange('home')} />
           </Suspense>
         );
       case 'help':
         return (
           <Suspense fallback={<SectionLoadingSpinner text={t('loadingExpertHelp')} />}>
+            <Helmet>
+              <title>WeGuard - Expert Help</title>
+              <meta name="description" content="Connect with agricultural experts for personalized advice and support." />
+            </Helmet>
             <ExpertHelp onBack={() => handlePageChange('home')} onNavigateToChat={(question) => {
               setChatQuestion(question);
               handlePageChange('chat');
@@ -90,30 +107,50 @@ const Index = () => {
       case 'chat':
         return (
           <Suspense fallback={<SectionLoadingSpinner text={t('loadingChat')} />}>
+            <Helmet>
+              <title>WeGuard - Chat with Expert</title>
+              <meta name="description" content="Chat live with agricultural experts to get immediate answers to your farming questions." />
+            </Helmet>
             <ChatScreen onBack={() => handlePageChange('help')} question={chatQuestion} />
           </Suspense>
         );
       case 'calendar':
         return (
           <Suspense fallback={<SectionLoadingSpinner text="Loading treatment calendar..." />}>
+            <Helmet>
+              <title>WeGuard - Treatment Calendar</title>
+              <meta name="description" content="Manage your crop treatment schedules with a personalized calendar." />
+            </Helmet>
             <TreatmentCalendar />
           </Suspense>
         );
       case 'marketplace':
         return (
           <Suspense fallback={<SectionLoadingSpinner text="Loading marketplace..." />}>
+            <Helmet>
+              <title>WeGuard - Marketplace</title>
+              <meta name="description" content="Discover and purchase agricultural products and solutions in the WeGuard marketplace." />
+            </Helmet>
             <Marketplace />
           </Suspense>
         );
       case 'profile':
         return (
           <Suspense fallback={<SectionLoadingSpinner text="Loading profile..." />}>
+            <Helmet>
+              <title>WeGuard - User Profile</title>
+              <meta name="description" content="Manage your WeGuard profile and settings." />
+            </Helmet>
             <ProfilePage />
           </Suspense>
         );
       default:
         return (
           <div className="space-y-8 page-transition">
+            <Helmet>
+              <title>WeGuard - AI Crop Disease Detection for Smart Farming</title>
+              <meta name="description" content="Protect your crops with WeGuard's intelligent AI disease detection system. Get instant crop health analysis, expert treatment advice, and 24/7 agricultural support with 90% accuracy rate. Transform your farming with smart technology." />
+            </Helmet>
             {/* Hero Section */}
             <div className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-card animate-fade-in-up hover-glow h-56 sm:h-64 md:h-80">
               {/* 3D Background */}

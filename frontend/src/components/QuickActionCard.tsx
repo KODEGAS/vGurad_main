@@ -28,7 +28,7 @@ export const QuickActionCard: React.FC<QuickActionCardProps> = ({
             <Icon className="h-12 w-12 text-crop-primary transition-colors duration-300 group-hover:text-primary" />
           </div>
           <div className="transition-transform duration-300 group-hover:translateY(-2px)">
-            <h3 className="text-lg font-semibold text-foreground mb-2 transition-colors duration-300 group-hover:text-primary">{title}</h3>
+            <h2 className="text-lg font-semibold text-foreground mb-2 transition-colors duration-300 group-hover:text-primary">{title}</h2>
             <p className="text-muted-foreground text-sm mb-4 transition-opacity duration-300 group-hover:opacity-80">{description}</p>
           </div>
           <Button 
@@ -36,7 +36,7 @@ export const QuickActionCard: React.FC<QuickActionCardProps> = ({
             variant={variant}
             className="w-full py-3 text-base font-medium transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1"
           >
-            {title}
+            Learn More
           </Button>
         </div>
       </CardContent>
